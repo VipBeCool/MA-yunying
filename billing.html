@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>收费结算 - 智能营销平台</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .sidebar {
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+        }
+
+        .nav-item.active {
+            background: rgba(82, 196, 26, 0.2);
+            border-left-color: #52c41a;
+        }
+
+        .logo-icon {
+            background: #52c41a;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <div class="logo-icon">⚙️</div>
+                <h1>运营管控台</h1>
+            </div>
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-item"><span class="nav-icon">📊</span><span
+                        class="nav-text">运营概览</span></a>
+                <a href="institutions.html" class="nav-item"><span class="nav-icon">🏛️</span><span
+                        class="nav-text">机构管理</span></a>
+                <a href="customer-pool.html" class="nav-item"><span class="nav-icon">🏊</span><span
+                        class="nav-text">客户池</span></a>
+                <a href="products.html" class="nav-item"><span class="nav-icon">📦</span><span
+                        class="nav-text">产品配置</span></a>
+                <a href="rules.html" class="nav-item"><span class="nav-icon">🎯</span><span
+                        class="nav-text">规则引擎</span></a>
+                <a href="distribution.html" class="nav-item"><span class="nav-icon">🔀</span><span
+                        class="nav-text">分发管理</span></a>
+                <a href="analytics.html" class="nav-item"><span class="nav-icon">📈</span><span
+                        class="nav-text">效果分析</span></a>
+                <a href="billing.html" class="nav-item active"><span class="nav-icon">💰</span><span
+                        class="nav-text">收费结算</span></a>
+                <a href="reconciliation.html" class="nav-item"><span class="nav-icon">📑</span><span
+                        class="nav-text">对账管理</span></a>
+                <a href="risk-alert.html" class="nav-item"><span class="nav-icon">⚠️</span><span
+                        class="nav-text">风险预警</span></a>
+                <a href="api-monitor.html" class="nav-item"><span class="nav-icon">🔌</span><span
+                        class="nav-text">API监控</span></a>
+                <a href="downloads.html" class="nav-item"><span class="nav-icon">📥</span><span
+                        class="nav-text">下载中心</span></a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar" style="background: #52c41a;">管</div>
+                    <div>
+                        <div class="user-name">管理员</div>
+                        <div class="user-role">平台运营</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="page-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h1 class="page-title">收费结算</h1>
+                    <p class="page-breadcrumb"><a href="index.html">运营概览</a> / 收费结算</p>
+                </div>
+                <div>
+                    <select class="form-select" style="width: 120px;">
+                        <option>2026年2月</option>
+                        <option>2026年1月</option>
+                        <option>2025年12月</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 收入概览 -->
+            <div class="stat-cards">
+                <div class="stat-card primary">
+                    <div class="stat-label">本月总收入</div>
+                    <div class="stat-value">128.5<span class="stat-suffix">万</span></div>
+                    <div class="stat-trend up">↑ 18% 较上月</div>
+                </div>
+                <div class="stat-card success">
+                    <div class="stat-label">按推送计费</div>
+                    <div class="stat-value">32.5<span class="stat-suffix">万</span></div>
+                    <div class="stat-trend">85,000条 × ¥3.8</div>
+                </div>
+                <div class="stat-card warning">
+                    <div class="stat-label">按授信计费</div>
+                    <div class="stat-value">28.0<span class="stat-suffix">万</span></div>
+                    <div class="stat-trend">3,500户 × ¥80</div>
+                </div>
+                <div class="stat-card danger">
+                    <div class="stat-label">按放款计费</div>
+                    <div class="stat-value">68.0<span class="stat-suffix">万</span></div>
+                    <div class="stat-trend">2.58亿 × 0.26%</div>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <!-- 机构账单 -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">🏛️ 机构账单明细</h3>
+                        <span class="card-extra"><button class="btn btn-primary btn-sm">导出账单</button></span>
+                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>机构名称</th>
+                                <th>计费模式</th>
+                                <th>计费数量</th>
+                                <th>应收金额</th>
+                                <th>状态</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="company-name">江苏银行</span></td>
+                                <td><span class="tag tag-purple">放款分成</span></td>
+                                <td>8,500万放款</td>
+                                <td style="font-weight: 600; color: #52c41a;">¥25.5万</td>
+                                <td><span class="status-badge status-success">已结算</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="company-name">南京银行</span></td>
+                                <td><span class="tag tag-purple">放款分成</span></td>
+                                <td>6,800万放款</td>
+                                <td style="font-weight: 600; color: #52c41a;">¥20.4万</td>
+                                <td><span class="status-badge status-success">已结算</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="company-name">苏州农商行</span></td>
+                                <td><span class="tag tag-blue">授信计费</span></td>
+                                <td>1,200户授信</td>
+                                <td style="font-weight: 600; color: #52c41a;">¥9.6万</td>
+                                <td><span class="status-badge status-pending">待结算</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="company-name">某小贷公司A</span></td>
+                                <td><span class="tag tag-green">推送计费</span></td>
+                                <td>5,000条推送</td>
+                                <td style="font-weight: 600; color: #52c41a;">¥2.5万</td>
+                                <td><span class="status-badge status-success">已结算</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- 收费模式说明 -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">💡 收费模式说明</h3>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 16px;">
+                        <div
+                            style="padding: 16px; background: linear-gradient(135deg, #f0f5ff 0%, #d6e4ff 100%); border-radius: 8px;">
+                            <div style="font-weight: 600; color: #2f54eb; margin-bottom: 8px;">📤 按推送计费</div>
+                            <div style="font-size: 13px; color: #595959;">推送给银行时计费，适合品牌银行、测试期合作</div>
+                            <div style="font-size: 20px; font-weight: 600; color: #2f54eb; margin-top: 8px;">¥5-10 / 条
+                            </div>
+                        </div>
+                        <div
+                            style="padding: 16px; background: linear-gradient(135deg, #f6ffed 0%, #d9f7be 100%); border-radius: 8px;">
+                            <div style="font-weight: 600; color: #389e0d; margin-bottom: 8px;">✅ 按授信计费</div>
+                            <div style="font-size: 13px; color: #595959;">银行完成授信时计费，适合中小银行</div>
+                            <div style="font-size: 20px; font-weight: 600; color: #389e0d; margin-top: 8px;">¥50-100 / 户
+                            </div>
+                        </div>
+                        <div
+                            style="padding: 16px; background: linear-gradient(135deg, #fff7e6 0%, #ffe7ba 100%); border-radius: 8px;">
+                            <div style="font-weight: 600; color: #d46b08; margin-bottom: 8px;">💰 按放款分成</div>
+                            <div style="font-size: 13px; color: #595959;">实际放款时计费，主流模式，风险共担</div>
+                            <div style="font-size: 20px; font-weight: 600; color: #d46b08; margin-top: 8px;">放款金额 ×
+                                0.1%-0.3%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 月度趋势 -->
+            <div class="card" style="margin-top: 16px;">
+                <div class="card-header">
+                    <h3 class="card-title">📈 收入趋势</h3>
+                </div>
+                <div style="padding: 20px;">
+                    <div
+                        style="display: flex; align-items: flex-end; justify-content: space-between; height: 150px; padding: 0 20px;">
+                        <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
+                            <div
+                                style="width: 50px; height: 60px; background: linear-gradient(180deg, #52c41a 0%, #95de64 100%); border-radius: 4px 4px 0 0;">
+                            </div>
+                            <div style="font-size: 12px; color: #8c8c8c; margin-top: 8px;">9月</div>
+                            <div style="font-size: 11px; color: #595959;">85万</div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
+                            <div
+                                style="width: 50px; height: 75px; background: linear-gradient(180deg, #52c41a 0%, #95de64 100%); border-radius: 4px 4px 0 0;">
+                            </div>
+                            <div style="font-size: 12px; color: #8c8c8c; margin-top: 8px;">10月</div>
+                            <div style="font-size: 11px; color: #595959;">92万</div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
+                            <div
+                                style="width: 50px; height: 85px; background: linear-gradient(180deg, #52c41a 0%, #95de64 100%); border-radius: 4px 4px 0 0;">
+                            </div>
+                            <div style="font-size: 12px; color: #8c8c8c; margin-top: 8px;">11月</div>
+                            <div style="font-size: 11px; color: #595959;">102万</div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
+                            <div
+                                style="width: 50px; height: 95px; background: linear-gradient(180deg, #52c41a 0%, #95de64 100%); border-radius: 4px 4px 0 0;">
+                            </div>
+                            <div style="font-size: 12px; color: #8c8c8c; margin-top: 8px;">12月</div>
+                            <div style="font-size: 11px; color: #595959;">109万</div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
+                            <div
+                                style="width: 50px; height: 105px; background: linear-gradient(180deg, #52c41a 0%, #95de64 100%); border-radius: 4px 4px 0 0;">
+                            </div>
+                            <div style="font-size: 12px; color: #8c8c8c; margin-top: 8px;">1月</div>
+                            <div style="font-size: 11px; color: #595959;">118万</div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
+                            <div
+                                style="width: 50px; height: 120px; background: linear-gradient(180deg, #1890ff 0%, #69c0ff 100%); border-radius: 4px 4px 0 0;">
+                            </div>
+                            <div style="font-size: 12px; color: #8c8c8c; margin-top: 8px;">2月</div>
+                            <div style="font-size: 11px; color: #1890ff; font-weight: 600;">128万</div>
+                        </div>
+                    </div>
+                    <div style="text-align: center; margin-top: 16px; font-size: 13px; color: #595959;">
+                        收入持续增长，本月较去年同期增长 <span style="color: #52c41a; font-weight: 600;">+52%</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>

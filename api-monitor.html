@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API监控 - 智能营销平台</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .sidebar {
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+        }
+
+        .nav-item.active {
+            background: rgba(82, 196, 26, 0.2);
+            border-left-color: #52c41a;
+        }
+
+        .logo-icon {
+            background: #52c41a;
+        }
+
+        .log-entry {
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 12px;
+            padding: 8px 12px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .log-entry:hover {
+            background: #fafafa;
+        }
+
+        .log-time {
+            color: #8c8c8c;
+        }
+
+        .log-success {
+            color: #52c41a;
+        }
+
+        .log-error {
+            color: #ff4d4f;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <div class="logo-icon">⚙️</div>
+                <h1>运营管控台</h1>
+            </div>
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-item"><span class="nav-icon">📊</span><span
+                        class="nav-text">运营概览</span></a>
+                <a href="institutions.html" class="nav-item"><span class="nav-icon">🏛️</span><span
+                        class="nav-text">机构管理</span></a>
+                <a href="customer-pool.html" class="nav-item"><span class="nav-icon">🏊</span><span
+                        class="nav-text">客户池</span></a>
+                <a href="products.html" class="nav-item"><span class="nav-icon">📦</span><span
+                        class="nav-text">产品配置</span></a>
+                <a href="rules.html" class="nav-item"><span class="nav-icon">🎯</span><span
+                        class="nav-text">规则引擎</span></a>
+                <a href="distribution.html" class="nav-item"><span class="nav-icon">🔀</span><span
+                        class="nav-text">分发管理</span></a>
+                <a href="analytics.html" class="nav-item"><span class="nav-icon">📈</span><span
+                        class="nav-text">效果分析</span></a>
+                <a href="billing.html" class="nav-item"><span class="nav-icon">💰</span><span
+                        class="nav-text">收费结算</span></a>
+                <a href="reconciliation.html" class="nav-item"><span class="nav-icon">📑</span><span
+                        class="nav-text">对账管理</span></a>
+                <a href="risk-alert.html" class="nav-item"><span class="nav-icon">⚠️</span><span
+                        class="nav-text">风险预警</span></a>
+                <a href="api-monitor.html" class="nav-item active"><span class="nav-icon">🔌</span><span
+                        class="nav-text">API监控</span></a>
+                <a href="downloads.html" class="nav-item"><span class="nav-icon">📥</span><span
+                        class="nav-text">下载中心</span></a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar" style="background: #52c41a;">管</div>
+                    <div>
+                        <div class="user-name">管理员</div>
+                        <div class="user-role">平台运营</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">API监控</h1>
+                <p class="page-breadcrumb"><a href="index.html">运营概览</a> / API监控</p>
+            </div>
+
+            <!-- API状态概览 -->
+            <div class="stat-cards">
+                <div class="stat-card success">
+                    <div class="stat-label">API状态</div>
+                    <div class="stat-value" style="color: #52c41a;">正常</div>
+                    <div class="stat-trend">延迟 45ms</div>
+                </div>
+                <div class="stat-card primary">
+                    <div class="stat-label">今日调用</div>
+                    <div class="stat-value">12,580<span class="stat-suffix">次</span></div>
+                    <div class="stat-trend up">↑ 8% 较昨日</div>
+                </div>
+                <div class="stat-card warning">
+                    <div class="stat-label">今日回传</div>
+                    <div class="stat-value">856<span class="stat-suffix">条</span></div>
+                    <div class="stat-trend">来自5家机构</div>
+                </div>
+                <div class="stat-card danger">
+                    <div class="stat-label">失败请求</div>
+                    <div class="stat-value">3<span class="stat-suffix">次</span></div>
+                    <div class="stat-trend">成功率 99.97%</div>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <!-- 机构回传状态 -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">🏛️ 机构数据回传状态</h3>
+                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>机构名称</th>
+                                <th>对接方式</th>
+                                <th>最后回传</th>
+                                <th>今日回传</th>
+                                <th>状态</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>江苏银行</td>
+                                <td><span class="tag tag-blue">API实时</span></td>
+                                <td style="color: #8c8c8c; font-size: 13px;">5分钟前</td>
+                                <td>328条</td>
+                                <td><span class="status-badge status-success">正常</span></td>
+                            </tr>
+                            <tr>
+                                <td>南京银行</td>
+                                <td><span class="tag tag-blue">API实时</span></td>
+                                <td style="color: #8c8c8c; font-size: 13px;">12分钟前</td>
+                                <td>245条</td>
+                                <td><span class="status-badge status-success">正常</span></td>
+                            </tr>
+                            <tr>
+                                <td>苏州农商行</td>
+                                <td><span class="tag tag-green">批量导入</span></td>
+                                <td style="color: #8c8c8c; font-size: 13px;">昨日 18:00</td>
+                                <td>156条</td>
+                                <td><span class="status-badge status-success">正常</span></td>
+                            </tr>
+                            <tr>
+                                <td>某小贷公司A</td>
+                                <td><span class="tag tag-orange">人工录入</span></td>
+                                <td style="color: #8c8c8c; font-size: 13px;">2小时前</td>
+                                <td>45条</td>
+                                <td><span class="status-badge status-success">正常</span></td>
+                            </tr>
+                            <tr>
+                                <td>某小贷公司B</td>
+                                <td><span class="tag tag-orange">人工录入</span></td>
+                                <td style="color: #faad14; font-size: 13px;">3天前</td>
+                                <td>0条</td>
+                                <td><span class="status-badge status-pending">待跟进</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- 回传数据统计 -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">📊 回传数据分布</h3>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 16px;">
+                        <div style="display: flex; align-items: center; gap: 16px;">
+                            <div style="width: 80px; flex-shrink: 0; font-weight: 500;">已触达</div>
+                            <div
+                                style="flex: 1; height: 24px; background: #e8e8e8; border-radius: 4px; overflow: hidden;">
+                                <div
+                                    style="width: 65%; height: 100%; background: linear-gradient(90deg, #1890ff 0%, #40a9ff 100%); border-radius: 4px; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 500;">
+                                    65%</div>
+                            </div>
+                            <div
+                                style="width: 60px; text-align: right; font-size: 18px; font-weight: 600; color: #1890ff;">
+                                556</div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 16px;">
+                            <div style="width: 80px; flex-shrink: 0; font-weight: 500;">有意向</div>
+                            <div
+                                style="flex: 1; height: 24px; background: #e8e8e8; border-radius: 4px; overflow: hidden;">
+                                <div
+                                    style="width: 25%; height: 100%; background: linear-gradient(90deg, #52c41a 0%, #73d13d 100%); border-radius: 4px; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 500;">
+                                    25%</div>
+                            </div>
+                            <div
+                                style="width: 60px; text-align: right; font-size: 18px; font-weight: 600; color: #52c41a;">
+                                214</div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 16px;">
+                            <div style="width: 80px; flex-shrink: 0; font-weight: 500;">已申请</div>
+                            <div
+                                style="flex: 1; height: 24px; background: #e8e8e8; border-radius: 4px; overflow: hidden;">
+                                <div
+                                    style="width: 8%; min-width: 30px; height: 100%; background: linear-gradient(90deg, #faad14 0%, #ffc53d 100%); border-radius: 4px; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 500;">
+                                    8%</div>
+                            </div>
+                            <div
+                                style="width: 60px; text-align: right; font-size: 18px; font-weight: 600; color: #faad14;">
+                                68</div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 16px;">
+                            <div style="width: 80px; flex-shrink: 0; font-weight: 500;">已授信</div>
+                            <div
+                                style="flex: 1; height: 24px; background: #e8e8e8; border-radius: 4px; overflow: hidden;">
+                                <div
+                                    style="width: 4%; min-width: 30px; height: 100%; background: linear-gradient(90deg, #eb2f96 0%, #f759ab 100%); border-radius: 4px; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 500;">
+                                    4%</div>
+                            </div>
+                            <div
+                                style="width: 60px; text-align: right; font-size: 18px; font-weight: 600; color: #eb2f96;">
+                                32</div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 16px;">
+                            <div style="width: 80px; flex-shrink: 0; font-weight: 500;">放款成功</div>
+                            <div
+                                style="flex: 1; height: 24px; background: #e8e8e8; border-radius: 4px; overflow: hidden;">
+                                <div
+                                    style="width: 2%; min-width: 30px; height: 100%; background: linear-gradient(90deg, #722ed1 0%, #9254de 100%); border-radius: 4px; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 500;">
+                                    2%</div>
+                            </div>
+                            <div
+                                style="width: 60px; text-align: right; font-size: 18px; font-weight: 600; color: #722ed1;">
+                                18</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 实时日志 -->
+            <div class="card" style="margin-top: 16px;">
+                <div class="card-header">
+                    <h3 class="card-title">📋 实时回传日志</h3>
+                    <span class="card-extra">
+                        <button class="btn btn-text btn-sm" onclick="location.reload()">🔄 刷新</button>
+                    </span>
+                </div>
+                <div style="max-height: 300px; overflow-y: auto; background: #fafafa; border-radius: 6px;">
+                    <div class="log-entry">
+                        <span class="log-time">[2026-02-06 09:05:23]</span>
+                        <span class="log-success">[SUCCESS]</span>
+                        江苏银行 → customer_status → <code>{"customer_id":"320500XXX001","status":"contacted"}</code>
+                    </div>
+                    <div class="log-entry">
+                        <span class="log-time">[2026-02-06 09:04:56]</span>
+                        <span class="log-success">[SUCCESS]</span>
+                        江苏银行 → customer_status → <code>{"customer_id":"320500XXX002","status":"interested"}</code>
+                    </div>
+                    <div class="log-entry">
+                        <span class="log-time">[2026-02-06 09:03:12]</span>
+                        <span class="log-success">[SUCCESS]</span>
+                        南京银行 → customer_status →
+                        <code>{"customer_id":"320100XXX003","status":"loan_success","amount":1500000}</code>
+                    </div>
+                    <div class="log-entry">
+                        <span class="log-time">[2026-02-06 09:02:45]</span>
+                        <span class="log-error">[ERROR]</span>
+                        某小贷A → customer_status → 签名验证失败，请检查API Key
+                    </div>
+                    <div class="log-entry">
+                        <span class="log-time">[2026-02-06 09:01:30]</span>
+                        <span class="log-success">[SUCCESS]</span>
+                        江苏银行 → customer_status →
+                        <code>{"customer_id":"320500XXX004","status":"rejected","reason":"额度不足"}</code>
+                    </div>
+                    <div class="log-entry">
+                        <span class="log-time">[2026-02-06 09:00:15]</span>
+                        <span class="log-success">[SUCCESS]</span>
+                        南京银行 → customer_status → <code>{"customer_id":"320100XXX005","status":"applied"}</code>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>产品配置 - 运营管控台</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .sidebar {
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+        }
+
+        .nav-item.active {
+            background: rgba(82, 196, 26, 0.2);
+            border-left-color: #52c41a;
+        }
+
+        .logo-icon {
+            background: #52c41a;
+        }
+
+        /* 产品状态标签 */
+        .status-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-tag.running {
+            background: #f6ffed;
+            color: #52c41a;
+        }
+
+        .status-tag.paused {
+            background: #fff7e6;
+            color: #fa8c16;
+        }
+
+        .status-tag.offline {
+            background: #f5f5f5;
+            color: #bfbfbf;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .status-dot.running {
+            background: #52c41a;
+            animation: blink 1.5s infinite;
+        }
+
+        .status-dot.paused {
+            background: #fa8c16;
+        }
+
+        .status-dot.offline {
+            background: #bfbfbf;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.4;
+            }
+        }
+
+        .freq-tag {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            background: #e6f7ff;
+            color: #1890ff;
+            font-weight: 500;
+        }
+
+        .time-text {
+            font-size: 12px;
+            color: #8c8c8c;
+        }
+
+        /* 弹窗 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 40px;
+            overflow-y: auto;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            background: #fff;
+            border-radius: 16px;
+            width: 760px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #262626;
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+            color: #8c8c8c;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover {
+            background: #f5f5f5;
+            color: #262626;
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            padding: 16px 24px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        /* 表单区域 */
+        .form-section {
+            margin-bottom: 28px;
+        }
+
+        .form-section-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #262626;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-section-title .icon {
+            font-size: 18px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .form-grid.col-3 {
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            font-weight: 500;
+            color: #595959;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 8px 12px;
+            border: 1px solid #d9d9d9;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.2s;
+            background: #fff;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: #1890ff;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        /* 单选按钮组 */
+        .radio-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .radio-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border: 1px solid #d9d9d9;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .radio-item:hover {
+            border-color: #91d5ff;
+        }
+
+        .radio-item.selected {
+            border-color: #1890ff;
+            background: #e6f7ff;
+            color: #1890ff;
+            font-weight: 500;
+        }
+
+        .radio-item input[type="radio"] {
+            accent-color: #1890ff;
+            width: 14px;
+            height: 14px;
+        }
+
+        /* 字段权限复选框 */
+        .field-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .field-check {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border: 1px solid #e8e8e8;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .field-check:hover {
+            border-color: #91d5ff;
+        }
+
+        .field-check.checked {
+            border-color: #1890ff;
+            background: #f0f8ff;
+        }
+
+        .field-check input[type="checkbox"] {
+            accent-color: #1890ff;
+            width: 15px;
+            height: 15px;
+        }
+
+        .field-check .field-icon {
+            font-size: 14px;
+        }
+
+        /* 规则摘要 */
+        .rule-summary {
+            background: #fafafa;
+            border: 1px solid #e8e8e8;
+            border-radius: 10px;
+            padding: 14px 16px;
+        }
+
+        .rule-summary .rule-name {
+            font-weight: 600;
+            font-size: 14px;
+            color: #262626;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .rule-summary .rule-conditions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .rule-cond-tag {
+            padding: 3px 10px;
+            background: #e6f7ff;
+            color: #1890ff;
+            border-radius: 6px;
+            font-size: 12px;
+        }
+
+        /* 分隔线 */
+        .form-divider {
+            height: 1px;
+            background: #f0f0f0;
+            margin: 24px 0;
+        }
+
+        /* 开关样式 */
+        .toggle-switch {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            display: inline-block;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            inset: 0;
+            background: #d9d9d9;
+            border-radius: 24px;
+            transition: 0.3s;
+        }
+
+        .toggle-slider:before {
+            content: "";
+            position: absolute;
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background: white;
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+
+        .toggle-switch input:checked+.toggle-slider {
+            background: #52c41a;
+        }
+
+        .toggle-switch input:checked+.toggle-slider:before {
+            transform: translateX(20px);
+        }
+
+        .toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+        }
+
+        .toggle-label {
+            font-size: 13px;
+            color: #595959;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #52c41a;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 8px;
+            z-index: 9999;
+            font-size: 14px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <div class="logo-icon">⚙️</div>
+                <h1>运营管控台</h1>
+            </div>
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-item"><span class="nav-icon">📊</span><span
+                        class="nav-text">运营概览</span></a>
+                <a href="institutions.html" class="nav-item"><span class="nav-icon">🏛️</span><span
+                        class="nav-text">机构管理</span></a>
+                <a href="customer-pool.html" class="nav-item"><span class="nav-icon">🏊</span><span
+                        class="nav-text">客户池</span></a>
+                <a href="products.html" class="nav-item active"><span class="nav-icon">📦</span><span
+                        class="nav-text">产品配置</span></a>
+                <a href="rules.html" class="nav-item"><span class="nav-icon">🎯</span><span
+                        class="nav-text">规则引擎</span></a>
+                <a href="distribution.html" class="nav-item"><span class="nav-icon">🔀</span><span
+                        class="nav-text">分发管理</span></a>
+                <a href="analytics.html" class="nav-item"><span class="nav-icon">📈</span><span
+                        class="nav-text">效果分析</span></a>
+                <a href="billing.html" class="nav-item"><span class="nav-icon">💰</span><span
+                        class="nav-text">收费结算</span></a>
+                <a href="reconciliation.html" class="nav-item"><span class="nav-icon">📑</span><span
+                        class="nav-text">对账管理</span></a>
+                <a href="risk-alert.html" class="nav-item"><span class="nav-icon">⚠️</span><span
+                        class="nav-text">风险预警</span></a>
+                <a href="api-monitor.html" class="nav-item"><span class="nav-icon">🔌</span><span
+                        class="nav-text">API监控</span></a>
+                <a href="downloads.html" class="nav-item"><span class="nav-icon">📥</span><span
+                        class="nav-text">下载中心</span></a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar" style="background: #52c41a;">管</div>
+                    <div>
+                        <div class="user-name">管理员</div>
+                        <div class="user-role">平台运营</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="page-header" style="display:flex;justify-content:space-between;align-items:center;">
+                <div>
+                    <h2>产品配置</h2>
+                    <div class="breadcrumb">运营管控台 / 产品配置</div>
+                </div>
+                <button class="btn btn-primary" onclick="openProductModal()">+ 新增产品</button>
+            </div>
+
+            <!-- 筛选栏 -->
+            <div class="filter-bar">
+                <div class="filter-item">
+                    <label>所属机构</label>
+                    <select class="form-select" id="filterOrg" onchange="filterProducts()">
+                        <option value="">全部机构</option>
+                        <option>江苏银行</option>
+                        <option>南京银行</option>
+                        <option>苏州农商行</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>产品类型</label>
+                    <select class="form-select" id="filterType" onchange="filterProducts()">
+                        <option value="">全部类型</option>
+                        <option>信用贷</option>
+                        <option>抵押贷</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>状态</label>
+                    <select class="form-select" id="filterStatus" onchange="filterProducts()">
+                        <option value="">全部状态</option>
+                        <option value="running">运行中</option>
+                        <option value="paused">已暂停</option>
+                        <option value="offline">已下线</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 产品列表 -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">产品列表</h3>
+                    <span class="card-extra" id="productCount">共 6 个产品</span>
+                </div>
+                <div class="table-wrapper">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>产品名称</th>
+                                <th>所属机构</th>
+                                <th>类型</th>
+                                <th>状态</th>
+                                <th>执行频率</th>
+                                <th>上次执行</th>
+                                <th>下次执行</th>
+                                <th>推送量</th>
+                                <th>转化率</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productTableBody">
+                            <!-- 动态渲染 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 产品编辑/新增弹窗 -->
+    <div class="modal-overlay" id="productModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">📦 新增获客产品</h3>
+                <div class="modal-close" onclick="closeProductModal()">✕</div>
+            </div>
+            <div class="modal-body">
+                <!-- 区域A：基本信息 -->
+                <div class="form-section">
+                    <div class="form-section-title"><span class="icon">📋</span> 基本信息</div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>产品名称</label>
+                            <input type="text" id="prodName" placeholder="如：科技贷">
+                        </div>
+                        <div class="form-group">
+                            <label>所属机构</label>
+                            <select id="prodOrg">
+                                <option>江苏银行</option>
+                                <option>南京银行</option>
+                                <option>苏州农商行</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>产品类型</label>
+                            <select id="prodType">
+                                <option>信用贷</option>
+                                <option>抵押贷</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>准入评分</label>
+                            <input type="text" id="prodScore" placeholder="如：≥750">
+                        </div>
+                        <div class="form-group">
+                            <label>最高额度</label>
+                            <input type="text" id="prodLimit" placeholder="如：500万">
+                        </div>
+                        <div class="form-group">
+                            <label>利率区间</label>
+                            <input type="text" id="prodRate" placeholder="如：4.5%-5.5%">
+                        </div>
+                        <div class="form-group full-width">
+                            <label>产品描述</label>
+                            <textarea id="prodDesc" placeholder="面向科技型企业的专项信贷产品..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-divider"></div>
+
+                <!-- 区域B：调度策略 -->
+                <div class="form-section">
+                    <div class="form-section-title"><span class="icon">⏰</span> 调度策略</div>
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label>执行频率</label>
+                            <div class="radio-group" id="freqGroup">
+                                <label class="radio-item selected" onclick="selectRadio(this,'freq')">
+                                    <input type="radio" name="freq" value="daily" checked> 每天
+                                </label>
+                                <label class="radio-item" onclick="selectRadio(this,'freq')">
+                                    <input type="radio" name="freq" value="weekly"> 每周
+                                </label>
+                                <label class="radio-item" onclick="selectRadio(this,'freq')">
+                                    <input type="radio" name="freq" value="monthly"> 每月
+                                </label>
+                                <label class="radio-item" onclick="selectRadio(this,'freq')">
+                                    <input type="radio" name="freq" value="once"> 仅一次
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>执行时间</label>
+                            <input type="time" id="prodTime" value="06:00">
+                        </div>
+                        <div class="form-group">
+                            <label>输出上限（条/次）</label>
+                            <input type="number" id="prodMaxOutput" value="500" min="1" max="10000">
+                        </div>
+                        <div class="form-group">
+                            <label>名单排序</label>
+                            <select id="prodSortBy">
+                                <option>苏信分由高到低</option>
+                                <option>资金需求预估由高到低</option>
+                                <option>注册资金由高到低</option>
+                                <option>企业成立时间由近到远</option>
+                                <option>综合推荐度</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>名单处理</label>
+                            <select id="prodListProcess">
+                                <option>不处理（全量输出）</option>
+                                <option>排除已有名单客户</option>
+                                <option>排除已触达客户</option>
+                                <option>与上传名单取交集</option>
+                                <option>排除上传名单客户</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-divider"></div>
+
+                <!-- 区域C：权限控制 -->
+                <div class="form-section">
+                    <div class="form-section-title"><span class="icon">🔒</span> 权限控制</div>
+                    <div class="toggle-row">
+                        <span class="toggle-label">允许机构导出名单</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="allowExport">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div style="margin-top:16px;">
+                        <label
+                            style="font-size:13px;font-weight:500;color:#595959;margin-bottom:10px;display:block;">名单展示字段</label>
+                        <div class="field-grid" id="fieldGrid">
+                            <label class="field-check checked">
+                                <input type="checkbox" checked disabled> <span class="field-icon">🏢</span> 企业名称
+                            </label>
+                            <label class="field-check checked">
+                                <input type="checkbox" checked disabled> <span class="field-icon">🆔</span>
+                                统一社会信用代码
+                            </label>
+                            <label class="field-check checked" onclick="toggleField(this)">
+                                <input type="checkbox" checked> <span class="field-icon">📞</span> 联系方式
+                            </label>
+                            <label class="field-check" onclick="toggleField(this)">
+                                <input type="checkbox"> <span class="field-icon">📊</span> 苏信分
+                            </label>
+                            <label class="field-check" onclick="toggleField(this)">
+                                <input type="checkbox"> <span class="field-icon">💼</span> 征信概要
+                            </label>
+                            <label class="field-check" onclick="toggleField(this)">
+                                <input type="checkbox"> <span class="field-icon">⚖️</span> 司法风险详情
+                            </label>
+                            <label class="field-check" onclick="toggleField(this)">
+                                <input type="checkbox"> <span class="field-icon">💰</span> 财务数据
+                            </label>
+                            <label class="field-check" onclick="toggleField(this)">
+                                <input type="checkbox"> <span class="field-icon">📝</span> 纳税评级
+                            </label>
+                            <label class="field-check" onclick="toggleField(this)">
+                                <input type="checkbox"> <span class="field-icon">🏭</span> 行业分类
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-divider"></div>
+
+                <!-- 区域D：关联规则 -->
+                <div class="form-section">
+                    <div class="form-section-title"><span class="icon">🎯</span> 关联规则</div>
+                    <div class="form-group" style="margin-bottom:12px;">
+                        <label>选择规则</label>
+                        <select id="prodRule" onchange="updateRuleSummary()">
+                            <option value="rule1">科技企业筛选规则</option>
+                            <option value="rule2">税务优质企业规则</option>
+                            <option value="rule3">专精特新企业规则</option>
+                            <option value="rule4">园区重点企业规则</option>
+                            <option value="">+ 跳转创建新规则</option>
+                        </select>
+                    </div>
+                    <div class="rule-summary" id="ruleSummary">
+                        <div class="rule-name">🎯 科技企业筛选规则</div>
+                        <div class="rule-conditions">
+                            <span class="rule-cond-tag">行业 = 制造业 / 科技服务</span>
+                            <span class="rule-cond-tag">苏信分 ≥ 750</span>
+                            <span class="rule-cond-tag">注册资金 ≥ 500万</span>
+                            <span class="rule-cond-tag">成立年限 ≥ 3年</span>
+                            <span class="rule-cond-tag">无司法风险</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" onclick="closeProductModal()">取消</button>
+                <button class="btn btn-primary" onclick="saveProduct()">保存产品</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 产品 mock 数据
+        const products = [
+            {
+                id: 1, name: '科技贷', org: '江苏银行', type: '信用贷', status: 'running',
+                score: '≥750', limit: '500万', rate: '4.5%-5.5%',
+                freq: '每天', freqVal: 'daily', time: '06:00', maxOutput: 500,
+                sortBy: '苏信分由高到低', listProcess: '排除已触达客户',
+                allowExport: true, pushCount: 5000, conversion: '4.2%',
+                lastRun: '2026-02-11 06:00', nextRun: '2026-02-12 06:00',
+                rule: '科技企业筛选规则',
+                conditions: ['行业=制造业/科技服务', '苏信分≥750', '注册资金≥500万']
+            },
+            {
+                id: 2, name: '税e融', org: '江苏银行', type: '信用贷', status: 'running',
+                score: '≥700', limit: '300万', rate: '5.0%-6.0%',
+                freq: '每周', freqVal: 'weekly', time: '07:00', maxOutput: 300,
+                sortBy: '综合推荐度', listProcess: '排除已有名单客户',
+                allowExport: false, pushCount: 4000, conversion: '3.8%',
+                lastRun: '2026-02-10 07:00', nextRun: '2026-02-17 07:00',
+                rule: '税务优质企业规则',
+                conditions: ['纳税评级=A/B', '苏信分≥700', '连续纳税≥2年']
+            },
+            {
+                id: 3, name: '专精特新贷', org: '南京银行', type: '信用贷', status: 'running',
+                score: '≥720', limit: '800万', rate: '4.8%-5.8%',
+                freq: '每月', freqVal: 'monthly', time: '08:00', maxOutput: 200,
+                sortBy: '资金需求预估由高到低', listProcess: '不处理（全量输出）',
+                allowExport: true, pushCount: 4500, conversion: '4.0%',
+                lastRun: '2026-02-01 08:00', nextRun: '2026-03-01 08:00',
+                rule: '专精特新企业规则',
+                conditions: ['专精特新认定', '苏信分≥720', '研发投入占比≥5%']
+            },
+            {
+                id: 4, name: '园区贷', org: '苏州农商行', type: '抵押贷', status: 'paused',
+                score: '≥680', limit: '1000万', rate: '5.5%-6.5%',
+                freq: '每天', freqVal: 'daily', time: '06:30', maxOutput: 400,
+                sortBy: '注册资金由高到低', listProcess: '排除已有名单客户',
+                allowExport: false, pushCount: 3500, conversion: '3.2%',
+                lastRun: '2026-02-05 06:30', nextRun: '—',
+                rule: '园区重点企业规则',
+                conditions: ['入驻园区', '苏信分≥680', '有不动产']
+            },
+            {
+                id: 5, name: '外贸通', org: '江苏银行', type: '信用贷', status: 'running',
+                score: '≥710', limit: '600万', rate: '4.8%-5.5%',
+                freq: '每周', freqVal: 'weekly', time: '07:30', maxOutput: 350,
+                sortBy: '苏信分由高到低', listProcess: '排除已触达客户',
+                allowExport: true, pushCount: 2800, conversion: '3.5%',
+                lastRun: '2026-02-10 07:30', nextRun: '2026-02-17 07:30',
+                rule: '外贸企业筛选规则',
+                conditions: ['有进出口经营权', '苏信分≥710', '年出口额≥100万$']
+            },
+            {
+                id: 6, name: '绿色信贷', org: '南京银行', type: '信用贷', status: 'offline',
+                score: '≥700', limit: '400万', rate: '4.2%-5.0%',
+                freq: '仅一次', freqVal: 'once', time: '09:00', maxOutput: 1000,
+                sortBy: '综合推荐度', listProcess: '不处理（全量输出）',
+                allowExport: false, pushCount: 1200, conversion: '2.8%',
+                lastRun: '2026-01-15 09:00', nextRun: '—',
+                rule: '绿色企业筛选规则',
+                conditions: ['环保认证', '能耗达标', '苏信分≥700']
+            }
+        ];
+
+        const statusMap = {
+            running: { label: '运行中', cls: 'running' },
+            paused: { label: '已暂停', cls: 'paused' },
+            offline: { label: '已下线', cls: 'offline' }
+        };
+
+        // 规则摘要数据
+        const ruleSummaries = {
+            rule1: { name: '科技企业筛选规则', conditions: ['行业 = 制造业 / 科技服务', '苏信分 ≥ 750', '注册资金 ≥ 500万', '成立年限 ≥ 3年', '无司法风险'] },
+            rule2: { name: '税务优质企业规则', conditions: ['纳税评级 = A / B', '苏信分 ≥ 700', '连续纳税 ≥ 2年', '无欠税记录'] },
+            rule3: { name: '专精特新企业规则', conditions: ['专精特新认定', '苏信分 ≥ 720', '研发投入占比 ≥ 5%', '有效专利 ≥ 3项'] },
+            rule4: { name: '园区重点企业规则', conditions: ['入驻省级以上园区', '苏信分 ≥ 680', '有不动产', '在营状态'] }
+        };
+
+        // 渲染产品列表
+        function renderProducts(data) {
+            const tbody = document.getElementById('productTableBody');
+            document.getElementById('productCount').textContent = `共 ${data.length} 个产品`;
+            tbody.innerHTML = data.map(p => {
+                const s = statusMap[p.status];
+                return `<tr>
+                    <td><span class="company-name">${p.name}</span></td>
+                    <td>${p.org}</td>
+                    <td><span class="tag ${p.type === '信用贷' ? 'tag-blue' : 'tag-green'}">${p.type}</span></td>
+                    <td><span class="status-tag ${s.cls}"><span class="status-dot ${s.cls}"></span> ${s.label}</span></td>
+                    <td><span class="freq-tag">${p.freq}</span></td>
+                    <td><span class="time-text">${p.lastRun}</span></td>
+                    <td><span class="time-text">${p.nextRun}</span></td>
+                    <td>${p.pushCount.toLocaleString()}</td>
+                    <td style="color:${parseFloat(p.conversion) >= 4 ? '#52c41a' : '#1890ff'};font-weight:600;">${p.conversion}</td>
+                    <td>
+                        <button class="btn btn-text btn-sm" onclick="editProduct(${p.id})">编辑</button>
+                        <button class="btn btn-text btn-sm" onclick="toggleProductStatus(${p.id})">${p.status === 'running' ? '暂停' : '启用'}</button>
+                        <button class="btn btn-text btn-sm" onclick="location.href='rules.html'">规则</button>
+                    </td>
+                </tr>`;
+            }).join('');
+        }
+
+        // 筛选
+        function filterProducts() {
+            let filtered = [...products];
+            const org = document.getElementById('filterOrg').value;
+            const type = document.getElementById('filterType').value;
+            const status = document.getElementById('filterStatus').value;
+            if (org) filtered = filtered.filter(p => p.org === org);
+            if (type) filtered = filtered.filter(p => p.type === type);
+            if (status) filtered = filtered.filter(p => p.status === status);
+            renderProducts(filtered);
+        }
+
+        // 弹窗
+        function openProductModal(title) {
+            document.getElementById('modalTitle').textContent = title || '📦 新增获客产品';
+            document.getElementById('productModal').classList.add('show');
+        }
+
+        function closeProductModal() {
+            document.getElementById('productModal').classList.remove('show');
+        }
+
+        // 编辑产品
+        function editProduct(id) {
+            const p = products.find(x => x.id === id);
+            if (!p) return;
+            document.getElementById('prodName').value = p.name;
+            document.getElementById('prodScore').value = p.score;
+            document.getElementById('prodLimit').value = p.limit;
+            document.getElementById('prodRate').value = p.rate;
+            document.getElementById('prodTime').value = p.time;
+            document.getElementById('prodMaxOutput').value = p.maxOutput;
+            // 选中对应频率
+            document.querySelectorAll('#freqGroup .radio-item').forEach(r => {
+                const input = r.querySelector('input');
+                if (input.value === p.freqVal) {
+                    r.classList.add('selected');
+                    input.checked = true;
+                } else {
+                    r.classList.remove('selected');
+                    input.checked = false;
+                }
+            });
+            document.getElementById('allowExport').checked = p.allowExport;
+            openProductModal('📦 编辑产品 - ' + p.name);
+        }
+
+        // 切换产品状态
+        function toggleProductStatus(id) {
+            const p = products.find(x => x.id === id);
+            if (!p) return;
+            if (p.status === 'running') {
+                p.status = 'paused';
+                p.nextRun = '—';
+                showToast(`已暂停产品「${p.name}」`);
+            } else {
+                p.status = 'running';
+                p.nextRun = '2026-02-12 06:00';
+                showToast(`已启用产品「${p.name}」`);
+            }
+            renderProducts(products);
+        }
+
+        // 单选
+        function selectRadio(el, name) {
+            el.closest('.radio-group').querySelectorAll('.radio-item').forEach(r => r.classList.remove('selected'));
+            el.classList.add('selected');
+        }
+
+        // 字段权限切换
+        function toggleField(el) {
+            const cb = el.querySelector('input[type="checkbox"]');
+            if (cb.disabled) return;
+            cb.checked = !cb.checked;
+            el.classList.toggle('checked', cb.checked);
+        }
+
+        // 规则摘要更新
+        function updateRuleSummary() {
+            const val = document.getElementById('prodRule').value;
+            const el = document.getElementById('ruleSummary');
+            if (!val) {
+                location.href = 'rules.html';
+                return;
+            }
+            const r = ruleSummaries[val];
+            if (r) {
+                el.innerHTML = `<div class="rule-name">🎯 ${r.name}</div>
+                    <div class="rule-conditions">${r.conditions.map(c => `<span class="rule-cond-tag">${c}</span>`).join('')}</div>`;
+            }
+        }
+
+        // 保存
+        function saveProduct() {
+            const name = document.getElementById('prodName').value;
+            if (!name) { alert('请输入产品名称'); return; }
+            closeProductModal();
+            showToast(`产品「${name}」保存成功`);
+        }
+
+        // Toast
+        function showToast(msg) {
+            const t = document.createElement('div');
+            t.className = 'toast';
+            t.textContent = '✓ ' + msg;
+            document.body.appendChild(t);
+            setTimeout(() => t.remove(), 2500);
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => renderProducts(products));
+    </script>
+</body>
+
+</html>

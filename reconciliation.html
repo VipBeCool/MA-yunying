@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>对账管理 - 智能营销平台</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .sidebar {
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+        }
+
+        .nav-item.active {
+            background: rgba(82, 196, 26, 0.2);
+            border-left-color: #52c41a;
+        }
+
+        .logo-icon {
+            background: #52c41a;
+        }
+
+        .reconcile-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .reconcile-status.match {
+            background: #f6ffed;
+            color: #52c41a;
+        }
+
+        .reconcile-status.mismatch {
+            background: #fff2f0;
+            color: #ff4d4f;
+        }
+
+        .reconcile-status.pending {
+            background: #fffbe6;
+            color: #faad14;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <div class="logo-icon">⚙️</div>
+                <h1>运营管控台</h1>
+            </div>
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-item"><span class="nav-icon">📊</span><span
+                        class="nav-text">运营概览</span></a>
+                <a href="institutions.html" class="nav-item"><span class="nav-icon">🏛️</span><span
+                        class="nav-text">机构管理</span></a>
+                <a href="customer-pool.html" class="nav-item"><span class="nav-icon">🏊</span><span
+                        class="nav-text">客户池</span></a>
+                <a href="products.html" class="nav-item"><span class="nav-icon">📦</span><span
+                        class="nav-text">产品配置</span></a>
+                <a href="rules.html" class="nav-item"><span class="nav-icon">🎯</span><span
+                        class="nav-text">规则引擎</span></a>
+                <a href="distribution.html" class="nav-item"><span class="nav-icon">🔀</span><span
+                        class="nav-text">分发管理</span></a>
+                <a href="analytics.html" class="nav-item"><span class="nav-icon">📈</span><span
+                        class="nav-text">效果分析</span></a>
+                <a href="billing.html" class="nav-item"><span class="nav-icon">💰</span><span
+                        class="nav-text">收费结算</span></a>
+                <a href="reconciliation.html" class="nav-item active"><span class="nav-icon">📑</span><span
+                        class="nav-text">对账管理</span></a>
+                <a href="risk-alert.html" class="nav-item"><span class="nav-icon">⚠️</span><span
+                        class="nav-text">风险预警</span></a>
+                <a href="api-monitor.html" class="nav-item"><span class="nav-icon">🔌</span><span
+                        class="nav-text">API监控</span></a>
+                <a href="downloads.html" class="nav-item"><span class="nav-icon">📥</span><span
+                        class="nav-text">下载中心</span></a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar" style="background: #52c41a;">管</div>
+                    <div>
+                        <div class="user-name">管理员</div>
+                        <div class="user-role">平台运营</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="page-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h1 class="page-title">对账管理</h1>
+                    <p class="page-breadcrumb"><a href="index.html">运营概览</a> / 对账管理</p>
+                </div>
+                <div style="display: flex; gap: 12px;">
+                    <select class="form-select" style="width: 120px;">
+                        <option>2026年2月</option>
+                        <option>2026年1月</option>
+                        <option>2025年12月</option>
+                    </select>
+                    <button class="btn btn-primary">📥 生成对账单</button>
+                </div>
+            </div>
+
+            <!-- 对账概览 -->
+            <div class="stat-cards">
+                <div class="stat-card primary">
+                    <div class="stat-label">本月待对账</div>
+                    <div class="stat-value">8<span class="stat-suffix">家</span></div>
+                    <div class="stat-trend">机构账单</div>
+                </div>
+                <div class="stat-card success">
+                    <div class="stat-label">已核对一致</div>
+                    <div class="stat-value">5<span class="stat-suffix">家</span></div>
+                    <div class="stat-trend">占比 62.5%</div>
+                </div>
+                <div class="stat-card danger">
+                    <div class="stat-label">存在差异</div>
+                    <div class="stat-value">2<span class="stat-suffix">家</span></div>
+                    <div class="stat-trend">需人工核对</div>
+                </div>
+                <div class="stat-card warning">
+                    <div class="stat-label">差异金额</div>
+                    <div class="stat-value">3.2<span class="stat-suffix">万</span></div>
+                    <div class="stat-trend">待确认</div>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px;">
+                <!-- 对账明细 -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">📑 机构对账明细</h3>
+                        <span class="card-extra"><button class="btn btn-default btn-sm">导出Excel</button></span>
+                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>机构名称</th>
+                                <th>计费模式</th>
+                                <th>平台统计</th>
+                                <th>机构反馈</th>
+                                <th>差异</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="company-name">江苏银行</span></td>
+                                <td><span class="tag tag-purple">放款分成</span></td>
+                                <td>8,500万</td>
+                                <td>8,500万</td>
+                                <td style="color: #52c41a;">0</td>
+                                <td><span class="reconcile-status match">✓ 一致</span></td>
+                                <td><button class="btn btn-text btn-sm">详情</button></td>
+                            </tr>
+                            <tr>
+                                <td><span class="company-name">南京银行</span></td>
+                                <td><span class="tag tag-purple">放款分成</span></td>
+                                <td>6,800万</td>
+                                <td>6,650万</td>
+                                <td style="color: #ff4d4f;">-150万</td>
+                                <td><span class="reconcile-status mismatch">✗ 差异</span></td>
+                                <td><button class="btn btn-primary btn-sm">核对</button></td>
+                            </tr>
+                            <tr>
+                                <td><span class="company-name">苏州农商行</span></td>
+                                <td><span class="tag tag-blue">授信计费</span></td>
+                                <td>1,200户</td>
+                                <td>1,200户</td>
+                                <td style="color: #52c41a;">0</td>
+                                <td><span class="reconcile-status match">✓ 一致</span></td>
+                                <td><button class="btn btn-text btn-sm">详情</button></td>
+                            </tr>
+                            <tr>
+                                <td><span class="company-name">某小贷公司A</span></td>
+                                <td><span class="tag tag-green">推送计费</span></td>
+                                <td>5,000条</td>
+                                <td>4,820条</td>
+                                <td style="color: #ff4d4f;">-180条</td>
+                                <td><span class="reconcile-status mismatch">✗ 差异</span></td>
+                                <td><button class="btn btn-primary btn-sm">核对</button></td>
+                            </tr>
+                            <tr>
+                                <td><span class="company-name">某小贷公司B</span></td>
+                                <td><span class="tag tag-green">推送计费</span></td>
+                                <td>3,000条</td>
+                                <td>--</td>
+                                <td>--</td>
+                                <td><span class="reconcile-status pending">⏳ 待确认</span></td>
+                                <td><button class="btn btn-default btn-sm">催办</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- 对账说明 -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">📋 对账流程说明</h3>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <div style="display: flex; gap: 12px; align-items: flex-start;">
+                            <div
+                                style="width: 28px; height: 28px; background: #1890ff; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; flex-shrink: 0;">
+                                1</div>
+                            <div>
+                                <div style="font-weight: 500;">生成对账单</div>
+                                <div style="font-size: 12px; color: #8c8c8c;">每月初自动生成各机构对账单</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 12px; align-items: flex-start;">
+                            <div
+                                style="width: 28px; height: 28px; background: #13c2c2; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; flex-shrink: 0;">
+                                2</div>
+                            <div>
+                                <div style="font-weight: 500;">机构确认</div>
+                                <div style="font-size: 12px; color: #8c8c8c;">机构核对推送/授信/放款数据</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 12px; align-items: flex-start;">
+                            <div
+                                style="width: 28px; height: 28px; background: #faad14; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; flex-shrink: 0;">
+                                3</div>
+                            <div>
+                                <div style="font-weight: 500;">差异核对</div>
+                                <div style="font-size: 12px; color: #8c8c8c;">存在差异时逐笔核对明细</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 12px; align-items: flex-start;">
+                            <div
+                                style="width: 28px; height: 28px; background: #52c41a; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; flex-shrink: 0;">
+                                4</div>
+                            <div>
+                                <div style="font-weight: 500;">确认结算</div>
+                                <div style="font-size: 12px; color: #8c8c8c;">双方确认后生成结算账单</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div
+                        style="margin-top: 20px; padding: 16px; background: linear-gradient(135deg, #f0f5ff 0%, #d6e4ff 100%); border-radius: 8px;">
+                        <div style="font-weight: 600; color: #2f54eb; margin-bottom: 8px;">💡 常见差异原因</div>
+                        <ul style="margin: 0; padding-left: 20px; font-size: 13px; color: #595959;">
+                            <li>放款金额以银行实际放款为准</li>
+                            <li>推送条数差异多因网络超时重推</li>
+                            <li>授信口径不一致需统一标准</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 历史对账 -->
+            <div class="card" style="margin-top: 16px;">
+                <div class="card-header">
+                    <h3 class="card-title">📆 历史对账记录</h3>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>账期</th>
+                            <th>机构数</th>
+                            <th>一致</th>
+                            <th>差异</th>
+                            <th>结算金额</th>
+                            <th>完成时间</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2026年1月</td>
+                            <td>8家</td>
+                            <td style="color: #52c41a;">8家</td>
+                            <td>0家</td>
+                            <td style="font-weight: 600;">¥118.5万</td>
+                            <td style="color: #8c8c8c;">2026-02-03</td>
+                            <td><button class="btn btn-text btn-sm">查看</button></td>
+                        </tr>
+                        <tr>
+                            <td>2025年12月</td>
+                            <td>7家</td>
+                            <td style="color: #52c41a;">6家</td>
+                            <td style="color: #ff4d4f;">1家</td>
+                            <td style="font-weight: 600;">¥109.2万</td>
+                            <td style="color: #8c8c8c;">2026-01-05</td>
+                            <td><button class="btn btn-text btn-sm">查看</button></td>
+                        </tr>
+                        <tr>
+                            <td>2025年11月</td>
+                            <td>7家</td>
+                            <td style="color: #52c41a;">7家</td>
+                            <td>0家</td>
+                            <td style="font-weight: 600;">¥102.8万</td>
+                            <td style="color: #8c8c8c;">2025-12-04</td>
+                            <td><button class="btn btn-text btn-sm">查看</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>

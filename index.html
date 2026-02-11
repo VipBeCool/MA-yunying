@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>运营管控台 - 智能营销平台</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .sidebar {
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+        }
+
+        .nav-item.active {
+            background: rgba(82, 196, 26, 0.2);
+            border-left-color: #52c41a;
+        }
+
+        .logo-icon {
+            background: #52c41a;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <div class="logo-icon">⚙️</div>
+                <h1>运营管控台</h1>
+            </div>
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-item active">
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-text">运营概览</span>
+                </a>
+                <a href="institutions.html" class="nav-item">
+                    <span class="nav-icon">🏛️</span>
+                    <span class="nav-text">机构管理</span>
+                </a>
+                <a href="customer-pool.html" class="nav-item">
+                    <span class="nav-icon">🏊</span>
+                    <span class="nav-text">客户池</span>
+                </a>
+                <a href="products.html" class="nav-item">
+                    <span class="nav-icon">📦</span>
+                    <span class="nav-text">产品配置</span>
+                </a>
+                <a href="rules.html" class="nav-item">
+                    <span class="nav-icon">🎯</span>
+                    <span class="nav-text">规则引擎</span>
+                </a>
+                <a href="distribution.html" class="nav-item">
+                    <span class="nav-icon">🔀</span>
+                    <span class="nav-text">分发管理</span>
+                </a>
+                <a href="analytics.html" class="nav-item">
+                    <span class="nav-icon">📈</span>
+                    <span class="nav-text">效果分析</span>
+                </a>
+                <a href="billing.html" class="nav-item">
+                    <span class="nav-icon">💰</span>
+                    <span class="nav-text">收费结算</span>
+                </a>
+                <a href="reconciliation.html" class="nav-item">
+                    <span class="nav-icon">📑</span>
+                    <span class="nav-text">对账管理</span>
+                </a>
+                <a href="risk-alert.html" class="nav-item">
+                    <span class="nav-icon">⚠️</span>
+                    <span class="nav-text">风险预警</span>
+                </a>
+                <a href="api-monitor.html" class="nav-item">
+                    <span class="nav-icon">🔌</span>
+                    <span class="nav-text">API监控</span>
+                </a>
+                <a href="downloads.html" class="nav-item">
+                    <span class="nav-icon">📥</span>
+                    <span class="nav-text">下载中心</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar" style="background: #52c41a;">管</div>
+                    <div>
+                        <div class="user-name">管理员</div>
+                        <div class="user-role">平台运营</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">运营概览</h1>
+                <p class="page-breadcrumb">智能营销平台运营管控台</p>
+            </div>
+
+            <!-- 核心指标 -->
+            <div class="stat-cards">
+                <div class="stat-card primary">
+                    <div class="stat-label">企业池总量</div>
+                    <div class="stat-value">1,400<span class="stat-suffix">万</span></div>
+                    <div class="stat-trend">已授权 200万</div>
+                </div>
+                <div class="stat-card success">
+                    <div class="stat-label">合作机构</div>
+                    <div class="stat-value">15<span class="stat-suffix">家</span></div>
+                    <div class="stat-trend">活跃产品 28个</div>
+                </div>
+                <div class="stat-card warning">
+                    <div class="stat-label">本月推送</div>
+                    <div class="stat-value">8.5<span class="stat-suffix">万</span></div>
+                    <div class="stat-trend up">↑ 15% 较上月</div>
+                </div>
+                <div class="stat-card danger">
+                    <div class="stat-label">本月放款</div>
+                    <div class="stat-value">2.58<span class="stat-suffix">亿</span></div>
+                    <div class="stat-trend up">↑ 22% 较上月</div>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px;">
+                <!-- 机构业绩排行 -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">🏆 机构业绩排行</h3>
+                        <span class="card-extra">本月放款金额</span>
+                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>排名</th>
+                                <th>机构名称</th>
+                                <th>合作等级</th>
+                                <th>推送量</th>
+                                <th>放款金额</th>
+                                <th>转化率</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="rank-number top">1</span></td>
+                                <td><a href="institutions.html" class="company-name">江苏银行</a></td>
+                                <td><span class="tag tag-purple">战略合作</span></td>
+                                <td>12,000</td>
+                                <td style="font-weight: 600; color: #52c41a;">8,500万</td>
+                                <td>4.2%</td>
+                            </tr>
+                            <tr>
+                                <td><span class="rank-number top">2</span></td>
+                                <td><a href="institutions.html" class="company-name">南京银行</a></td>
+                                <td><span class="tag tag-purple">战略合作</span></td>
+                                <td>10,000</td>
+                                <td style="font-weight: 600; color: #52c41a;">6,800万</td>
+                                <td>3.8%</td>
+                            </tr>
+                            <tr>
+                                <td><span class="rank-number top">3</span></td>
+                                <td><a href="institutions.html" class="company-name">苏州农商行</a></td>
+                                <td><span class="tag tag-blue">重点合作</span></td>
+                                <td>8,000</td>
+                                <td style="font-weight: 600; color: #52c41a;">4,200万</td>
+                                <td>3.2%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- 快捷操作 -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">⚡ 快捷操作</h3>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <a href="institutions.html" class="btn btn-default" style="justify-content: flex-start;">🏛️
+                            新增合作机构</a>
+                        <a href="products.html" class="btn btn-default" style="justify-content: flex-start;">📦
+                            配置新产品</a>
+                        <a href="rules.html" class="btn btn-default" style="justify-content: flex-start;">🎯 创建获客规则</a>
+                        <a href="distribution.html" class="btn btn-default" style="justify-content: flex-start;">🔀
+                            查看据量池</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 整体漏斗 + 规则效果 -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">📊 整体转化漏斗</h3>
+                    </div>
+                    <div class="funnel-chart">
+                        <div class="funnel-step">
+                            <div class="funnel-label">推送</div>
+                            <div class="funnel-bar-container">
+                                <div class="funnel-bar"
+                                    style="width: 100%; background: linear-gradient(90deg, #1890ff 0%, #40a9ff 100%);">
+                                    85,000</div>
+                            </div>
+                            <div class="funnel-value">100%</div>
+                        </div>
+                        <div class="funnel-step">
+                            <div class="funnel-label">触达</div>
+                            <div class="funnel-bar-container">
+                                <div class="funnel-bar"
+                                    style="width: 58%; background: linear-gradient(90deg, #13c2c2 0%, #36cfc9 100%);">
+                                    49,300</div>
+                            </div>
+                            <div class="funnel-value">58%</div>
+                        </div>
+                        <div class="funnel-step">
+                            <div class="funnel-label">意向</div>
+                            <div class="funnel-bar-container">
+                                <div class="funnel-bar"
+                                    style="width: 18%; background: linear-gradient(90deg, #52c41a 0%, #73d13d 100%);">
+                                    15,300</div>
+                            </div>
+                            <div class="funnel-value">18%</div>
+                        </div>
+                        <div class="funnel-step">
+                            <div class="funnel-label">申请</div>
+                            <div class="funnel-bar-container">
+                                <div class="funnel-bar"
+                                    style="width: 9.4%; background: linear-gradient(90deg, #faad14 0%, #ffc53d 100%);">
+                                    8,000</div>
+                            </div>
+                            <div class="funnel-value">9.4%</div>
+                        </div>
+                        <div class="funnel-step">
+                            <div class="funnel-label">授信</div>
+                            <div class="funnel-bar-container">
+                                <div class="funnel-bar"
+                                    style="width: 5.9%; background: linear-gradient(90deg, #eb2f96 0%, #f759ab 100%);">
+                                    5,000</div>
+                            </div>
+                            <div class="funnel-value">5.9%</div>
+                        </div>
+                        <div class="funnel-step">
+                            <div class="funnel-label">放款</div>
+                            <div class="funnel-bar-container">
+                                <div class="funnel-bar"
+                                    style="width: 3.6%; background: linear-gradient(90deg, #722ed1 0%, #9254de 100%);">
+                                    3,060</div>
+                            </div>
+                            <div class="funnel-value">3.6%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">🎯 规则效果TOP5</h3>
+                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>规则名称</th>
+                                <th>转化率</th>
+                                <th>效果</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>规则A-高新科技</td>
+                                <td style="color: #52c41a; font-weight: 600;">4.2%</td>
+                                <td><span class="tag tag-green">优秀</span></td>
+                            </tr>
+                            <tr>
+                                <td>规则B-专精特新</td>
+                                <td style="color: #52c41a; font-weight: 600;">4.0%</td>
+                                <td><span class="tag tag-green">优秀</span></td>
+                            </tr>
+                            <tr>
+                                <td>规则C-纳税大户</td>
+                                <td style="color: #1890ff; font-weight: 600;">3.5%</td>
+                                <td><span class="tag tag-blue">良好</span></td>
+                            </tr>
+                            <tr>
+                                <td>规则D-制造业</td>
+                                <td style="color: #1890ff; font-weight: 600;">3.1%</td>
+                                <td><span class="tag tag-blue">良好</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="js/mock-data.js"></script>
+</body>
+
+</html>

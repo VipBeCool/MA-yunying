@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>下载中心 - 运营管控台</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .sidebar {
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+        }
+
+        .nav-item.active {
+            background: rgba(82, 196, 26, 0.2);
+            border-left-color: #52c41a;
+        }
+
+        .logo-icon {
+            background: #52c41a;
+        }
+
+        .dl-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .dl-stat {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .dl-stat .val {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .dl-stat .lbl {
+            font-size: 13px;
+            color: #8c8c8c;
+            margin-top: 4px;
+        }
+
+        .dl-tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 20px;
+        }
+
+        .dl-tab {
+            padding: 8px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            background: #f5f5f5;
+            color: #595959;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .dl-tab.active {
+            background: #1890ff;
+            color: #fff;
+        }
+
+        .dl-tab:hover:not(.active) {
+            background: #e6e6e6;
+        }
+
+        .dl-item {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: all 0.2s;
+        }
+
+        .dl-item:hover {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .dl-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .dl-icon.excel {
+            background: #f6ffed;
+        }
+
+        .dl-icon.csv {
+            background: #e6f7ff;
+        }
+
+        .dl-icon.pdf {
+            background: #fff1f0;
+        }
+
+        .dl-info {
+            flex: 1;
+        }
+
+        .dl-info .dl-name {
+            font-weight: 600;
+            font-size: 14px;
+            color: #262626;
+        }
+
+        .dl-info .dl-meta {
+            font-size: 12px;
+            color: #8c8c8c;
+            margin-top: 4px;
+            display: flex;
+            gap: 16px;
+        }
+
+        .dl-info .dl-meta span {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .dl-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .dl-status {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 12px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 500;
+            gap: 4px;
+        }
+
+        .dl-status.done {
+            background: #f6ffed;
+            color: #52c41a;
+        }
+
+        .dl-status.running {
+            background: #e6f7ff;
+            color: #1890ff;
+        }
+
+        .dl-status.failed {
+            background: #fff1f0;
+            color: #f5222d;
+        }
+
+        .dl-status.expired {
+            background: #f5f5f5;
+            color: #bfbfbf;
+        }
+
+        /* 进度条 */
+        .dl-progress {
+            width: 120px;
+            height: 6px;
+            background: #f0f0f0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .dl-progress-bar {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.3s;
+        }
+
+        .dl-progress-bar.done {
+            background: #52c41a;
+            width: 100%;
+        }
+
+        .dl-progress-bar.p60 {
+            background: #1890ff;
+            width: 60%;
+            animation: pulse 1.5s infinite;
+        }
+
+        .dl-progress-bar.p30 {
+            background: #1890ff;
+            width: 30%;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.6;
+            }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #bfbfbf;
+        }
+
+        .empty-state .icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <div class="logo-icon">⚙️</div>
+                <h1>运营管控台</h1>
+            </div>
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-item"><span class="nav-icon">📊</span><span
+                        class="nav-text">运营概览</span></a>
+                <a href="institutions.html" class="nav-item"><span class="nav-icon">🏛️</span><span
+                        class="nav-text">机构管理</span></a>
+                <a href="customer-pool.html" class="nav-item"><span class="nav-icon">🏊</span><span
+                        class="nav-text">客户池</span></a>
+                <a href="products.html" class="nav-item"><span class="nav-icon">📦</span><span
+                        class="nav-text">产品配置</span></a>
+                <a href="rules.html" class="nav-item"><span class="nav-icon">🎯</span><span
+                        class="nav-text">规则引擎</span></a>
+                <a href="distribution.html" class="nav-item"><span class="nav-icon">🔀</span><span
+                        class="nav-text">分发管理</span></a>
+                <a href="analytics.html" class="nav-item"><span class="nav-icon">📈</span><span
+                        class="nav-text">效果分析</span></a>
+                <a href="billing.html" class="nav-item"><span class="nav-icon">💰</span><span
+                        class="nav-text">收费结算</span></a>
+                <a href="reconciliation.html" class="nav-item"><span class="nav-icon">📑</span><span
+                        class="nav-text">对账管理</span></a>
+                <a href="risk-alert.html" class="nav-item"><span class="nav-icon">⚠️</span><span
+                        class="nav-text">风险预警</span></a>
+                <a href="api-monitor.html" class="nav-item"><span class="nav-icon">🔌</span><span
+                        class="nav-text">API监控</span></a>
+                <a href="downloads.html" class="nav-item active"><span class="nav-icon">📥</span><span
+                        class="nav-text">下载中心</span></a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar" style="background: #52c41a;">管</div>
+                    <div>
+                        <div class="user-name">管理员</div>
+                        <div class="user-role">平台运营</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="page-header" style="display:flex;justify-content:space-between;align-items:center;">
+                <div>
+                    <h2>下载中心</h2>
+                    <div class="breadcrumb">运营管控台 / 下载中心</div>
+                </div>
+                <div style="display:flex;gap:10px;">
+                    <button class="btn btn-default" onclick="clearExpired()">🗑 清理过期文件</button>
+                </div>
+            </div>
+
+            <!-- 统计 -->
+            <div class="dl-stats">
+                <div class="dl-stat">
+                    <div class="val" style="color:#1890ff;">2</div>
+                    <div class="lbl">生成中</div>
+                </div>
+                <div class="dl-stat">
+                    <div class="val" style="color:#52c41a;">18</div>
+                    <div class="lbl">可下载</div>
+                </div>
+                <div class="dl-stat">
+                    <div class="val" style="color:#bfbfbf;">5</div>
+                    <div class="lbl">已过期</div>
+                </div>
+                <div class="dl-stat">
+                    <div class="val" style="color:#f5222d;">1</div>
+                    <div class="lbl">失败</div>
+                </div>
+            </div>
+
+            <!-- 标签筛选 -->
+            <div class="dl-tabs">
+                <button class="dl-tab active" onclick="filterTab('all',this)">全部 (26)</button>
+                <button class="dl-tab" onclick="filterTab('running',this)">生成中 (2)</button>
+                <button class="dl-tab" onclick="filterTab('done',this)">可下载 (18)</button>
+                <button class="dl-tab" onclick="filterTab('expired',this)">已过期 (5)</button>
+                <button class="dl-tab" onclick="filterTab('failed',this)">失败 (1)</button>
+            </div>
+
+            <!-- 下载列表 -->
+            <div id="dlList"></div>
+        </main>
+    </div>
+
+    <script>
+        const dlData = [
+            { id: 1, name: '客户池数据导出 - 全部状态', type: 'excel', source: '客户池管理', rows: 324186, size: '45.2 MB', status: 'running', progress: 60, time: '2026-02-11 12:30', user: '管理员' },
+            { id: 2, name: '分发记录导出 - 2026年2月', type: 'csv', source: '分发管理', rows: 12580, size: null, status: 'running', progress: 30, time: '2026-02-11 12:28', user: '管理员' },
+            { id: 3, name: '客户池数据导出 - 冷却中客户', type: 'excel', source: '客户池管理', rows: 31056, size: '8.7 MB', status: 'done', progress: 100, time: '2026-02-11 11:45', user: '管理员', expires: '2026-02-14 11:45' },
+            { id: 4, name: '对账明细 - 江苏银行 - 2026年1月', type: 'excel', source: '对账管理', rows: 856, size: '1.2 MB', status: 'done', progress: 100, time: '2026-02-10 16:20', user: '管理员', expires: '2026-02-13 16:20' },
+            { id: 5, name: '收费结算账单 - 2026年1月', type: 'pdf', source: '收费结算', rows: null, size: '2.1 MB', status: 'done', progress: 100, time: '2026-02-10 14:00', user: '管理员', expires: '2026-02-13 14:00' },
+            { id: 6, name: '分发记录导出 - 2026年1月', type: 'csv', source: '分发管理', rows: 45230, size: '12.3 MB', status: 'done', progress: 100, time: '2026-02-08 09:30', user: '管理员', expires: '2026-02-11 09:30' },
+            { id: 7, name: '客户池数据导出 - 苏州市可分配', type: 'excel', source: '客户池管理', rows: 52300, size: '14.8 MB', status: 'done', progress: 100, time: '2026-02-07 15:10', user: '管理员', expires: '2026-02-10 15:10' },
+            { id: 8, name: '效果分析报表 - 全机构 - 2026年1月', type: 'pdf', source: '效果分析', rows: null, size: '3.5 MB', status: 'done', progress: 100, time: '2026-02-06 10:00', user: '管理员', expires: '2026-02-09 10:00' },
+            { id: 9, name: '对账明细 - 苏州农商行 - 2025年12月', type: 'excel', source: '对账管理', rows: 420, size: '680 KB', status: 'expired', progress: 100, time: '2026-01-28 14:30', user: '管理员' },
+            { id: 10, name: '客户池数据导出 - 黑名单', type: 'excel', source: '客户池管理', rows: 5200, size: '1.5 MB', status: 'expired', progress: 100, time: '2026-01-25 11:00', user: '管理员' },
+            { id: 11, name: '分发记录导出 - 全量', type: 'csv', source: '分发管理', rows: 890000, size: null, status: 'failed', progress: 45, time: '2026-02-09 16:40', user: '管理员', error: '数据量过大，建议按月份分批导出' },
+        ];
+
+        const typeIcons = { excel: '📊', csv: '📄', pdf: '📕' };
+        const typeLabels = { excel: 'Excel', csv: 'CSV', pdf: 'PDF' };
+
+        function renderList(data) {
+            const el = document.getElementById('dlList');
+            if (data.length === 0) {
+                el.innerHTML = '<div class="empty-state"><div class="icon">📭</div><div>暂无下载任务</div></div>';
+                return;
+            }
+            el.innerHTML = data.map(d => {
+                let statusHtml = '';
+                if (d.status === 'done') statusHtml = '<span class="dl-status done">✓ 可下载</span>';
+                else if (d.status === 'running') statusHtml = '<span class="dl-status running">⏳ 生成中</span>';
+                else if (d.status === 'failed') statusHtml = '<span class="dl-status failed">✗ 失败</span>';
+                else if (d.status === 'expired') statusHtml = '<span class="dl-status expired">⏱ 已过期</span>';
+
+                let progressCls = d.status === 'done' ? 'done' : d.progress >= 50 ? 'p60' : 'p30';
+                let sizeHtml = d.size ? d.size : '计算中...';
+                let rowsHtml = d.rows ? d.rows.toLocaleString() + ' 行' : '';
+
+                let actionsHtml = '';
+                if (d.status === 'done') {
+                    actionsHtml = `<button class="btn btn-primary btn-sm" onclick="downloadFile(${d.id})">📥 下载</button>
+                    <button class="btn btn-text btn-sm" onclick="deleteFile(${d.id})" style="color:#f5222d;">删除</button>`;
+                } else if (d.status === 'running') {
+                    actionsHtml = `<button class="btn btn-default btn-sm" disabled>等待完成...</button>`;
+                } else if (d.status === 'failed') {
+                    actionsHtml = `<button class="btn btn-default btn-sm" onclick="retryTask(${d.id})">🔄 重试</button>`;
+                } else {
+                    actionsHtml = `<button class="btn btn-text btn-sm" onclick="deleteFile(${d.id})" style="color:#bfbfbf;">清理</button>`;
+                }
+
+                return `<div class="dl-item" data-status="${d.status}">
+                <div class="dl-icon ${d.type}">${typeIcons[d.type]}</div>
+                <div class="dl-info">
+                    <div class="dl-name">${d.name}</div>
+                    <div class="dl-meta">
+                        <span>📁 ${typeLabels[d.type]}</span>
+                        <span>📂 ${d.source}</span>
+                        ${rowsHtml ? `<span>📋 ${rowsHtml}</span>` : ''}
+                        <span>💾 ${sizeHtml}</span>
+                        <span>🕐 ${d.time}</span>
+                    </div>
+                    ${d.error ? `<div style="font-size:12px;color:#f5222d;margin-top:4px;">❌ ${d.error}</div>` : ''}
+                    ${d.expires ? `<div style="font-size:11px;color:#bfbfbf;margin-top:2px;">文件保留至 ${d.expires}</div>` : ''}
+                </div>
+                <div class="dl-actions">
+                    <div class="dl-progress"><div class="dl-progress-bar ${progressCls}"></div></div>
+                    ${statusHtml}
+                    ${actionsHtml}
+                </div>
+            </div>`;
+            }).join('');
+        }
+
+        function filterTab(status, btn) {
+            document.querySelectorAll('.dl-tab').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+            if (status === 'all') { renderList(dlData); return; }
+            renderList(dlData.filter(d => d.status === status));
+        }
+
+        function downloadFile(id) { showToast('开始下载...'); }
+        function deleteFile(id) { if (confirm('确认删除？')) showToast('已删除'); }
+        function retryTask(id) { showToast('已重新提交导出任务'); }
+        function clearExpired() { if (confirm('确认清理所有已过期文件？')) showToast('已清理 5 个过期文件'); }
+
+        function showToast(msg) {
+            const t = document.createElement('div');
+            t.style.cssText = 'position:fixed;top:20px;right:20px;background:#52c41a;color:#fff;padding:12px 24px;border-radius:8px;z-index:9999;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);';
+            t.textContent = '✓ ' + msg;
+            document.body.appendChild(t);
+            setTimeout(() => t.remove(), 2500);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => renderList(dlData));
+    </script>
+</body>
+
+</html>

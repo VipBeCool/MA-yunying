@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>风险预警 - 智能营销平台</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .sidebar {
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+        }
+
+        .nav-item.active {
+            background: rgba(82, 196, 26, 0.2);
+            border-left-color: #52c41a;
+        }
+
+        .logo-icon {
+            background: #52c41a;
+        }
+
+        .alert-card {
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            border-left: 4px solid;
+        }
+
+        .alert-card.high {
+            background: #fff2f0;
+            border-left-color: #ff4d4f;
+        }
+
+        .alert-card.medium {
+            background: #fffbe6;
+            border-left-color: #faad14;
+        }
+
+        .alert-card.low {
+            background: #f6ffed;
+            border-left-color: #52c41a;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <div class="logo-icon">⚙️</div>
+                <h1>运营管控台</h1>
+            </div>
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-item"><span class="nav-icon">📊</span><span
+                        class="nav-text">运营概览</span></a>
+                <a href="institutions.html" class="nav-item"><span class="nav-icon">🏛️</span><span
+                        class="nav-text">机构管理</span></a>
+                <a href="customer-pool.html" class="nav-item"><span class="nav-icon">🏊</span><span
+                        class="nav-text">客户池</span></a>
+                <a href="products.html" class="nav-item"><span class="nav-icon">📦</span><span
+                        class="nav-text">产品配置</span></a>
+                <a href="rules.html" class="nav-item"><span class="nav-icon">🎯</span><span
+                        class="nav-text">规则引擎</span></a>
+                <a href="distribution.html" class="nav-item"><span class="nav-icon">🔀</span><span
+                        class="nav-text">分发管理</span></a>
+                <a href="analytics.html" class="nav-item"><span class="nav-icon">📈</span><span
+                        class="nav-text">效果分析</span></a>
+                <a href="billing.html" class="nav-item"><span class="nav-icon">💰</span><span
+                        class="nav-text">收费结算</span></a>
+                <a href="reconciliation.html" class="nav-item"><span class="nav-icon">📑</span><span
+                        class="nav-text">对账管理</span></a>
+                <a href="risk-alert.html" class="nav-item active"><span class="nav-icon">⚠️</span><span
+                        class="nav-text">风险预警</span></a>
+                <a href="api-monitor.html" class="nav-item"><span class="nav-icon">🔌</span><span
+                        class="nav-text">API监控</span></a>
+                <a href="downloads.html" class="nav-item"><span class="nav-icon">📥</span><span
+                        class="nav-text">下载中心</span></a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar" style="background: #52c41a;">管</div>
+                    <div>
+                        <div class="user-name">管理员</div>
+                        <div class="user-role">平台运营</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">风险预警</h1>
+                <p class="page-breadcrumb"><a href="index.html">运营概览</a> / 风险预警</p>
+            </div>
+
+            <!-- 预警概览 -->
+            <div class="stat-cards">
+                <div class="stat-card danger">
+                    <div class="stat-label">高风险预警</div>
+                    <div class="stat-value">3<span class="stat-suffix">条</span></div>
+                    <div class="stat-trend">需立即处理</div>
+                </div>
+                <div class="stat-card warning">
+                    <div class="stat-label">中风险预警</div>
+                    <div class="stat-value">8<span class="stat-suffix">条</span></div>
+                    <div class="stat-trend">建议关注</div>
+                </div>
+                <div class="stat-card success">
+                    <div class="stat-label">已处理预警</div>
+                    <div class="stat-value">45<span class="stat-suffix">条</span></div>
+                    <div class="stat-trend">本月累计</div>
+                </div>
+                <div class="stat-card primary">
+                    <div class="stat-label">监控企业</div>
+                    <div class="stat-value">2,850<span class="stat-suffix">家</span></div>
+                    <div class="stat-trend">已推送未放款</div>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px;">
+                <!-- 预警列表 -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">🚨 实时预警</h3>
+                        <span class="card-extra">
+                            <button class="btn btn-text btn-sm">全部标为已读</button>
+                        </span>
+                    </div>
+
+                    <!-- 高风险 -->
+                    <div class="alert-card high">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <div style="font-weight: 600;">🔴 苏州某精密机械有限公司</div>
+                                <div style="font-size: 13px; color: #595959; margin-top: 4px;">
+                                    <strong>预警类型：</strong>新增被执行人信息
+                                </div>
+                                <div style="font-size: 12px; color: #8c8c8c; margin-top: 4px;">
+                                    推送机构：江苏银行 | 推送时间：2026-02-01 | 当前状态：已意向
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <span class="tag tag-red">高风险</span>
+                                <div style="font-size: 11px; color: #8c8c8c; margin-top: 4px;">2小时前</div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 12px; display: flex; gap: 8px;">
+                            <button class="btn btn-primary btn-sm">通知银行</button>
+                            <button class="btn btn-default btn-sm">查看详情</button>
+                            <button class="btn btn-text btn-sm">忽略</button>
+                        </div>
+                    </div>
+
+                    <div class="alert-card high">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <div style="font-weight: 600;">🔴 南京某建材贸易有限公司</div>
+                                <div style="font-size: 13px; color: #595959; margin-top: 4px;">
+                                    <strong>预警类型：</strong>法人变更
+                                </div>
+                                <div style="font-size: 12px; color: #8c8c8c; margin-top: 4px;">
+                                    推送机构：南京银行 | 推送时间：2026-01-28 | 当前状态：已申请
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <span class="tag tag-red">高风险</span>
+                                <div style="font-size: 11px; color: #8c8c8c; margin-top: 4px;">5小时前</div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 12px; display: flex; gap: 8px;">
+                            <button class="btn btn-primary btn-sm">通知银行</button>
+                            <button class="btn btn-default btn-sm">查看详情</button>
+                            <button class="btn btn-text btn-sm">忽略</button>
+                        </div>
+                    </div>
+
+                    <div class="alert-card medium">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <div style="font-weight: 600;">🟡 常州某电子科技有限公司</div>
+                                <div style="font-size: 13px; color: #595959; margin-top: 4px;">
+                                    <strong>预警类型：</strong>行政处罚（环保）
+                                </div>
+                                <div style="font-size: 12px; color: #8c8c8c; margin-top: 4px;">
+                                    推送机构：苏州农商行 | 推送时间：2026-02-03 | 当前状态：已触达
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <span class="tag tag-orange">中风险</span>
+                                <div style="font-size: 11px; color: #8c8c8c; margin-top: 4px;">1天前</div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 12px; display: flex; gap: 8px;">
+                            <button class="btn btn-default btn-sm">通知银行</button>
+                            <button class="btn btn-default btn-sm">查看详情</button>
+                            <button class="btn btn-text btn-sm">忽略</button>
+                        </div>
+                    </div>
+
+                    <div class="alert-card medium">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <div style="font-weight: 600;">🟡 无锡某智能装备有限公司</div>
+                                <div style="font-size: 13px; color: #595959; margin-top: 4px;">
+                                    <strong>预警类型：</strong>股权变更
+                                </div>
+                                <div style="font-size: 12px; color: #8c8c8c; margin-top: 4px;">
+                                    推送机构：江苏银行 | 推送时间：2026-01-25 | 当前状态：已授信
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <span class="tag tag-orange">中风险</span>
+                                <div style="font-size: 11px; color: #8c8c8c; margin-top: 4px;">2天前</div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 12px; display: flex; gap: 8px;">
+                            <button class="btn btn-default btn-sm">通知银行</button>
+                            <button class="btn btn-default btn-sm">查看详情</button>
+                            <button class="btn btn-text btn-sm">忽略</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 预警类型统计 -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">📊 预警类型分布</h3>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #f5f5f5; border-radius: 6px;">
+                            <div>
+                                <div style="font-weight: 500;">司法涉诉</div>
+                                <div style="font-size: 12px; color: #8c8c8c;">被执行人、裁判文书</div>
+                            </div>
+                            <div style="font-size: 20px; font-weight: 600; color: #ff4d4f;">5</div>
+                        </div>
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #f5f5f5; border-radius: 6px;">
+                            <div>
+                                <div style="font-weight: 500;">工商变更</div>
+                                <div style="font-size: 12px; color: #8c8c8c;">法人、股权、经营范围</div>
+                            </div>
+                            <div style="font-size: 20px; font-weight: 600; color: #faad14;">3</div>
+                        </div>
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #f5f5f5; border-radius: 6px;">
+                            <div>
+                                <div style="font-weight: 500;">行政处罚</div>
+                                <div style="font-size: 12px; color: #8c8c8c;">环保、税务、市场监管</div>
+                            </div>
+                            <div style="font-size: 20px; font-weight: 600; color: #faad14;">2</div>
+                        </div>
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #f5f5f5; border-radius: 6px;">
+                            <div>
+                                <div style="font-weight: 500;">经营异常</div>
+                                <div style="font-size: 12px; color: #8c8c8c;">列入异常名录</div>
+                            </div>
+                            <div style="font-size: 20px; font-weight: 600; color: #1890ff;">1</div>
+                        </div>
+                    </div>
+
+                    <div
+                        style="margin-top: 20px; padding: 16px; background: linear-gradient(135deg, #fff7e6 0%, #ffe7ba 100%); border-radius: 8px;">
+                        <div style="font-weight: 600; color: #d46b08; margin-bottom: 8px;">💡 预警建议</div>
+                        <ul style="margin: 0; padding-left: 20px; font-size: 13px; color: #595959;">
+                            <li>高风险预警建议24小时内通知合作机构</li>
+                            <li>已授信客户出现预警需重点跟踪</li>
+                            <li>连续出现预警的区域/行业需评估规则</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>

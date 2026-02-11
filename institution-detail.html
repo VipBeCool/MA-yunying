@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>组织架构管理 - 智能营销平台</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .sidebar {
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+        }
+
+        .nav-item.active {
+            background: rgba(82, 196, 26, 0.2);
+            border-left-color: #52c41a;
+        }
+
+        .logo-icon {
+            background: #52c41a;
+        }
+
+        /* 页面主布局 - 左树右表 */
+        .org-layout {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+
+        /* 左侧树形结构 */
+        .org-tree-panel {
+            width: 280px;
+            flex-shrink: 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .org-tree-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .org-tree-header h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #262626;
+        }
+
+        .org-tree-body {
+            padding: 12px;
+            max-height: calc(100vh - 180px);
+            overflow-y: auto;
+        }
+
+        /* 树节点 */
+        .tree-node {
+            user-select: none;
+        }
+
+        .tree-node-content {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-size: 13px;
+            color: #595959;
+        }
+
+        .tree-node-content:hover {
+            background: #f5f5f5;
+        }
+
+        .tree-node-content.active {
+            background: #e6f7ff;
+            color: #1890ff;
+            font-weight: 500;
+        }
+
+        .tree-toggle {
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: #bfbfbf;
+            transition: transform 0.2s;
+            flex-shrink: 0;
+        }
+
+        .tree-toggle.expanded {
+            transform: rotate(90deg);
+        }
+
+        .tree-toggle.hidden {
+            visibility: hidden;
+        }
+
+        .tree-icon {
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .tree-label {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .tree-badge {
+            font-size: 11px;
+            color: #bfbfbf;
+            flex-shrink: 0;
+        }
+
+        .tree-children {
+            padding-left: 20px;
+        }
+
+        .tree-children.collapsed {
+            display: none;
+        }
+
+        /* 右侧信息面板 */
+        .org-detail-panel {
+            flex: 1;
+            min-width: 0;
+        }
+
+        /* 节点信息卡 */
+        .node-info-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            padding: 20px 24px;
+            margin-bottom: 16px;
+        }
+
+        .node-info-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .node-info-header h3 {
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .node-level-tag {
+            font-size: 12px;
+            padding: 2px 10px;
+            border-radius: 10px;
+            font-weight: 500;
+        }
+
+        .level-hq {
+            background: #f9f0ff;
+            color: #722ed1;
+        }
+
+        .level-branch {
+            background: #e6f7ff;
+            color: #1890ff;
+        }
+
+        .level-sub {
+            background: #f6ffed;
+            color: #52c41a;
+        }
+
+        .level-outlet {
+            background: #fff7e6;
+            color: #fa8c16;
+        }
+
+        .node-info-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        .node-info-item {
+            padding: 12px;
+            background: #fafafa;
+            border-radius: 6px;
+        }
+
+        .node-info-item .info-label {
+            font-size: 12px;
+            color: #8c8c8c;
+            margin-bottom: 4px;
+        }
+
+        .node-info-item .info-value {
+            font-size: 15px;
+            font-weight: 600;
+            color: #262626;
+        }
+
+        .node-info-item .info-value.highlight {
+            color: #1890ff;
+        }
+
+        /* 区域标签 */
+        .region-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 12px;
+        }
+
+        .region-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #595959;
+        }
+
+        .region-tag .region-icon {
+            font-size: 12px;
+        }
+
+        /* 账号列表 */
+        .account-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .account-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 24px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .account-header h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #262626;
+        }
+
+        .account-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .account-table th {
+            text-align: left;
+            padding: 10px 16px;
+            background: #fafafa;
+            font-weight: 500;
+            color: #8c8c8c;
+            font-size: 13px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .account-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f5f5f5;
+            font-size: 13px;
+            color: #262626;
+        }
+
+        .account-table tbody tr:hover {
+            background: #fafafa;
+        }
+
+        .account-name {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .account-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: 500;
+            flex-shrink: 0;
+        }
+
+        .role-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .role-admin {
+            background: #f9f0ff;
+            color: #722ed1;
+        }
+
+        .role-head {
+            background: #e6f7ff;
+            color: #1890ff;
+        }
+
+        .role-manager {
+            background: #f6ffed;
+            color: #52c41a;
+        }
+
+        .workload-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .workload-track {
+            width: 60px;
+            height: 6px;
+            background: #f0f0f0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .workload-fill {
+            height: 100%;
+            border-radius: 3px;
+        }
+
+        .workload-fill.light {
+            background: #52c41a;
+        }
+
+        .workload-fill.medium {
+            background: #faad14;
+        }
+
+        .workload-fill.heavy {
+            background: #ff4d4f;
+        }
+
+        .status-dot {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+        }
+
+        .status-dot::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+
+        .status-dot.online::before {
+            background: #52c41a;
+        }
+
+        .status-dot.offline::before {
+            background: #d9d9d9;
+        }
+
+        /* 新增账号弹窗 */
+        .add-account-modal .modal {
+            max-width: 500px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        /* 面包屑 */
+        .org-breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: #8c8c8c;
+            margin-bottom: 4px;
+        }
+
+        .org-breadcrumb span {
+            cursor: pointer;
+        }
+
+        .org-breadcrumb span:hover {
+            color: #1890ff;
+        }
+
+        .org-breadcrumb .sep {
+            color: #d9d9d9;
+            cursor: default;
+        }
+
+        .org-breadcrumb .sep:hover {
+            color: #d9d9d9;
+        }
+
+        /* 编辑节点弹窗 */
+        .edit-node-modal .modal {
+            max-width: 480px;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: #262626;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 10000;
+            transition: transform 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast.success {
+            background: linear-gradient(135deg, #52c41a, #73d13d);
+        }
+
+        /* 空状态 */
+        .empty-accounts {
+            text-align: center;
+            padding: 40px 20px;
+            color: #bfbfbf;
+        }
+
+        .empty-accounts .empty-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .empty-accounts p {
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <div class="logo-icon">⚙️</div>
+                <h1>运营管控台</h1>
+            </div>
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-item"><span class="nav-icon">📊</span><span
+                        class="nav-text">运营概览</span></a>
+                <a href="institutions.html" class="nav-item active"><span class="nav-icon">🏛️</span><span
+                        class="nav-text">机构管理</span></a>
+                <a href="customer-pool.html" class="nav-item"><span class="nav-icon">🏊</span><span
+                        class="nav-text">客户池</span></a>
+                <a href="products.html" class="nav-item"><span class="nav-icon">📦</span><span
+                        class="nav-text">产品配置</span></a>
+                <a href="rules.html" class="nav-item"><span class="nav-icon">🎯</span><span
+                        class="nav-text">规则引擎</span></a>
+                <a href="distribution.html" class="nav-item"><span class="nav-icon">🔀</span><span
+                        class="nav-text">分发管理</span></a>
+                <a href="analytics.html" class="nav-item"><span class="nav-icon">📈</span><span
+                        class="nav-text">效果分析</span></a>
+                <a href="billing.html" class="nav-item"><span class="nav-icon">💰</span><span
+                        class="nav-text">收费结算</span></a>
+                <a href="reconciliation.html" class="nav-item"><span class="nav-icon">📑</span><span
+                        class="nav-text">对账管理</span></a>
+                <a href="risk-alert.html" class="nav-item"><span class="nav-icon">⚠️</span><span
+                        class="nav-text">风险预警</span></a>
+                <a href="api-monitor.html" class="nav-item"><span class="nav-icon">🔌</span><span
+                        class="nav-text">API监控</span></a>
+                <a href="downloads.html" class="nav-item"><span class="nav-icon">📥</span><span
+                        class="nav-text">下载中心</span></a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar" style="background: #52c41a;">管</div>
+                    <div>
+                        <div class="user-name">管理员</div>
+                        <div class="user-role">平台运营</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="page-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h1 class="page-title" id="pageTitle">组织架构管理</h1>
+                    <p class="page-breadcrumb"><a href="index.html">运营概览</a> / <a href="institutions.html">机构管理</a> /
+                        <span id="instName">江苏银行</span>
+                    </p>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn btn-default" onclick="openModal('addNodeModal')">+ 添加下级</button>
+                    <button class="btn btn-primary" onclick="openModal('addAccountModal')">+ 新增账号</button>
+                </div>
+            </div>
+
+            <div class="org-layout">
+                <!-- 左侧：组织树 -->
+                <div class="org-tree-panel">
+                    <div class="org-tree-header">
+                        <h4>🏛️ 组织架构</h4>
+                        <button class="btn btn-text btn-sm" onclick="expandAll()">全部展开</button>
+                    </div>
+                    <div class="org-tree-body" id="orgTree">
+                        <!-- 动态渲染 -->
+                    </div>
+                </div>
+
+                <!-- 右侧：信息面板 -->
+                <div class="org-detail-panel">
+                    <!-- 节点信息卡 -->
+                    <div class="node-info-card" id="nodeInfoCard">
+                        <!-- 动态渲染 -->
+                    </div>
+
+                    <!-- 账号列表 -->
+                    <div class="account-card">
+                        <div class="account-header">
+                            <h4>👥 账号列表 <span id="accountCount"
+                                    style="font-weight: 400; color: #8c8c8c; font-size: 13px;">（0人）</span></h4>
+                            <div style="display: flex; gap: 8px;">
+                                <select class="form-select" style="width: 120px; padding: 4px 8px; font-size: 13px;"
+                                    onchange="filterAccounts(this.value)">
+                                    <option value="">全部角色</option>
+                                    <option value="管理员">管理员</option>
+                                    <option value="行长">行长</option>
+                                    <option value="客户经理">客户经理</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="accountTableContainer">
+                            <!-- 动态渲染 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 新增账号弹窗 -->
+    <div class="modal-overlay add-account-modal" id="addAccountModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">新增账号</h3>
+                <div class="modal-close" onclick="closeModal('addAccountModal')">✕</div>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">姓名 *</label>
+                        <input type="text" class="form-input" placeholder="请输入姓名">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">手机号 *</label>
+                        <input type="text" class="form-input" placeholder="请输入手机号">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">角色 *</label>
+                        <select class="form-select" id="newAccountRole">
+                            <option value="客户经理">客户经理</option>
+                            <option value="行长">支行行长</option>
+                            <option value="管理员">管理员</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">所属组织 *</label>
+                        <input type="text" class="form-input" id="newAccountOrg" readonly>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">管辖区域</label>
+                    <input type="text" class="form-input" placeholder="如：苏州工业园区、苏州高新区">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">备注</label>
+                    <input type="text" class="form-input" placeholder="可选">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" onclick="closeModal('addAccountModal')">取消</button>
+                <button class="btn btn-primary" onclick="addAccount()">确认添加</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加下级组织弹窗 -->
+    <div class="modal-overlay edit-node-modal" id="addNodeModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">添加下级组织</h3>
+                <div class="modal-close" onclick="closeModal('addNodeModal')">✕</div>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">上级组织</label>
+                    <input type="text" class="form-input" id="parentNodeName" readonly>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">组织名称 *</label>
+                    <input type="text" class="form-input" placeholder="如：南京分行、新区支行">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">管辖区域</label>
+                    <input type="text" class="form-input" placeholder="如：苏州市全域">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">地址</label>
+                    <input type="text" class="form-input" placeholder="如：苏州工业园区苏州大道西205号">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" onclick="closeModal('addNodeModal')">取消</button>
+                <button class="btn btn-primary" onclick="addNode()">确认添加</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 编辑节点弹窗 -->
+    <div class="modal-overlay edit-node-modal" id="editNodeModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">编辑组织信息</h3>
+                <div class="modal-close" onclick="closeModal('editNodeModal')">✕</div>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">组织名称</label>
+                    <input type="text" class="form-input" id="editNodeName">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">管辖区域</label>
+                    <input type="text" class="form-input" id="editNodeRegion" placeholder="多个区域用顿号分隔">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">地址</label>
+                    <input type="text" class="form-input" id="editNodeAddress">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" onclick="closeModal('editNodeModal')">取消</button>
+                <button class="btn btn-primary" onclick="saveNode()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // ========== Mock 组织架构数据 ==========
+        const orgData = {
+            id: 'hq',
+            name: '江苏银行总行',
+            level: '总行',
+            region: ['江苏省'],
+            address: '南京市建邺区江东中路228号',
+            children: [
+                {
+                    id: 'sz',
+                    name: '苏州分行',
+                    level: '分行',
+                    region: ['苏州市'],
+                    address: '苏州市姑苏区人民路1023号',
+                    children: [
+                        {
+                            id: 'sz-tech',
+                            name: '科技支行',
+                            level: '支行',
+                            region: ['苏州工业园区', '苏州高新区'],
+                            address: '苏州工业园区苏州大道西205号',
+                            children: [
+                                {
+                                    id: 'sz-tech-park',
+                                    name: '园区网点',
+                                    level: '网点',
+                                    region: ['苏州工业园区'],
+                                    address: '苏州工业园区星湖街328号',
+                                    children: []
+                                },
+                                {
+                                    id: 'sz-tech-snd',
+                                    name: '高新区网点',
+                                    level: '网点',
+                                    region: ['苏州高新区'],
+                                    address: '苏州高新区狮山路22号',
+                                    children: []
+                                }
+                            ]
+                        },
+                        {
+                            id: 'sz-city',
+                            name: '城中支行',
+                            level: '支行',
+                            region: ['姑苏区', '相城区'],
+                            address: '苏州市姑苏区观前街130号',
+                            children: [
+                                {
+                                    id: 'sz-city-gusu',
+                                    name: '观前网点',
+                                    level: '网点',
+                                    region: ['姑苏区'],
+                                    address: '苏州市姑苏区观前街130号',
+                                    children: []
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    id: 'nj',
+                    name: '南京分行',
+                    level: '分行',
+                    region: ['南京市'],
+                    address: '南京市鼓楼区中山路18号',
+                    children: [
+                        {
+                            id: 'nj-jn',
+                            name: '江宁支行',
+                            level: '支行',
+                            region: ['江宁区', '雨花台区'],
+                            address: '南京市江宁区东山街道竹山路88号',
+                            children: [
+                                {
+                                    id: 'nj-jn-main',
+                                    name: '江宁网点',
+                                    level: '网点',
+                                    region: ['江宁区'],
+                                    address: '南京市江宁区东山街道竹山路88号',
+                                    children: []
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        };
+
+        // Mock 账号数据
+        const accountsData = [
+            { id: 1, name: '李行长', role: '管理员', orgId: 'hq', phone: '138****1001', region: '江苏省', customers: 0, monthDone: 0, status: 'online', lastLogin: '2025-02-10 09:30' },
+            { id: 2, name: '张总', role: '管理员', orgId: 'sz', phone: '138****2001', region: '苏州市', customers: 0, monthDone: 0, status: 'online', lastLogin: '2025-02-10 08:45' },
+            { id: 3, name: '李行长', role: '行长', orgId: 'sz-tech', phone: '138****3001', region: '苏州工业园区、苏州高新区', customers: 0, monthDone: 21, status: 'online', lastLogin: '2025-02-10 10:15' },
+            { id: 4, name: '朱某人', role: '客户经理', orgId: 'sz-tech-park', phone: '138****4001', region: '苏州工业园区', customers: 86, monthDone: 12, capacity: 100, status: 'online', lastLogin: '2025-02-10 09:00' },
+            { id: 5, name: '李明', role: '客户经理', orgId: 'sz-tech-park', phone: '138****4002', region: '苏州工业园区', customers: 70, monthDone: 7, capacity: 100, status: 'offline', lastLogin: '2025-02-09 17:30' },
+            { id: 6, name: '王芳', role: '客户经理', orgId: 'sz-tech-snd', phone: '138****5001', region: '苏州高新区', customers: 48, monthDone: 9, capacity: 100, status: 'online', lastLogin: '2025-02-10 08:30' },
+            { id: 7, name: '张伟', role: '客户经理', orgId: 'sz-tech-snd', phone: '138****5002', region: '苏州高新区', customers: 50, monthDone: 6, capacity: 100, status: 'online', lastLogin: '2025-02-10 09:15' },
+            { id: 8, name: '陈主任', role: '行长', orgId: 'sz-city', phone: '138****6001', region: '姑苏区、相城区', customers: 0, monthDone: 18, status: 'online', lastLogin: '2025-02-10 08:00' },
+            { id: 9, name: '刘洋', role: '客户经理', orgId: 'sz-city-gusu', phone: '138****6002', region: '姑苏区', customers: 65, monthDone: 8, capacity: 100, status: 'offline', lastLogin: '2025-02-08 16:45' },
+            { id: 10, name: '赵辉', role: '行长', orgId: 'nj-jn', phone: '138****7001', region: '江宁区、雨花台区', customers: 0, monthDone: 15, status: 'online', lastLogin: '2025-02-10 10:00' },
+            { id: 11, name: '孙倩', role: '客户经理', orgId: 'nj-jn-main', phone: '138****7002', region: '江宁区', customers: 55, monthDone: 5, capacity: 100, status: 'online', lastLogin: '2025-02-10 09:45' },
+        ];
+
+        let currentNodeId = 'hq';
+        let currentRoleFilter = '';
+        let expandedNodes = new Set(['hq', 'sz', 'sz-tech', 'nj', 'nj-jn']);
+
+        // 查找节点
+        function findNode(node, id) {
+            if (node.id === id) return node;
+            for (const child of node.children || []) {
+                const found = findNode(child, id);
+                if (found) return found;
+            }
+            return null;
+        }
+
+        // 获取节点路径（面包屑）
+        function getNodePath(node, targetId, path = []) {
+            path.push(node);
+            if (node.id === targetId) return [...path];
+            for (const child of node.children || []) {
+                const result = getNodePath(child, targetId, path);
+                if (result) return result;
+            }
+            path.pop();
+            return null;
+        }
+
+        // 获取节点及所有子节点ID
+        function getAllChildIds(node) {
+            let ids = [node.id];
+            for (const child of node.children || []) {
+                ids = ids.concat(getAllChildIds(child));
+            }
+            return ids;
+        }
+
+        // 统计子节点数量
+        function countDescendants(node) {
+            let count = 0;
+            for (const child of node.children || []) {
+                count += 1 + countDescendants(child);
+            }
+            return count;
+        }
+
+        // ========== 渲染树 ==========
+        function renderTree() {
+            document.getElementById('orgTree').innerHTML = renderTreeNode(orgData, 0);
+        }
+
+        function renderTreeNode(node, depth) {
+            const hasChildren = node.children && node.children.length > 0;
+            const isExpanded = expandedNodes.has(node.id);
+            const isActive = node.id === currentNodeId;
+            const levelIcons = { '总行': '🏛️', '分行': '🏢', '支行': '🏬', '网点': '📍' };
+
+            // 统计本节点下的账号数
+            const nodeIds = getAllChildIds(node);
+            const accountCount = accountsData.filter(a => nodeIds.includes(a.orgId)).length;
+
+            let html = `
+                <div class="tree-node">
+                    <div class="tree-node-content ${isActive ? 'active' : ''}" onclick="selectNode('${node.id}')">
+                        <span class="tree-toggle ${hasChildren ? (isExpanded ? 'expanded' : '') : 'hidden'}"
+                              onclick="event.stopPropagation(); toggleNode('${node.id}')">▶</span>
+                        <span class="tree-icon">${levelIcons[node.level] || '📁'}</span>
+                        <span class="tree-label">${node.name}</span>
+                        <span class="tree-badge">${accountCount}</span>
+                    </div>
+            `;
+
+            if (hasChildren) {
+                html += `<div class="tree-children ${isExpanded ? '' : 'collapsed'}">`;
+                for (const child of node.children) {
+                    html += renderTreeNode(child, depth + 1);
+                }
+                html += '</div>';
+            }
+
+            html += '</div>';
+            return html;
+        }
+
+        // 切换展开
+        function toggleNode(id) {
+            if (expandedNodes.has(id)) {
+                expandedNodes.delete(id);
+            } else {
+                expandedNodes.add(id);
+            }
+            renderTree();
+        }
+
+        // 全部展开
+        function expandAll() {
+            function addAll(node) {
+                expandedNodes.add(node.id);
+                (node.children || []).forEach(addAll);
+            }
+            addAll(orgData);
+            renderTree();
+        }
+
+        // 选择节点
+        function selectNode(id) {
+            currentNodeId = id;
+            currentRoleFilter = '';
+            renderTree();
+            renderNodeInfo();
+            renderAccounts();
+            // 更新弹窗相关
+            const node = findNode(orgData, id);
+            if (node) {
+                document.getElementById('newAccountOrg').value = node.name;
+                document.getElementById('parentNodeName').value = node.name;
+            }
+        }
+
+        // ========== 渲染节点信息 ==========
+        function renderNodeInfo() {
+            const node = findNode(orgData, currentNodeId);
+            if (!node) return;
+
+            const levelClass = { '总行': 'level-hq', '分行': 'level-branch', '支行': 'level-sub', '网点': 'level-outlet' }[node.level] || '';
+            const path = getNodePath(orgData, currentNodeId);
+            const nodeIds = getAllChildIds(node);
+            const accounts = accountsData.filter(a => nodeIds.includes(a.orgId));
+            const onlineCount = accounts.filter(a => a.status === 'online').length;
+            const totalCustomers = accounts.reduce((s, a) => s + (a.customers || 0), 0);
+            const subOrgCount = countDescendants(node);
+
+            // 面包屑
+            const breadcrumbHtml = path ? path.map((p, i) =>
+                i < path.length - 1
+                    ? `<span onclick="selectNode('${p.id}')">${p.name}</span><span class="sep">/</span>`
+                    : `<span style="color: #262626; cursor: default;">${p.name}</span>`
+            ).join('') : '';
+
+            document.getElementById('nodeInfoCard').innerHTML = `
+                <div class="org-breadcrumb">${breadcrumbHtml}</div>
+                <div class="node-info-header">
+                    <h3>
+                        ${node.name}
+                        <span class="node-level-tag ${levelClass}">${node.level}</span>
+                    </h3>
+                    <button class="btn btn-text btn-sm" onclick="openEditNode()">✏️ 编辑信息</button>
+                </div>
+                <div class="node-info-grid">
+                    <div class="node-info-item">
+                        <div class="info-label">下级组织</div>
+                        <div class="info-value">${subOrgCount} <span style="font-size: 12px; font-weight: 400; color: #8c8c8c;">个</span></div>
+                    </div>
+                    <div class="node-info-item">
+                        <div class="info-label">账号数量</div>
+                        <div class="info-value highlight">${accounts.length} <span style="font-size: 12px; font-weight: 400; color: #8c8c8c;">人（在线 ${onlineCount}）</span></div>
+                    </div>
+                    <div class="node-info-item">
+                        <div class="info-label">管辖企业</div>
+                        <div class="info-value">${totalCustomers > 0 ? totalCustomers.toLocaleString() : '-'} <span style="font-size: 12px; font-weight: 400; color: #8c8c8c;">家</span></div>
+                    </div>
+                    <div class="node-info-item">
+                        <div class="info-label">地址</div>
+                        <div class="info-value" style="font-size: 13px; font-weight: 400;">${node.address || '-'}</div>
+                    </div>
+                </div>
+                <div class="region-tags">
+                    <span style="font-size: 12px; color: #8c8c8c; margin-right: 4px;">管辖区域：</span>
+                    ${(node.region || []).map(r => `
+                        <span class="region-tag"><span class="region-icon">📍</span> ${r}</span>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // ========== 渲染账号列表 ==========
+        function renderAccounts() {
+            const node = findNode(orgData, currentNodeId);
+            if (!node) return;
+
+            const nodeIds = getAllChildIds(node);
+            let accounts = accountsData.filter(a => nodeIds.includes(a.orgId));
+            if (currentRoleFilter) {
+                accounts = accounts.filter(a => a.role === currentRoleFilter);
+            }
+
+            document.getElementById('accountCount').textContent = `（${accounts.length}人）`;
+
+            if (accounts.length === 0) {
+                document.getElementById('accountTableContainer').innerHTML = `
+                    <div class="empty-accounts">
+                        <div class="empty-icon">👤</div>
+                        <p>当前组织下暂无账号</p>
+                        <button class="btn btn-primary btn-sm" style="margin-top: 12px;" onclick="openModal('addAccountModal')">+ 新增账号</button>
+                    </div>
+                `;
+                return;
+            }
+
+            const avatarColors = ['#1890ff', '#52c41a', '#722ed1', '#fa8c16', '#eb2f96', '#13c2c2'];
+            const roleClasses = { '管理员': 'role-admin', '行长': 'role-head', '客户经理': 'role-manager' };
+
+            document.getElementById('accountTableContainer').innerHTML = `
+                <table class="account-table">
+                    <thead>
+                        <tr>
+                            <th>姓名</th>
+                            <th>角色</th>
+                            <th>所属组织</th>
+                            <th>管辖区域</th>
+                            <th>客户数</th>
+                            <th>负载</th>
+                            <th>本月业绩</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${accounts.map((a, i) => {
+                const org = findNode(orgData, a.orgId);
+                const orgName = org ? org.name : '-';
+                const loadPct = a.capacity ? Math.round(a.customers / a.capacity * 100) : 0;
+                const loadClass = loadPct < 60 ? 'light' : loadPct < 85 ? 'medium' : 'heavy';
+                return `
+                            <tr>
+                                <td>
+                                    <div class="account-name">
+                                        <div class="account-avatar" style="background: ${avatarColors[i % avatarColors.length]};">${a.name.charAt(0)}</div>
+                                        <div>
+                                            <div style="font-weight: 500;">${a.name}</div>
+                                            <div style="font-size: 12px; color: #8c8c8c;">${a.phone}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span class="role-tag ${roleClasses[a.role] || ''}">${a.role}</span></td>
+                                <td style="font-size: 12px; color: #595959;">${orgName}</td>
+                                <td style="font-size: 12px;">${a.region}</td>
+                                <td>${a.customers > 0 ? a.customers + '家' : '-'}</td>
+                                <td>
+                                    ${a.capacity ? `
+                                    <div class="workload-bar">
+                                        <div class="workload-track">
+                                            <div class="workload-fill ${loadClass}" style="width: ${loadPct}%;"></div>
+                                        </div>
+                                        <span style="font-size: 12px; color: #8c8c8c;">${loadPct}%</span>
+                                    </div>` : '-'}
+                                </td>
+                                <td>${a.monthDone > 0 ? a.monthDone + '笔' : '-'}</td>
+                                <td>
+                                    <span class="status-dot ${a.status}">${a.status === 'online' ? '在线' : '离线'}</span>
+                                </td>
+                                <td>
+                                    <button class="btn btn-text btn-sm">编辑</button>
+                                    <button class="btn btn-text btn-sm" style="color: #ff4d4f;">禁用</button>
+                                </td>
+                            </tr>`;
+            }).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        // 筛选账号
+        function filterAccounts(role) {
+            currentRoleFilter = role;
+            renderAccounts();
+        }
+
+        // 打开编辑节点弹窗
+        function openEditNode() {
+            const node = findNode(orgData, currentNodeId);
+            if (!node) return;
+            document.getElementById('editNodeName').value = node.name;
+            document.getElementById('editNodeRegion').value = (node.region || []).join('、');
+            document.getElementById('editNodeAddress').value = node.address || '';
+            openModal('editNodeModal');
+        }
+
+        // 保存节点
+        function saveNode() {
+            closeModal('editNodeModal');
+            showToast('✅ 组织信息已更新');
+            renderTree();
+            renderNodeInfo();
+        }
+
+        // 添加下级组织
+        function addNode() {
+            closeModal('addNodeModal');
+            showToast('✅ 下级组织已添加');
+        }
+
+        // 新增账号
+        function addAccount() {
+            closeModal('addAccountModal');
+            showToast('✅ 账号已创建');
+        }
+
+        // 通用弹窗
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        // Toast
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast show success';
+            setTimeout(() => { toast.className = 'toast'; }, 2500);
+        }
+
+        // 页面初始化
+        document.addEventListener('DOMContentLoaded', function () {
+            // 可通过URL参数指定机构
+            const params = new URLSearchParams(window.location.search);
+            const instName = params.get('name') || '江苏银行';
+            document.getElementById('instName').textContent = instName;
+            document.getElementById('pageTitle').textContent = instName + ' - 组织架构管理';
+
+            renderTree();
+            selectNode('hq');
+        });
+    </script>
+</body>
+
+</html>

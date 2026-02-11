@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>效果分析 - 智能营销平台</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .sidebar {
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+        }
+
+        .nav-item.active {
+            background: rgba(82, 196, 26, 0.2);
+            border-left-color: #52c41a;
+        }
+
+        .logo-icon {
+            background: #52c41a;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <div class="logo-icon">⚙️</div>
+                <h1>运营管控台</h1>
+            </div>
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-item"><span class="nav-icon">📊</span><span
+                        class="nav-text">运营概览</span></a>
+                <a href="institutions.html" class="nav-item"><span class="nav-icon">🏛️</span><span
+                        class="nav-text">机构管理</span></a>
+                <a href="customer-pool.html" class="nav-item"><span class="nav-icon">🏊</span><span
+                        class="nav-text">客户池</span></a>
+                <a href="products.html" class="nav-item"><span class="nav-icon">📦</span><span
+                        class="nav-text">产品配置</span></a>
+                <a href="rules.html" class="nav-item"><span class="nav-icon">🎯</span><span
+                        class="nav-text">规则引擎</span></a>
+                <a href="distribution.html" class="nav-item"><span class="nav-icon">🔀</span><span
+                        class="nav-text">分发管理</span></a>
+                <a href="analytics.html" class="nav-item active"><span class="nav-icon">📈</span><span
+                        class="nav-text">效果分析</span></a>
+                <a href="billing.html" class="nav-item"><span class="nav-icon">💰</span><span
+                        class="nav-text">收费结算</span></a>
+                <a href="reconciliation.html" class="nav-item"><span class="nav-icon">📑</span><span
+                        class="nav-text">对账管理</span></a>
+                <a href="risk-alert.html" class="nav-item"><span class="nav-icon">⚠️</span><span
+                        class="nav-text">风险预警</span></a>
+                <a href="api-monitor.html" class="nav-item"><span class="nav-icon">🔌</span><span
+                        class="nav-text">API监控</span></a>
+                <a href="downloads.html" class="nav-item"><span class="nav-icon">📥</span><span
+                        class="nav-text">下载中心</span></a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar" style="background: #52c41a;">管</div>
+                    <div>
+                        <div class="user-name">管理员</div>
+                        <div class="user-role">平台运营</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="page-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h1 class="page-title">效果分析</h1>
+                    <p class="page-breadcrumb"><a href="index.html">运营概览</a> / 效果分析</p>
+                </div>
+                <div>
+                    <select class="form-select" style="width: 120px;">
+                        <option>本月</option>
+                        <option>本季度</option>
+                        <option>全部</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 核心指标对比 -->
+            <div class="stat-cards">
+                <div class="stat-card primary">
+                    <div class="stat-label">平均转化率</div>
+                    <div class="stat-value">3.6<span class="stat-suffix">%</span></div>
+                    <div class="stat-trend up">↑ 0.3% 较上月</div>
+                </div>
+                <div class="stat-card success">
+                    <div class="stat-label">平均客单价</div>
+                    <div class="stat-value">84.5<span class="stat-suffix">万</span></div>
+                    <div class="stat-trend up">↑ 5.2% 较上月</div>
+                </div>
+                <div class="stat-card warning">
+                    <div class="stat-label">触达成功率</div>
+                    <div class="stat-value">58<span class="stat-suffix">%</span></div>
+                    <div class="stat-trend down">↓ 2% 较上月</div>
+                </div>
+                <div class="stat-card danger">
+                    <div class="stat-label">意向转化率</div>
+                    <div class="stat-value">18<span class="stat-suffix">%</span></div>
+                    <div class="stat-trend">持平</div>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <!-- 机构对比 -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">🏛️ 机构效果对比</h3>
+                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>机构</th>
+                                <th>推送量</th>
+                                <th>触达率</th>
+                                <th>转化率</th>
+                                <th>放款额</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>江苏银行</td>
+                                <td>12,000</td>
+                                <td>65%</td>
+                                <td style="color: #52c41a; font-weight: 600;">4.2%</td>
+                                <td>8,500万</td>
+                            </tr>
+                            <tr>
+                                <td>南京银行</td>
+                                <td>10,000</td>
+                                <td>62%</td>
+                                <td style="color: #52c41a; font-weight: 600;">3.8%</td>
+                                <td>6,800万</td>
+                            </tr>
+                            <tr>
+                                <td>苏州农商行</td>
+                                <td>8,000</td>
+                                <td>60%</td>
+                                <td style="color: #1890ff; font-weight: 600;">3.2%</td>
+                                <td>4,200万</td>
+                            </tr>
+                            <tr>
+                                <td>某小贷公司A</td>
+                                <td>5,000</td>
+                                <td>48%</td>
+                                <td style="color: #faad14; font-weight: 600;">2.4%</td>
+                                <td>1,200万</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- 产品对比 -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">📦 产品效果对比</h3>
+                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>产品</th>
+                                <th>推送量</th>
+                                <th>转化率</th>
+                                <th>平均额度</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>科技贷</td>
+                                <td>5,000</td>
+                                <td style="color: #52c41a; font-weight: 600;">4.2%</td>
+                                <td>120万</td>
+                            </tr>
+                            <tr>
+                                <td>专精特新贷</td>
+                                <td>4,500</td>
+                                <td style="color: #52c41a; font-weight: 600;">4.0%</td>
+                                <td>180万</td>
+                            </tr>
+                            <tr>
+                                <td>税e融</td>
+                                <td>4,000</td>
+                                <td style="color: #1890ff; font-weight: 600;">3.5%</td>
+                                <td>80万</td>
+                            </tr>
+                            <tr>
+                                <td>园区贷</td>
+                                <td>3,500</td>
+                                <td style="color: #1890ff; font-weight: 600;">3.2%</td>
+                                <td>250万</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 趋势图 -->
+            <div class="card" style="margin-top: 16px;">
+                <div class="card-header">
+                    <h3 class="card-title">📈 月度趋势</h3>
+                </div>
+                <div style="padding: 20px;">
+                    <div
+                        style="display: flex; align-items: flex-end; justify-content: space-between; height: 180px; padding: 0 20px;">
+                        <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
+                            <div
+                                style="width: 40px; height: 80px; background: linear-gradient(180deg, #1890ff 0%, #69c0ff 100%); border-radius: 4px 4px 0 0;">
+                            </div>
+                            <div style="font-size: 12px; color: #8c8c8c; margin-top: 8px;">9月</div>
+                            <div style="font-size: 11px; color: #595959;">2.8%</div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
+                            <div
+                                style="width: 40px; height: 100px; background: linear-gradient(180deg, #1890ff 0%, #69c0ff 100%); border-radius: 4px 4px 0 0;">
+                            </div>
+                            <div style="font-size: 12px; color: #8c8c8c; margin-top: 8px;">10月</div>
+                            <div style="font-size: 11px; color: #595959;">3.0%</div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
+                            <div
+                                style="width: 40px; height: 110px; background: linear-gradient(180deg, #1890ff 0%, #69c0ff 100%); border-radius: 4px 4px 0 0;">
+                            </div>
+                            <div style="font-size: 12px; color: #8c8c8c; margin-top: 8px;">11月</div>
+                            <div style="font-size: 11px; color: #595959;">3.2%</div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
+                            <div
+                                style="width: 40px; height: 120px; background: linear-gradient(180deg, #1890ff 0%, #69c0ff 100%); border-radius: 4px 4px 0 0;">
+                            </div>
+                            <div style="font-size: 12px; color: #8c8c8c; margin-top: 8px;">12月</div>
+                            <div style="font-size: 11px; color: #595959;">3.3%</div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
+                            <div
+                                style="width: 40px; height: 130px; background: linear-gradient(180deg, #1890ff 0%, #69c0ff 100%); border-radius: 4px 4px 0 0;">
+                            </div>
+                            <div style="font-size: 12px; color: #8c8c8c; margin-top: 8px;">1月</div>
+                            <div style="font-size: 11px; color: #595959;">3.5%</div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
+                            <div
+                                style="width: 40px; height: 150px; background: linear-gradient(180deg, #52c41a 0%, #95de64 100%); border-radius: 4px 4px 0 0;">
+                            </div>
+                            <div style="font-size: 12px; color: #8c8c8c; margin-top: 8px;">2月</div>
+                            <div style="font-size: 11px; color: #52c41a; font-weight: 600;">3.6%</div>
+                        </div>
+                    </div>
+                    <div style="text-align: center; margin-top: 16px; font-size: 13px; color: #595959;">
+                        转化率持续提升，较去年同期增长 <span style="color: #52c41a; font-weight: 600;">+28%</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>

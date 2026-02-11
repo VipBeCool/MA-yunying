@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>客户池管理 - 运营管控台</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .sidebar {
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+        }
+
+        .nav-item.active {
+            background: rgba(82, 196, 26, 0.2);
+            border-left-color: #52c41a;
+        }
+
+        .logo-icon {
+            background: #52c41a;
+        }
+
+        /* 统计卡片区 */
+        .pool-stats {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            border-left: 4px solid #e8e8e8;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .stat-card .stat-label {
+            font-size: 13px;
+            color: #8c8c8c;
+        }
+
+        .stat-card .stat-trend {
+            font-size: 12px;
+            margin-top: 6px;
+        }
+
+        .stat-card.total {
+            border-left-color: #1890ff;
+        }
+
+        .stat-card.total .stat-value {
+            color: #1890ff;
+        }
+
+        .stat-card.available {
+            border-left-color: #52c41a;
+        }
+
+        .stat-card.available .stat-value {
+            color: #52c41a;
+        }
+
+        .stat-card.marketing {
+            border-left-color: #fa8c16;
+        }
+
+        .stat-card.marketing .stat-value {
+            color: #fa8c16;
+        }
+
+        .stat-card.cooling {
+            border-left-color: #722ed1;
+        }
+
+        .stat-card.cooling .stat-value {
+            color: #722ed1;
+        }
+
+        .stat-card.loaned {
+            border-left-color: #13c2c2;
+        }
+
+        .stat-card.loaned .stat-value {
+            color: #13c2c2;
+        }
+
+        .stat-card.blacklist {
+            border-left-color: #f5222d;
+        }
+
+        .stat-card.blacklist .stat-value {
+            color: #f5222d;
+        }
+
+        /* 筛选栏 */
+        .filter-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            background: #fff;
+            padding: 16px 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            flex-wrap: wrap;
+        }
+
+        .filter-bar select,
+        .filter-bar input {
+            padding: 8px 12px;
+            border: 1px solid #d9d9d9;
+            border-radius: 6px;
+            font-size: 13px;
+            background: #fff;
+            min-width: 140px;
+        }
+
+        .filter-bar input[type="text"] {
+            min-width: 200px;
+        }
+
+        .filter-bar .filter-actions {
+            margin-left: auto;
+            display: flex;
+            gap: 8px;
+        }
+
+        /* 状态标签 */
+        .pool-status {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 500;
+            gap: 4px;
+        }
+
+        .pool-status::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+
+        .pool-status.s-available {
+            background: #f6ffed;
+            color: #52c41a;
+        }
+
+        .pool-status.s-available::before {
+            background: #52c41a;
+        }
+
+        .pool-status.s-locked {
+            background: #fff7e6;
+            color: #fa8c16;
+        }
+
+        .pool-status.s-locked::before {
+            background: #fa8c16;
+        }
+
+        .pool-status.s-assigned {
+            background: #e6f7ff;
+            color: #1890ff;
+        }
+
+        .pool-status.s-assigned::before {
+            background: #1890ff;
+        }
+
+        .pool-status.s-contacting {
+            background: #fff0f6;
+            color: #eb2f96;
+        }
+
+        .pool-status.s-contacting::before {
+            background: #eb2f96;
+        }
+
+        .pool-status.s-interested {
+            background: #f9f0ff;
+            color: #722ed1;
+        }
+
+        .pool-status.s-interested::before {
+            background: #722ed1;
+        }
+
+        .pool-status.s-credited {
+            background: #e6fffb;
+            color: #13c2c2;
+        }
+
+        .pool-status.s-credited::before {
+            background: #13c2c2;
+        }
+
+        .pool-status.s-loaned {
+            background: #d9f7be;
+            color: #389e0d;
+        }
+
+        .pool-status.s-loaned::before {
+            background: #389e0d;
+        }
+
+        .pool-status.s-rejected {
+            background: #fff1f0;
+            color: #f5222d;
+        }
+
+        .pool-status.s-rejected::before {
+            background: #f5222d;
+        }
+
+        .pool-status.s-cooling {
+            background: #efdbff;
+            color: #722ed1;
+        }
+
+        .pool-status.s-cooling::before {
+            background: #722ed1;
+        }
+
+        .pool-status.s-blacklisted {
+            background: #ffa39e;
+            color: #a8071a;
+        }
+
+        .pool-status.s-blacklisted::before {
+            background: #a8071a;
+        }
+
+        /* 表格增强 */
+        .pool-table {
+            width: 100%;
+        }
+
+        .pool-table th {
+            font-size: 12px;
+            color: #8c8c8c;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .pool-table td {
+            font-size: 13px;
+            vertical-align: middle;
+        }
+
+        .ent-name-cell {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ent-name-cell .name {
+            font-weight: 600;
+            color: #262626;
+        }
+
+        .ent-name-cell .code {
+            font-size: 11px;
+            color: #bfbfbf;
+            margin-top: 2px;
+        }
+
+        .region-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            background: #f0f5ff;
+            color: #2f54eb;
+            border-radius: 4px;
+            font-size: 11px;
+            margin: 1px 2px;
+        }
+
+        .inst-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            background: #fff7e6;
+            color: #d48806;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .cooling-info {
+            font-size: 12px;
+            color: #722ed1;
+        }
+
+        .cooling-info .days-left {
+            font-weight: 600;
+        }
+
+        .assign-count {
+            font-weight: 600;
+            color: #595959;
+        }
+
+        .reject-count {
+            color: #f5222d;
+            font-size: 12px;
+        }
+
+        /* 详情抽屉 */
+        .drawer-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.45);
+            z-index: 1000;
+        }
+
+        .drawer-overlay.active {
+            display: block;
+        }
+
+        .drawer {
+            position: fixed;
+            top: 0;
+            right: -520px;
+            width: 520px;
+            height: 100%;
+            background: #fff;
+            z-index: 1001;
+            transition: right 0.3s ease;
+            box-shadow: -4px 0 24px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .drawer.active {
+            right: 0;
+        }
+
+        .drawer-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .drawer-header h3 {
+            font-size: 16px;
+            margin: 0;
+        }
+
+        .drawer-close {
+            cursor: pointer;
+            font-size: 20px;
+            color: #8c8c8c;
+            background: none;
+            border: none;
+        }
+
+        .drawer-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+        }
+
+        /* 时间线 */
+        .timeline {
+            position: relative;
+            padding-left: 24px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #f0f0f0;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 20px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -20px;
+            top: 4px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid #1890ff;
+            background: #fff;
+        }
+
+        .timeline-item.success::before {
+            border-color: #52c41a;
+            background: #52c41a;
+        }
+
+        .timeline-item.warning::before {
+            border-color: #fa8c16;
+            background: #fa8c16;
+        }
+
+        .timeline-item.error::before {
+            border-color: #f5222d;
+            background: #f5222d;
+        }
+
+        .timeline-item .tl-time {
+            font-size: 12px;
+            color: #8c8c8c;
+        }
+
+        .timeline-item .tl-content {
+            font-size: 13px;
+            color: #262626;
+            margin-top: 4px;
+        }
+
+        .timeline-item .tl-detail {
+            font-size: 12px;
+            color: #8c8c8c;
+            margin-top: 2px;
+        }
+
+        /* 企业信息头 */
+        .ent-header {
+            margin-bottom: 24px;
+        }
+
+        .ent-header h4 {
+            font-size: 18px;
+            margin: 0 0 8px 0;
+        }
+
+        .ent-meta {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .ent-meta-item {
+            font-size: 12px;
+            color: #8c8c8c;
+        }
+
+        .ent-meta-item span {
+            color: #262626;
+            font-weight: 500;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #262626;
+            margin: 20px 0 12px 0;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        /* 分页 */
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 0;
+            font-size: 13px;
+            color: #8c8c8c;
+        }
+
+        .page-btns {
+            display: flex;
+            gap: 4px;
+        }
+
+        .page-btn {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #d9d9d9;
+            border-radius: 6px;
+            cursor: pointer;
+            background: #fff;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .page-btn:hover {
+            border-color: #1890ff;
+            color: #1890ff;
+        }
+
+        .page-btn.active {
+            background: #1890ff;
+            color: #fff;
+            border-color: #1890ff;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <div class="logo-icon">⚙️</div>
+                <h1>运营管控台</h1>
+            </div>
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-item"><span class="nav-icon">📊</span><span
+                        class="nav-text">运营概览</span></a>
+                <a href="institutions.html" class="nav-item"><span class="nav-icon">🏛️</span><span
+                        class="nav-text">机构管理</span></a>
+                <a href="customer-pool.html" class="nav-item active"><span class="nav-icon">🏊</span><span
+                        class="nav-text">客户池</span></a>
+                <a href="products.html" class="nav-item"><span class="nav-icon">📦</span><span
+                        class="nav-text">产品配置</span></a>
+                <a href="rules.html" class="nav-item"><span class="nav-icon">🎯</span><span
+                        class="nav-text">规则引擎</span></a>
+                <a href="distribution.html" class="nav-item"><span class="nav-icon">🔀</span><span
+                        class="nav-text">分发管理</span></a>
+                <a href="analytics.html" class="nav-item"><span class="nav-icon">📈</span><span
+                        class="nav-text">效果分析</span></a>
+                <a href="billing.html" class="nav-item"><span class="nav-icon">💰</span><span
+                        class="nav-text">收费结算</span></a>
+                <a href="reconciliation.html" class="nav-item"><span class="nav-icon">📑</span><span
+                        class="nav-text">对账管理</span></a>
+                <a href="risk-alert.html" class="nav-item"><span class="nav-icon">⚠️</span><span
+                        class="nav-text">风险预警</span></a>
+                <a href="api-monitor.html" class="nav-item"><span class="nav-icon">🔌</span><span
+                        class="nav-text">API监控</span></a>
+                <a href="downloads.html" class="nav-item"><span class="nav-icon">📥</span><span
+                        class="nav-text">下载中心</span></a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar" style="background: #52c41a;">管</div>
+                    <div>
+                        <div class="user-name">管理员</div>
+                        <div class="user-role">平台运营</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="page-header" style="display:flex;justify-content:space-between;align-items:center;">
+                <div>
+                    <h2>客户池管理</h2>
+                    <div class="breadcrumb">运营管控台 / 客户池管理</div>
+                </div>
+                <div style="display:flex;gap:10px;">
+                    <button class="btn btn-default" onclick="showCoolingConfig()">⏱ 冷却期配置</button>
+                    <button class="btn btn-default" onclick="exportPool()">📥 导出</button>
+                </div>
+            </div>
+
+            <!-- 统计卡片 -->
+            <div class="pool-stats">
+                <div class="stat-card total">
+                    <div class="stat-value">324,186</div>
+                    <div class="stat-label">总入池</div>
+                    <div class="stat-trend" style="color:#52c41a;">↑ 1,240 今日新增</div>
+                </div>
+                <div class="stat-card available">
+                    <div class="stat-value">187,432</div>
+                    <div class="stat-label">可分配</div>
+                    <div class="stat-trend" style="color:#52c41a;">占 57.8%</div>
+                </div>
+                <div class="stat-card marketing">
+                    <div class="stat-value">52,318</div>
+                    <div class="stat-label">营销中</div>
+                    <div class="stat-trend" style="color:#fa8c16;">含已分配 + 营销中 + 意向中</div>
+                </div>
+                <div class="stat-card cooling">
+                    <div class="stat-value">31,056</div>
+                    <div class="stat-label">冷却中</div>
+                    <div class="stat-trend" style="color:#722ed1;">预计7日内释放 4,200</div>
+                </div>
+                <div class="stat-card loaned">
+                    <div class="stat-value">48,180</div>
+                    <div class="stat-label">已放款</div>
+                    <div class="stat-trend" style="color:#13c2c2;">累计 ¥23.7亿</div>
+                </div>
+                <div class="stat-card blacklist">
+                    <div class="stat-value">5,200</div>
+                    <div class="stat-label">黑名单</div>
+                    <div class="stat-trend" style="color:#f5222d;">占 1.6%</div>
+                </div>
+            </div>
+
+            <!-- 筛选栏 -->
+            <div class="filter-bar">
+                <select id="filterStatus">
+                    <option value="">全部状态</option>
+                    <option value="AVAILABLE">可分配</option>
+                    <option value="LOCKED">已锁定</option>
+                    <option value="ASSIGNED">已分配</option>
+                    <option value="CONTACTING">营销中</option>
+                    <option value="INTERESTED">意向中</option>
+                    <option value="CREDITED">已授信</option>
+                    <option value="LOAN_SUCCESS">已放款</option>
+                    <option value="COOLING">冷却中</option>
+                    <option value="BLACKLISTED">黑名单</option>
+                </select>
+                <select id="filterRegion">
+                    <option value="">全部地区</option>
+                    <option value="320100">南京市</option>
+                    <option value="320500">苏州市</option>
+                    <option value="320200">无锡市</option>
+                    <option value="320400">常州市</option>
+                    <option value="320600">南通市</option>
+                </select>
+                <select id="filterInst">
+                    <option value="">全部机构</option>
+                    <option value="jsbank">江苏银行</option>
+                    <option value="njbank">南京银行</option>
+                    <option value="szrcb">苏州农商行</option>
+                    <option value="xlA">某小贷公司A</option>
+                </select>
+                <input type="text" id="searchInput" placeholder="搜索企业名称 / 统一社会信用代码">
+                <div class="filter-actions">
+                    <button class="btn btn-primary btn-sm" onclick="applyFilter()">筛选</button>
+                    <button class="btn btn-default btn-sm" onclick="resetFilter()">重置</button>
+                </div>
+            </div>
+
+            <!-- 主表格 -->
+            <div class="card" style="padding:0;">
+                <table class="table pool-table">
+                    <thead>
+                        <tr>
+                            <th style="width:22%;">企业信息</th>
+                            <th>地区</th>
+                            <th>状态</th>
+                            <th>当前机构</th>
+                            <th>分配/拒绝</th>
+                            <th>冷却截止</th>
+                            <th>最近分配</th>
+                            <th style="width:15%;">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="poolTableBody"></tbody>
+                </table>
+                <div class="pagination" style="padding:12px 20px;">
+                    <span>共 <strong>324,186</strong> 条记录，当前第 1/16,210 页</span>
+                    <div class="page-btns">
+                        <div class="page-btn">«</div>
+                        <div class="page-btn active">1</div>
+                        <div class="page-btn">2</div>
+                        <div class="page-btn">3</div>
+                        <div class="page-btn">...</div>
+                        <div class="page-btn">16210</div>
+                        <div class="page-btn">»</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 详情抽屉 -->
+    <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+    <div class="drawer" id="detailDrawer">
+        <div class="drawer-header">
+            <h3 id="drawerTitle">企业详情</h3>
+            <button class="drawer-close" onclick="closeDrawer()">✕</button>
+        </div>
+        <div class="drawer-body" id="drawerBody"></div>
+    </div>
+
+    <!-- 冷却期配置弹窗 -->
+    <div class="modal-overlay" id="coolingModal">
+        <div class="modal" style="max-width:560px;">
+            <div class="modal-header">
+                <h3>⏱ 冷却期配置</h3>
+                <button class="modal-close" onclick="closeCoolingConfig()">✕</button>
+            </div>
+            <div class="modal-body">
+                <table class="table" style="font-size:13px;">
+                    <thead>
+                        <tr>
+                            <th>场景</th>
+                            <th>冷却天数</th>
+                            <th>适用范围</th>
+                            <th>状态</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>授信拒绝</td>
+                            <td><input type="number" value="30"
+                                    style="width:60px;padding:4px 8px;border:1px solid #d9d9d9;border-radius:4px;"> 天
+                            </td>
+                            <td>跨机构</td>
+                            <td><span class="status-badge status-success">启用</span></td>
+                        </tr>
+                        <tr>
+                            <td>客户明确拒绝</td>
+                            <td><input type="number" value="90"
+                                    style="width:60px;padding:4px 8px;border:1px solid #d9d9d9;border-radius:4px;"> 天
+                            </td>
+                            <td>跨机构</td>
+                            <td><span class="status-badge status-success">启用</span></td>
+                        </tr>
+                        <tr>
+                            <td>银行退回</td>
+                            <td><input type="number" value="15"
+                                    style="width:60px;padding:4px 8px;border:1px solid #d9d9d9;border-radius:4px;"> 天
+                            </td>
+                            <td>跨机构</td>
+                            <td><span class="status-badge status-success">启用</span></td>
+                        </tr>
+                        <tr>
+                            <td>放款完成</td>
+                            <td><input type="number" value="365"
+                                    style="width:60px;padding:4px 8px;border:1px solid #d9d9d9;border-radius:4px;"> 天
+                            </td>
+                            <td>同机构</td>
+                            <td><span class="status-badge status-success">启用</span></td>
+                        </tr>
+                        <tr>
+                            <td>同机构重推</td>
+                            <td><input type="number" value="180"
+                                    style="width:60px;padding:4px 8px;border:1px solid #d9d9d9;border-radius:4px;"> 天
+                            </td>
+                            <td>同机构</td>
+                            <td><span class="status-badge status-success">启用</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" onclick="closeCoolingConfig()">取消</button>
+                <button class="btn btn-primary" onclick="closeCoolingConfig()">保存配置</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mock 数据
+        const mockData = [
+            { id: 1, entId: '91320500MA1WXXX1', name: '苏州创芯微电子有限公司', region: '苏州市', regionCode: '320500', status: 'CONTACTING', inst: '江苏银行', instId: 'jsbank', product: '科技贷', assignCount: 1, rejectCount: 0, coolingUntil: null, assignTime: '2026-02-08', score: 782 },
+            { id: 2, entId: '91320100MA2BXXX2', name: '南京智云数据科技有限公司', region: '南京市', regionCode: '320100', status: 'AVAILABLE', inst: null, instId: null, product: null, assignCount: 2, rejectCount: 1, coolingUntil: null, assignTime: '2026-01-15', score: 756 },
+            { id: 3, entId: '91320500MA3CXXX3', name: '苏州恒力精密制造有限公司', region: '苏州市', regionCode: '320500', status: 'COOLING', inst: '苏州农商行', instId: 'szrcb', product: '税e融', assignCount: 3, rejectCount: 2, coolingUntil: '2026-03-10', assignTime: '2026-02-05', score: 712 },
+            { id: 4, entId: '91320200MA4DXXX4', name: '无锡太湖新能源科技股份有限公司', region: '无锡市', regionCode: '320200', status: 'LOAN_SUCCESS', inst: '江苏银行', instId: 'jsbank', product: '科技贷', assignCount: 1, rejectCount: 0, coolingUntil: null, assignTime: '2026-01-20', score: 805, loanAmount: 300 },
+            { id: 5, entId: '91320100MA5EXXX5', name: '南京紫金山生物医药有限公司', region: '南京市', regionCode: '320100', status: 'INTERESTED', inst: '南京银行', instId: 'njbank', product: '宁创贷', assignCount: 1, rejectCount: 0, coolingUntil: null, assignTime: '2026-02-06', score: 768 },
+            { id: 6, entId: '91320400MA6FXXX6', name: '常州龙城智能装备有限公司', region: '常州市', regionCode: '320400', status: 'ASSIGNED', inst: '江苏银行', instId: 'jsbank', product: '税e融', assignCount: 1, rejectCount: 0, coolingUntil: null, assignTime: '2026-02-10', score: 734 },
+            { id: 7, entId: '91320500MA7GXXX7', name: '苏州工业园区集成电路设计有限公司', region: '苏州市', regionCode: '320500', status: 'CREDITED', inst: '苏州农商行', instId: 'szrcb', product: '科创贷', assignCount: 2, rejectCount: 1, coolingUntil: null, assignTime: '2026-02-01', score: 791 },
+            { id: 8, entId: '91320600MA8HXXX8', name: '南通海工装备制造有限公司', region: '南通市', regionCode: '320600', status: 'AVAILABLE', inst: null, instId: null, product: null, assignCount: 0, rejectCount: 0, coolingUntil: null, assignTime: null, score: 698 },
+            { id: 9, entId: '91320100MA9IXXX9', name: '南京某涉诉企业有限公司', region: '南京市', regionCode: '320100', status: 'BLACKLISTED', inst: null, instId: null, product: null, assignCount: 1, rejectCount: 1, coolingUntil: null, assignTime: '2025-11-20', score: 320, blacklistReason: '多起司法诉讼，列入失信被执行人' },
+            { id: 10, entId: '91320500MAAJXXA', name: '苏州纳米新材料有限公司', region: '苏州市', regionCode: '320500', status: 'COOLING', inst: '江苏银行', instId: 'jsbank', product: '科技贷', assignCount: 2, rejectCount: 1, coolingUntil: '2026-02-28', assignTime: '2026-01-28', score: 745 },
+            { id: 11, entId: '91320200MABKXXB', name: '无锡惠山区精密机械有限公司', region: '无锡市', regionCode: '320200', status: 'AVAILABLE', inst: null, instId: null, product: null, assignCount: 1, rejectCount: 1, coolingUntil: null, assignTime: '2025-12-10', score: 721 },
+            { id: 12, entId: '91320100MACLXXC', name: '南京江北新区人工智能有限公司', region: '南京市', regionCode: '320100', status: 'CONTACTING', inst: '某小贷公司A', instId: 'xlA', product: '信用贷', assignCount: 3, rejectCount: 2, coolingUntil: null, assignTime: '2026-02-09', score: 668 },
+        ];
+
+        const statusMap = {
+            'AVAILABLE': { label: '可分配', cls: 's-available' },
+            'LOCKED': { label: '已锁定', cls: 's-locked' },
+            'ASSIGNED': { label: '已分配', cls: 's-assigned' },
+            'CONTACTING': { label: '营销中', cls: 's-contacting' },
+            'INTERESTED': { label: '意向中', cls: 's-interested' },
+            'CREDITED': { label: '已授信', cls: 's-credited' },
+            'LOAN_SUCCESS': { label: '已放款', cls: 's-loaned' },
+            'REJECTED': { label: '已拒绝', cls: 's-rejected' },
+            'COOLING': { label: '冷却中', cls: 's-cooling' },
+            'BLACKLISTED': { label: '黑名单', cls: 's-blacklisted' },
+        };
+
+        function renderTable(data) {
+            const tbody = document.getElementById('poolTableBody');
+            tbody.innerHTML = data.map(d => {
+                const s = statusMap[d.status] || { label: d.status, cls: '' };
+                const instHtml = d.inst ? `<span class="inst-tag">${d.inst}</span><br><span style="font-size:11px;color:#bfbfbf;">${d.product || ''}</span>` : '<span style="color:#bfbfbf;">-</span>';
+                const coolingHtml = d.coolingUntil ? `<span class="cooling-info">截至 <span class="days-left">${d.coolingUntil}</span></span>` : '<span style="color:#d9d9d9;">-</span>';
+                const assignTimeHtml = d.assignTime ? d.assignTime : '<span style="color:#d9d9d9;">从未分配</span>';
+
+                // 操作按钮根据状态
+                let actions = `<button class="btn btn-text btn-sm" onclick="openDrawer(${d.id})">详情</button>`;
+                if (d.status === 'AVAILABLE') {
+                    actions += `<button class="btn btn-text btn-sm" onclick="freezeEnt(${d.id})" style="color:#fa8c16;">冻结</button>`;
+                    actions += `<button class="btn btn-text btn-sm" onclick="blacklistEnt(${d.id})" style="color:#f5222d;">拉黑</button>`;
+                } else if (d.status === 'COOLING') {
+                    actions += `<button class="btn btn-text btn-sm" onclick="releaseEnt(${d.id})" style="color:#52c41a;">释放</button>`;
+                } else if (d.status === 'BLACKLISTED') {
+                    actions += `<button class="btn btn-text btn-sm" onclick="unblacklist(${d.id})" style="color:#52c41a;">移出</button>`;
+                }
+
+                return `<tr>
+                <td><div class="ent-name-cell"><span class="name">${d.name}</span><span class="code">${d.entId}</span></div></td>
+                <td><span class="region-tag">${d.region}</span></td>
+                <td><span class="pool-status ${s.cls}">${s.label}</span></td>
+                <td>${instHtml}</td>
+                <td><span class="assign-count">${d.assignCount}次</span> / <span class="reject-count">${d.rejectCount}拒</span></td>
+                <td>${coolingHtml}</td>
+                <td>${assignTimeHtml}</td>
+                <td>${actions}</td>
+            </tr>`;
+            }).join('');
+        }
+
+        // 筛选
+        function applyFilter() {
+            const status = document.getElementById('filterStatus').value;
+            const region = document.getElementById('filterRegion').value;
+            const inst = document.getElementById('filterInst').value;
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            let filtered = mockData.filter(d => {
+                if (status && d.status !== status) return false;
+                if (region && d.regionCode !== region) return false;
+                if (inst && d.instId !== inst) return false;
+                if (search && !d.name.toLowerCase().includes(search) && !d.entId.toLowerCase().includes(search)) return false;
+                return true;
+            });
+            renderTable(filtered);
+        }
+
+        function resetFilter() {
+            document.getElementById('filterStatus').value = '';
+            document.getElementById('filterRegion').value = '';
+            document.getElementById('filterInst').value = '';
+            document.getElementById('searchInput').value = '';
+            renderTable(mockData);
+        }
+
+        // 抽屉详情
+        function openDrawer(id) {
+            const d = mockData.find(x => x.id === id);
+            if (!d) return;
+            const s = statusMap[d.status] || { label: d.status, cls: '' };
+            document.getElementById('drawerTitle').textContent = d.name;
+
+            // 构建详情内容
+            let html = `
+            <div class="ent-header">
+                <h4>${d.name}</h4>
+                <div class="ent-meta">
+                    <div class="ent-meta-item">统一社会信用代码：<span>${d.entId}</span></div>
+                    <div class="ent-meta-item">地区：<span>${d.region}</span></div>
+                    <div class="ent-meta-item">苏信分：<span>${d.score}</span></div>
+                </div>
+                <div style="margin-top:12px;">
+                    当前状态：<span class="pool-status ${s.cls}">${s.label}</span>
+                    ${d.inst ? `&nbsp;&nbsp;当前机构：<span class="inst-tag">${d.inst}</span>` : ''}
+                </div>
+            </div>`;
+
+            if (d.status === 'BLACKLISTED' && d.blacklistReason) {
+                html += `<div style="background:#fff1f0;border:1px solid #ffa39e;border-radius:8px;padding:12px;margin-bottom:16px;font-size:13px;color:#a8071a;">
+                ⚠️ 黑名单原因：${d.blacklistReason}
+            </div>`;
+            }
+
+            if (d.coolingUntil) {
+                html += `<div style="background:#f9f0ff;border:1px solid #d3adf7;border-radius:8px;padding:12px;margin-bottom:16px;font-size:13px;color:#722ed1;">
+                ⏱ 冷却期截止：<strong>${d.coolingUntil}</strong>
+            </div>`;
+            }
+
+            // 模拟分配历史时间线
+            html += `<div class="section-title">📋 分配历史</div><div class="timeline">`;
+            if (d.assignCount >= 1 && d.assignTime) {
+                html += `<div class="timeline-item${d.status === 'LOAN_SUCCESS' ? ' success' : ''}">
+                <div class="tl-time">${d.assignTime}</div>
+                <div class="tl-content">分配给 ${d.inst || '江苏银行'} - ${d.product || '科技贷'}</div>
+                <div class="tl-detail">批次号 BATCH-20260208-001</div>
+            </div>`;
+            }
+            if (d.status === 'CONTACTING') {
+                html += `<div class="timeline-item warning"><div class="tl-time">${d.assignTime}</div><div class="tl-content">银行确认触达，正在营销中</div></div>`;
+            }
+            if (d.status === 'LOAN_SUCCESS') {
+                html += `<div class="timeline-item success"><div class="tl-time">2026-02-15</div><div class="tl-content">放款成功 ¥${d.loanAmount}万</div></div>`;
+            }
+            if (d.rejectCount > 0) {
+                html += `<div class="timeline-item error"><div class="tl-time">2025-12-20</div><div class="tl-content">被拒绝（上一次分配）</div><div class="tl-detail">拒绝原因：额度不足 / 行业限制</div></div>`;
+            }
+            if (d.assignCount === 0) {
+                html += `<div class="timeline-item"><div class="tl-time">-</div><div class="tl-content">暂无分配历史</div></div>`;
+            }
+            html += `</div>`;
+
+            document.getElementById('drawerBody').innerHTML = html;
+            document.getElementById('drawerOverlay').classList.add('active');
+            document.getElementById('detailDrawer').classList.add('active');
+        }
+
+        function closeDrawer() {
+            document.getElementById('drawerOverlay').classList.remove('active');
+            document.getElementById('detailDrawer').classList.remove('active');
+        }
+
+        // 操作
+        function freezeEnt(id) { if (confirm('确认冻结该企业？冻结后将不参与分配。')) showToast('已冻结'); }
+        function releaseEnt(id) { if (confirm('确认提前释放冷却期？')) showToast('已释放，状态变为可分配'); }
+        function blacklistEnt(id) { if (confirm('确认加入黑名单？该企业将永久不可分配。')) showToast('已加入黑名单'); }
+        function unblacklist(id) { if (confirm('确认移出黑名单？')) showToast('已移出黑名单'); }
+        function exportPool() { showToast('导出任务已创建'); setTimeout(() => { if (confirm('前往下载中心查看？')) location.href = 'downloads.html'; }, 1500); }
+
+        function showCoolingConfig() { document.getElementById('coolingModal').classList.add('active'); }
+        function closeCoolingConfig() { document.getElementById('coolingModal').classList.remove('active'); }
+
+        function showToast(msg) {
+            const t = document.createElement('div');
+            t.style.cssText = 'position:fixed;top:20px;right:20px;background:#52c41a;color:#fff;padding:12px 24px;border-radius:8px;z-index:9999;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);animation:fadeIn 0.3s;';
+            t.textContent = '✓ ' + msg;
+            document.body.appendChild(t);
+            setTimeout(() => t.remove(), 2500);
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => renderTable(mockData));
+    </script>
+</body>
+
+</html>
