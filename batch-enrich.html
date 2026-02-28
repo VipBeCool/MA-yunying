@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>批量画像查询 - 智能营销平台</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .sidebar {
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+        }
+
+        .nav-item.active {
+            background: rgba(82, 196, 26, 0.2);
+            border-left-color: #52c41a;
+        }
+
+        .logo-icon {
+            background: #52c41a;
+        }
+
+        .enrich-layout {
+            display: flex;
+            gap: 24px;
+            height: calc(100vh - 120px);
+        }
+
+        /* 步骤条 */
+        .step-sidebar {
+            width: 200px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+            padding: 24px 16px;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            color: #8c8c8c;
+            position: relative;
+        }
+
+        .step-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 35px;
+            bottom: -15px;
+            width: 2px;
+            background: #f0f0f0;
+        }
+
+        .step-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            z-index: 1;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-title {
+            font-weight: 500;
+            font-size: 15px;
+        }
+
+        .step-desc {
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        /* 状态样式 */
+        .step-item.completed {
+            color: #595959;
+        }
+
+        .step-item.completed .step-circle {
+            background: #e6f7ff;
+            color: #1890ff;
+        }
+
+        .step-item.completed:not(:last-child)::after {
+            background: #e6f7ff;
+        }
+
+        .step-item.active {
+            color: #262626;
+        }
+
+        .step-item.active .step-circle {
+            background: #1890ff;
+            color: #fff;
+            box-shadow: 0 0 0 4px #e6f7ff;
+        }
+
+        /* 主工作区 */
+        .enrich-main {
+            flex: 1;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .step-panel {
+            flex: 1;
+            padding: 24px 32px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .step-panel.active {
+            display: block;
+        }
+
+        .panel-footer {
+            padding: 16px 32px;
+            border-top: 1px solid #f0f0f0;
+            background: #fafafa;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* 第一步：上传区域 */
+        .upload-area {
+            border: 2px dashed #d9d9d9;
+            border-radius: 8px;
+            background: #fafafa;
+            padding: 48px;
+            text-align: center;
+            margin: 24px 0;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .upload-area:hover {
+            border-color: #1890ff;
+            background: #f0f5ff;
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            color: #1890ff;
+            margin-bottom: 16px;
+        }
+
+        .upload-text {
+            font-size: 16px;
+            color: #262626;
+            margin-bottom: 8px;
+        }
+
+        .upload-hint {
+            color: #8c8c8c;
+            font-size: 13px;
+        }
+
+        /* 第二步：标签配置区 */
+        .tag-bundle-section {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .bundle-card {
+            border: 1px solid #d9d9d9;
+            border-radius: 8px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .bundle-card:hover {
+            border-color: #1890ff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .bundle-card.selected {
+            border-width: 2px;
+            border-color: #1890ff;
+            background: #e6f7ff;
+        }
+
+        .bundle-card.selected::after {
+            content: '✓';
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: #1890ff;
+            color: #fff;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .bundle-title {
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .bundle-desc {
+            color: #8c8c8c;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .bundle-tags {
+            margin-top: 12px;
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+
+        .mini-tag {
+            background: #fff;
+            border: 1px solid #e8e8e8;
+            padding: 2px 6px;
+            font-size: 11px;
+            border-radius: 4px;
+            color: #595959;
+        }
+
+        .tag-group {
+            margin-bottom: 24px;
+        }
+
+        .tag-group-title {
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-left: 4px solid #1890ff;
+            padding-left: 8px;
+        }
+
+        .tag-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        /* 标签项与脱敏开关 */
+        .tag-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            border: 1px solid #f0f0f0;
+            border-radius: 4px;
+            background: #fafafa;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .mask-toggle {
+            display: flex;
+            background: #e8e8e8;
+            border-radius: 12px;
+            padding: 2px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .mask-option {
+            padding: 2px 8px;
+            border-radius: 10px;
+            color: #8c8c8c;
+            transition: all 0.2s;
+        }
+
+        .mask-option.active {
+            background: #fff;
+            color: #1890ff;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            font-weight: 500;
+        }
+
+        .mask-toggle.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            position: relative;
+        }
+
+        .mask-toggle.disabled::after {
+            content: '🔒';
+            position: absolute;
+            right: -16px;
+            top: 2px;
+            font-size: 10px;
+        }
+
+        .alert-info {
+            background: #e6f7ff;
+            border: 1px solid #91d5ff;
+            border-radius: 4px;
+            padding: 12px 16px;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            margin-bottom: 24px;
+        }
+
+        /* 标签状态区分与沉浸式 UI */
+        .tag-item.from-bundle {
+            background: #e6f7ff;
+            border-color: #91d5ff;
+        }
+
+        .tag-item.from-bundle .checkbox-label {
+            color: #096dd9;
+            font-weight: 500;
+        }
+
+        /* 气泡式标签来源小图标 */
+        .bundle-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 16px;
+            height: 16px;
+            background: #1890ff;
+            color: #fff;
+            border-radius: 50%;
+            font-size: 10px;
+            margin-left: 6px;
+            cursor: help;
+            position: relative;
+        }
+
+        .bundle-icon:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 120%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            z-index: 100;
+            line-height: 1.2;
+            pointer-events: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .bundle-icon:hover::before {
+            content: '';
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 4px solid transparent;
+            border-top-color: rgba(0, 0, 0, 0.8);
+            pointer-events: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- 侧边栏 -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <div class="logo-icon">⚙️</div>
+                <h1>运营管控台</h1>
+            </div>
+
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-item "><span class="nav-icon">📊</span><span
+                        class="nav-text">运营概览</span></a>
+
+                <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 8px 16px;"></div>
+                <div style="font-size: 12px; color: rgba(255,255,255,0.45); padding: 8px 24px; margin-top: 4px;">数据交付
+                </div>
+                <a href="smart-search.html" class="nav-item "><span class="nav-icon">🎯</span><span
+                        class="nav-text">智能探客</span></a>
+                <a href="batch-enrich.html" class="nav-item active"><span class="nav-icon">📑</span><span
+                        class="nav-text">批量画像查询</span></a>
+
+                <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 8px 16px;"></div>
+                <div style="font-size: 12px; color: rgba(255,255,255,0.45); padding: 8px 24px; margin-top: 4px;">业务管理
+                </div>
+                <a href="institutions.html" class="nav-item "><span class="nav-icon">🏛️</span><span
+                        class="nav-text">机构管理</span></a>
+                <a href="customer-pool.html" class="nav-item "><span class="nav-icon">🏊</span><span
+                        class="nav-text">客户池</span></a>
+                <a href="products.html" class="nav-item "><span class="nav-icon">📦</span><span
+                        class="nav-text">产品配置</span></a>
+                <a href="rules.html" class="nav-item "><span class="nav-icon">🎯</span><span
+                        class="nav-text">规则引擎</span></a>
+                <a href="distribution.html" class="nav-item "><span class="nav-icon">🔀</span><span
+                        class="nav-text">分发管理</span></a>
+                <a href="analytics.html" class="nav-item "><span class="nav-icon">📈</span><span
+                        class="nav-text">效果分析</span></a>
+                <a href="billing.html" class="nav-item "><span class="nav-icon">💰</span><span
+                        class="nav-text">收费结算</span></a>
+                <a href="reconciliation.html" class="nav-item "><span class="nav-icon">📑</span><span
+                        class="nav-text">对账管理</span></a>
+                <a href="risk-alert.html" class="nav-item "><span class="nav-icon">⚠️</span><span
+                        class="nav-text">风险预警</span></a>
+
+                <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 8px 16px;"></div>
+                <div style="font-size: 12px; color: rgba(255,255,255,0.45); padding: 8px 24px; margin-top: 4px;">系统配置
+                </div>
+                <a href="api-monitor.html" class="nav-item "><span class="nav-icon">🔌</span><span
+                        class="nav-text">API监控</span></a>
+                <a href="downloads.html" class="nav-item "><span class="nav-icon">📥</span><span
+                        class="nav-text">下载中心</span></a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar" style="background: #52c41a;">管</div>
+                    <div>
+                        <div class="user-name">管理员</div>
+                        <div class="user-role">平台运营</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="page-header"
+                style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom: 20px;">
+                <div>
+                    <h1 class="page-title">批量画像查询</h1>
+                    <p class="page-breadcrumb"><a href="index.html">数据服务</a> / 批量画像查询及离线补充</p>
+                </div>
+                <div>
+                    <button class="btn btn-default" onclick="alert('即将跳转至离线任务管理中心')">📥 我的下载任务 (2)</button>
+                </div>
+            </div>
+
+            <div class="enrich-layout">
+                <!-- 左侧：步骤条 -->
+                <div class="step-sidebar">
+                    <div class="step-item completed">
+                        <div class="step-circle">1</div>
+                        <div class="step-content">
+                            <div class="step-title">上传名单</div>
+                            <div class="step-desc">导入待查询企业</div>
+                        </div>
+                    </div>
+                    <div class="step-item active">
+                        <div class="step-circle">2</div>
+                        <div class="step-content">
+                            <div class="step-title">选择画像维度</div>
+                            <div class="step-desc">配置脱敏及输出标签</div>
+                        </div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-circle">3</div>
+                        <div class="step-content">
+                            <div class="step-title">离线跑批</div>
+                            <div class="step-desc">系统异步处理贴标</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 右侧：工作区 -->
+                <div class="enrich-main">
+
+                    <!-- 面板 2 (开发演示聚焦在这一步) -->
+                    <div class="step-panel active" id="step2">
+                        <div style="font-size: 18px; font-weight: 600; margin-bottom: 16px;">配置需匹配的画像维度</div>
+
+                        <div class="alert-info">
+                            <div style="font-size: 16px; margin-top: 2px;">ℹ️</div>
+                            <div>
+                                <div style="font-weight: 500; color: #096dd9; margin-bottom: 4px;">当前已上传名单：<strong
+                                        style="color: #1890ff;">5,210</strong> 家企业</div>
+                                <div style="color: #595959; font-size: 13px;">请选择需要系统补充返回的数据字段。基于您的当前权限等级
+                                    [平台高级运营]，部分敏感数据（如纳税具体金额、历史被执行金额）已强制锁定为【区间脱敏模式】，您无法改为精确输出。</div>
+                            </div>
+                        </div>
+
+                        <!-- 场景化快捷标签包 -->
+                        <div style="font-weight: 600; font-size: 15px; margin-bottom: 12px; margin-top: 32px;">📦
+                            快捷场景标签包 (一键勾选)</div>
+                        <div class="tag-bundle-section">
+                            <div class="bundle-card selected">
+                                <div class="bundle-title"><span>🛡️</span> 信用风控与准入排查</div>
+                                <div class="bundle-desc">覆盖企业全方位涉诉、行政处罚、经营异常、历史变更等反欺诈刚需指标。</div>
+                                <div class="bundle-tags">
+                                    <span class="mini-tag">涉诉总数</span>
+                                    <span class="mini-tag">被执行人</span>
+                                    <span class="mini-tag">经营异常</span>
+                                    <span class="mini-tag">法人变更次数</span>
+                                    <span class="mini-tag">更多+12</span>
+                                </div>
+                            </div>
+                            <div class="bundle-card">
+                                <div class="bundle-title"><span>🔬</span> 科创资质与无形资产</div>
+                                <div class="bundle-desc">精准识别科技创新能力，包含各级政府资质认定证书及软著专利等知产数量。</div>
+                                <div class="bundle-tags">
+                                    <span class="mini-tag">高新技术企业</span>
+                                    <span class="mini-tag">专精特新</span>
+                                    <span class="mini-tag">有效专利数</span>
+                                    <span class="mini-tag">软著数</span>
+                                    <span class="mini-tag">更多+8</span>
+                                </div>
+                            </div>
+                            <div class="bundle-card">
+                                <div class="bundle-title"><span>💼</span> 经营规模与税务评估</div>
+                                <div class="bundle-desc">评估企业实际经营实力与纳税健康状况（部分数据需特殊接口或用户授权）。</div>
+                                <div class="bundle-tags">
+                                    <span class="mini-tag">注册资本</span>
+                                    <span class="mini-tag">成立年限</span>
+                                    <span class="mini-tag">近三年营收(区间)</span>
+                                    <span class="mini-tag">纳税评级</span>
+                                    <span class="mini-tag">参保人数</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 全量标签池扩展 -->
+                        <div class="tag-group">
+                            <div class="tag-group-title">
+                                <span>基础与经营标签</span>
+                                <label
+                                    style="font-size: 13px; font-weight: normal; cursor: pointer; color: #1890ff;"><input
+                                        type="checkbox" checked style="margin-right: 4px;">全选该组</label>
+                            </div>
+                            <div class="tag-grid">
+                                <div class="tag-item">
+                                    <label class="checkbox-label"><input type="checkbox" checked> 成立年限（年）</label>
+                                    <div class="mask-toggle">
+                                        <div class="mask-option active">脱敏区间</div>
+                                        <div class="mask-option">精确值</div>
+                                    </div>
+                                </div>
+                                <div class="tag-item">
+                                    <label class="checkbox-label"><input type="checkbox" checked> 注册资本金额</label>
+                                    <div class="mask-toggle">
+                                        <div class="mask-option">脱敏区间</div>
+                                        <div class="mask-option active">精确值</div>
+                                    </div>
+                                </div>
+                                <div class="tag-item">
+                                    <label class="checkbox-label"><input type="checkbox" checked> 分支机构数量</label>
+                                </div>
+                                <div class="tag-item">
+                                    <label class="checkbox-label"><input type="checkbox"> 实缴资本</label>
+                                </div>
+                                <div class="tag-item">
+                                    <label class="checkbox-label"><input type="checkbox"> 行业代码(国标大类)</label>
+                                </div>
+                                <div class="tag-item">
+                                    <label class="checkbox-label"><input type="checkbox"> 行业代码(国标中类)</label>
+                                </div>
+                                <div class="tag-item">
+                                    <label class="checkbox-label"><input type="checkbox" checked> 企业状态(在营/吊销等)</label>
+                                </div>
+                                <div class="tag-item" style="border-color: #ffd591; background: #fffbe6;">
+                                    <label class="checkbox-label"><input type="checkbox" checked> 近一年营业收入</label>
+                                    <div class="mask-toggle disabled" title="权限不足，锁定脱敏">
+                                        <div class="mask-option active">脱敏区间</div>
+                                        <div class="mask-option">精确值</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tag-group">
+                            <div class="tag-group-title">
+                                <span>司法与风险</span>
+                                <label
+                                    style="font-size: 13px; font-weight: normal; cursor: pointer; color: #1890ff;"><input
+                                        type="checkbox" checked style="margin-right: 4px;">全选该组</label>
+                            </div>
+                            <div class="tag-grid">
+                                <div class="tag-item from-bundle">
+                                    <label class="checkbox-label"><input type="checkbox" checked disabled> 历史涉诉案件总数
+                                        <span class="bundle-icon" data-tooltip="由 [信用风控排查] 组包自动勾选">ℹ️</span></label>
+                                    <div class="mask-toggle">
+                                        <div class="mask-option active">脱敏区间</div>
+                                        <div class="mask-option">精确值</div>
+                                    </div>
+                                </div>
+                                <div class="tag-item from-bundle" style="border-color: #ffd591; background: #fffbe6;">
+                                    <label class="checkbox-label"><input type="checkbox" checked disabled> 当前被执行金额 <span
+                                            class="bundle-icon" data-tooltip="由 [信用风控排查] 组包自动勾选">ℹ️</span></label>
+                                    <div class="mask-toggle disabled" title="权限不足，锁定脱敏">
+                                        <div class="mask-option active">脱敏区间</div>
+                                        <div class="mask-option">精确值</div>
+                                    </div>
+                                </div>
+                                <div class="tag-item from-bundle">
+                                    <label class="checkbox-label"><input type="checkbox" checked disabled> 是否有失信记录 <span
+                                            class="bundle-icon" data-tooltip="由 [信用风控排查] 组包自动勾选">ℹ️</span></label>
+                                </div>
+                                <div class="tag-item from-bundle">
+                                    <label class="checkbox-label"><input type="checkbox" checked disabled> 行政处罚记录数 <span
+                                            class="bundle-icon" data-tooltip="由 [信用风控排查] 组包自动勾选">ℹ️</span></label>
+                                </div>
+                                <div class="tag-item from-bundle">
+                                    <label class="checkbox-label"><input type="checkbox" checked disabled> 股权出质情况 <span
+                                            class="bundle-icon" data-tooltip="由 [信用风控排查] 组包自动勾选">ℹ️</span></label>
+                                </div>
+                                <div class="tag-item">
+                                    <label class="checkbox-label"><input type="checkbox" checked> 法定代表人变更次数</label>
+                                </div>
+                                <div class="tag-item">
+                                    <label class="checkbox-label"><input type="checkbox"> 借贷纠纷案件数</label>
+                                </div>
+                                <div class="tag-item">
+                                    <label class="checkbox-label"><input type="checkbox"> 买卖合同纠纷案件数</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tag-group">
+                            <div class="tag-group-title">
+                                <span>科创与知识产权</span>
+                                <label
+                                    style="font-size: 13px; font-weight: normal; cursor: pointer; color: #1890ff;"><input
+                                        type="checkbox" style="margin-right: 4px;">全选该组</label>
+                            </div>
+                            <div class="tag-grid">
+                                <div class="tag-item">
+                                    <label class="checkbox-label"><input type="checkbox"> 有效发明专利数</label>
+                                </div>
+                                <div class="tag-item">
+                                    <label class="checkbox-label"><input type="checkbox"> 实用新型专利数</label>
+                                </div>
+                                <div class="tag-item">
+                                    <label class="checkbox-label"><input type="checkbox"> 软件著作权数</label>
+                                </div>
+                                <div class="tag-item">
+                                    <label class="checkbox-label"><input type="checkbox"> 高新技术企业认定标志</label>
+                                </div>
+                                <div class="tag-item">
+                                    <label class="checkbox-label"><input type="checkbox"> 专精特新企业标志</label>
+                                </div>
+                                <div class="tag-item">
+                                    <label class="checkbox-label"><input type="checkbox"> 科技型中小企业标志</label>
+                                </div>
+                                <div class="tag-item">
+                                    <label class="checkbox-label"><input type="checkbox"> 注册商标数量</label>
+                                </div>
+                                <div class="tag-item">
+                                    <label class="checkbox-label"><input type="checkbox"> 核心软著名称列表</label>
+                                    <div class="mask-toggle">
+                                        <div class="mask-option active">只输出总数</div>
+                                        <div class="mask-option">输出明细</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tag-group">
+                            <div class="tag-group-title">
+                                <span>税务、资质与社保</span>
+                                <label
+                                    style="font-size: 13px; font-weight: normal; cursor: pointer; color: #1890ff;"><input
+                                        type="checkbox" style="margin-right: 4px;">全选该组</label>
+                            </div>
+                            <div class="tag-grid">
+                                <div class="tag-item">
+                                    <label class="checkbox-label"><input type="checkbox"> 最新纳税信用评级 (A等)</label>
+                                </div>
+                                <div class="tag-item" style="border-color: #ffd591; background: #fffbe6;">
+                                    <label class="checkbox-label"><input type="checkbox"> 近一年纳税总额</label>
+                                    <div class="mask-toggle disabled" title="权限不足，锁定脱敏">
+                                        <div class="mask-option active">脱敏区间</div>
+                                        <div class="mask-option">精确值</div>
+                                    </div>
+                                </div>
+                                <div class="tag-item">
+                                    <label class="checkbox-label"><input type="checkbox"> 欠税公告金额</label>
+                                </div>
+                                <div class="tag-item">
+                                    <label class="checkbox-label"><input type="checkbox"> 建筑资质证书名称</label>
+                                </div>
+                                <div class="tag-item">
+                                    <label class="checkbox-label"><input type="checkbox"> 医疗器械生产/经营资质</label>
+                                </div>
+                                <div class="tag-item">
+                                    <label class="checkbox-label"><input type="checkbox"> 缴纳社保人数 (最新)</label>
+                                    <div class="mask-toggle">
+                                        <div class="mask-option active">脱敏区间</div>
+                                        <div class="mask-option">精确值</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="panel-footer">
+                        <button class="btn btn-default" onclick="alert('返回至 第一步: 上传名单')">上一步</button>
+                        <button class="btn btn-primary" style="padding: 8px 32px;"
+                            onclick="document.getElementById('mockSubmit').style.display='flex'">提交跑批任务</button>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+
+        <!-- 模拟提交弹窗 -->
+        <div id="mockSubmit"
+            style="display:none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+            <div style="background: #fff; border-radius: 8px; padding: 32px; width: 400px; text-align: center;">
+                <div style="font-size: 48px; margin-bottom: 16px;">🚀</div>
+                <h3 style="margin-bottom: 12px; color: #262626;">跑批任务已提交</h3>
+                <p style="color: #595959; font-size: 14px; margin-bottom: 24px;">文件 <code>需丰富名单_1400.xlsx</code> 及所选 24
+                    个维度标签提取任务已分配至离线计算集群。预计耗时 <strong style="color:#1890ff;">2 分钟</strong>。<br><br>您可离开此页，完成后系统将推送下载链接。
+                </p>
+                <button class="btn btn-primary"
+                    onclick="this.parentElement.parentElement.style.display='none'">前往任务中心查看</button>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

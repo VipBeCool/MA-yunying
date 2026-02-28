@@ -20,11 +20,17 @@
             background: #52c41a;
         }
 
+        /* 预警卡片 */
         .alert-card {
-            padding: 16px;
-            border-radius: 8px;
+            padding: 16px 20px;
+            border-radius: 10px;
             margin-bottom: 12px;
             border-left: 4px solid;
+            transition: all 0.2s;
+        }
+
+        .alert-card:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         }
 
         .alert-card.high {
@@ -41,6 +47,119 @@
             background: #f6ffed;
             border-left-color: #52c41a;
         }
+
+        /* 推送状态标签 */
+        .push-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 500;
+        }
+
+        .push-status.not-pushed {
+            background: #f0f0f0;
+            color: #8c8c8c;
+        }
+
+        .push-status.pushed {
+            background: #d9f7be;
+            color: #389e0d;
+        }
+
+        /* 银行处理反馈 */
+        .bank-feedback {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 500;
+        }
+
+        .bank-feedback.pending {
+            background: #fff7e6;
+            color: #d48806;
+        }
+
+        .bank-feedback.processed {
+            background: #d9f7be;
+            color: #389e0d;
+        }
+
+        .bank-feedback.paused {
+            background: #fff2f0;
+            color: #cf1322;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #52c41a;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 8px;
+            z-index: 9999;
+            font-size: 14px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 联动状态面板 */
+        .sync-panel {
+            background: linear-gradient(135deg, #e6f7ff 0%, #bae7ff 100%);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .sync-panel-title {
+            font-weight: 600;
+            color: #096dd9;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .sync-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            font-size: 13px;
+            border-bottom: 1px solid rgba(24, 144, 255, 0.1);
+        }
+
+        .sync-item:last-child {
+            border-bottom: none;
+        }
+
+        .sync-org {
+            color: #262626;
+            font-weight: 500;
+        }
+
+        .sync-stats {
+            display: flex;
+            gap: 12px;
+            color: #595959;
+        }
     </style>
 </head>
 
@@ -51,31 +170,31 @@
                 <div class="logo-icon">⚙️</div>
                 <h1>运营管控台</h1>
             </div>
+            
             <nav class="nav-menu">
-                <a href="index.html" class="nav-item"><span class="nav-icon">📊</span><span
-                        class="nav-text">运营概览</span></a>
-                <a href="institutions.html" class="nav-item"><span class="nav-icon">🏛️</span><span
-                        class="nav-text">机构管理</span></a>
-                <a href="customer-pool.html" class="nav-item"><span class="nav-icon">🏊</span><span
-                        class="nav-text">客户池</span></a>
-                <a href="products.html" class="nav-item"><span class="nav-icon">📦</span><span
-                        class="nav-text">产品配置</span></a>
-                <a href="rules.html" class="nav-item"><span class="nav-icon">🎯</span><span
-                        class="nav-text">规则引擎</span></a>
-                <a href="distribution.html" class="nav-item"><span class="nav-icon">🔀</span><span
-                        class="nav-text">分发管理</span></a>
-                <a href="analytics.html" class="nav-item"><span class="nav-icon">📈</span><span
-                        class="nav-text">效果分析</span></a>
-                <a href="billing.html" class="nav-item"><span class="nav-icon">💰</span><span
-                        class="nav-text">收费结算</span></a>
-                <a href="reconciliation.html" class="nav-item"><span class="nav-icon">📑</span><span
-                        class="nav-text">对账管理</span></a>
-                <a href="risk-alert.html" class="nav-item active"><span class="nav-icon">⚠️</span><span
-                        class="nav-text">风险预警</span></a>
-                <a href="api-monitor.html" class="nav-item"><span class="nav-icon">🔌</span><span
-                        class="nav-text">API监控</span></a>
-                <a href="downloads.html" class="nav-item"><span class="nav-icon">📥</span><span
-                        class="nav-text">下载中心</span></a>
+                <a href="index.html" class="nav-item "><span class="nav-icon">📊</span><span class="nav-text">运营概览</span></a>
+                
+                <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 8px 16px;"></div>
+                <div style="font-size: 12px; color: rgba(255,255,255,0.45); padding: 8px 24px; margin-top: 4px;">数据交付</div>
+                <a href="smart-search.html" class="nav-item "><span class="nav-icon">🎯</span><span class="nav-text">智能探客</span></a>
+                <a href="batch-enrich.html" class="nav-item "><span class="nav-icon">📑</span><span class="nav-text">批量画像查询</span></a>
+                
+                <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 8px 16px;"></div>
+                <div style="font-size: 12px; color: rgba(255,255,255,0.45); padding: 8px 24px; margin-top: 4px;">业务管理</div>
+                <a href="institutions.html" class="nav-item "><span class="nav-icon">🏛️</span><span class="nav-text">机构管理</span></a>
+                <a href="customer-pool.html" class="nav-item "><span class="nav-icon">🏊</span><span class="nav-text">客户池</span></a>
+                <a href="products.html" class="nav-item "><span class="nav-icon">📦</span><span class="nav-text">产品配置</span></a>
+                <a href="rules.html" class="nav-item "><span class="nav-icon">🎯</span><span class="nav-text">规则引擎</span></a>
+                <a href="distribution.html" class="nav-item "><span class="nav-icon">🔀</span><span class="nav-text">分发管理</span></a>
+                <a href="analytics.html" class="nav-item "><span class="nav-icon">📈</span><span class="nav-text">效果分析</span></a>
+                <a href="billing.html" class="nav-item "><span class="nav-icon">💰</span><span class="nav-text">收费结算</span></a>
+                <a href="reconciliation.html" class="nav-item "><span class="nav-icon">📑</span><span class="nav-text">对账管理</span></a>
+                <a href="risk-alert.html" class="nav-item active"><span class="nav-icon">⚠️</span><span class="nav-text">风险预警</span></a>
+                
+                <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 8px 16px;"></div>
+                <div style="font-size: 12px; color: rgba(255,255,255,0.45); padding: 8px 24px; margin-top: 4px;">系统配置</div>
+                <a href="api-monitor.html" class="nav-item "><span class="nav-icon">🔌</span><span class="nav-text">API监控</span></a>
+                <a href="downloads.html" class="nav-item "><span class="nav-icon">📥</span><span class="nav-text">下载中心</span></a>
             </nav>
             <div class="sidebar-footer">
                 <div class="user-info">
@@ -89,27 +208,33 @@
         </aside>
 
         <main class="main-content">
-            <div class="page-header">
-                <h1 class="page-title">风险预警</h1>
-                <p class="page-breadcrumb"><a href="index.html">运营概览</a> / 风险预警</p>
+            <div class="page-header" style="display:flex;justify-content:space-between;align-items:center;">
+                <div>
+                    <h1 class="page-title">风险预警</h1>
+                    <p class="page-breadcrumb"><a href="index.html">运营概览</a> / 风险预警</p>
+                </div>
+                <div style="display:flex;gap:8px;">
+                    <button class="btn btn-default btn-sm" onclick="markAllRead()">全部标为已读</button>
+                    <button class="btn btn-primary btn-sm" onclick="pushAllToBank()">📤 一键推送未通知预警</button>
+                </div>
             </div>
 
             <!-- 预警概览 -->
             <div class="stat-cards">
                 <div class="stat-card danger">
                     <div class="stat-label">高风险预警</div>
-                    <div class="stat-value">3<span class="stat-suffix">条</span></div>
-                    <div class="stat-trend">需立即处理</div>
+                    <div class="stat-value" id="statHigh">3<span class="stat-suffix">条</span></div>
+                    <div class="stat-trend" style="color:#ff4d4f;">需立即处理</div>
                 </div>
                 <div class="stat-card warning">
                     <div class="stat-label">中风险预警</div>
-                    <div class="stat-value">8<span class="stat-suffix">条</span></div>
-                    <div class="stat-trend">建议关注</div>
+                    <div class="stat-value" id="statMedium">8<span class="stat-suffix">条</span></div>
+                    <div class="stat-trend" style="color:#faad14;">建议关注</div>
                 </div>
                 <div class="stat-card success">
-                    <div class="stat-label">已处理预警</div>
-                    <div class="stat-value">45<span class="stat-suffix">条</span></div>
-                    <div class="stat-trend">本月累计</div>
+                    <div class="stat-label">已推送至银行</div>
+                    <div class="stat-value" id="statPushed">3<span class="stat-suffix">条</span></div>
+                    <div class="stat-trend" style="color:#52c41a;">银行已接收</div>
                 </div>
                 <div class="stat-card primary">
                     <div class="stat-label">监控企业</div>
@@ -124,157 +249,236 @@
                     <div class="card-header">
                         <h3 class="card-title">🚨 实时预警</h3>
                         <span class="card-extra">
-                            <button class="btn btn-text btn-sm">全部标为已读</button>
+                            <button class="btn btn-text btn-sm" onclick="markAllRead()">全部标为已读</button>
                         </span>
                     </div>
-
-                    <!-- 高风险 -->
-                    <div class="alert-card high">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                            <div>
-                                <div style="font-weight: 600;">🔴 苏州某精密机械有限公司</div>
-                                <div style="font-size: 13px; color: #595959; margin-top: 4px;">
-                                    <strong>预警类型：</strong>新增被执行人信息
-                                </div>
-                                <div style="font-size: 12px; color: #8c8c8c; margin-top: 4px;">
-                                    推送机构：江苏银行 | 推送时间：2026-02-01 | 当前状态：已意向
-                                </div>
-                            </div>
-                            <div style="text-align: right;">
-                                <span class="tag tag-red">高风险</span>
-                                <div style="font-size: 11px; color: #8c8c8c; margin-top: 4px;">2小时前</div>
-                            </div>
-                        </div>
-                        <div style="margin-top: 12px; display: flex; gap: 8px;">
-                            <button class="btn btn-primary btn-sm">通知银行</button>
-                            <button class="btn btn-default btn-sm">查看详情</button>
-                            <button class="btn btn-text btn-sm">忽略</button>
-                        </div>
-                    </div>
-
-                    <div class="alert-card high">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                            <div>
-                                <div style="font-weight: 600;">🔴 南京某建材贸易有限公司</div>
-                                <div style="font-size: 13px; color: #595959; margin-top: 4px;">
-                                    <strong>预警类型：</strong>法人变更
-                                </div>
-                                <div style="font-size: 12px; color: #8c8c8c; margin-top: 4px;">
-                                    推送机构：南京银行 | 推送时间：2026-01-28 | 当前状态：已申请
-                                </div>
-                            </div>
-                            <div style="text-align: right;">
-                                <span class="tag tag-red">高风险</span>
-                                <div style="font-size: 11px; color: #8c8c8c; margin-top: 4px;">5小时前</div>
-                            </div>
-                        </div>
-                        <div style="margin-top: 12px; display: flex; gap: 8px;">
-                            <button class="btn btn-primary btn-sm">通知银行</button>
-                            <button class="btn btn-default btn-sm">查看详情</button>
-                            <button class="btn btn-text btn-sm">忽略</button>
-                        </div>
-                    </div>
-
-                    <div class="alert-card medium">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                            <div>
-                                <div style="font-weight: 600;">🟡 常州某电子科技有限公司</div>
-                                <div style="font-size: 13px; color: #595959; margin-top: 4px;">
-                                    <strong>预警类型：</strong>行政处罚（环保）
-                                </div>
-                                <div style="font-size: 12px; color: #8c8c8c; margin-top: 4px;">
-                                    推送机构：苏州农商行 | 推送时间：2026-02-03 | 当前状态：已触达
-                                </div>
-                            </div>
-                            <div style="text-align: right;">
-                                <span class="tag tag-orange">中风险</span>
-                                <div style="font-size: 11px; color: #8c8c8c; margin-top: 4px;">1天前</div>
-                            </div>
-                        </div>
-                        <div style="margin-top: 12px; display: flex; gap: 8px;">
-                            <button class="btn btn-default btn-sm">通知银行</button>
-                            <button class="btn btn-default btn-sm">查看详情</button>
-                            <button class="btn btn-text btn-sm">忽略</button>
-                        </div>
-                    </div>
-
-                    <div class="alert-card medium">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                            <div>
-                                <div style="font-weight: 600;">🟡 无锡某智能装备有限公司</div>
-                                <div style="font-size: 13px; color: #595959; margin-top: 4px;">
-                                    <strong>预警类型：</strong>股权变更
-                                </div>
-                                <div style="font-size: 12px; color: #8c8c8c; margin-top: 4px;">
-                                    推送机构：江苏银行 | 推送时间：2026-01-25 | 当前状态：已授信
-                                </div>
-                            </div>
-                            <div style="text-align: right;">
-                                <span class="tag tag-orange">中风险</span>
-                                <div style="font-size: 11px; color: #8c8c8c; margin-top: 4px;">2天前</div>
-                            </div>
-                        </div>
-                        <div style="margin-top: 12px; display: flex; gap: 8px;">
-                            <button class="btn btn-default btn-sm">通知银行</button>
-                            <button class="btn btn-default btn-sm">查看详情</button>
-                            <button class="btn btn-text btn-sm">忽略</button>
-                        </div>
+                    <div id="alertList">
+                        <!-- 动态渲染 -->
                     </div>
                 </div>
 
-                <!-- 预警类型统计 -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">📊 预警类型分布</h3>
-                    </div>
-                    <div style="display: flex; flex-direction: column; gap: 12px;">
-                        <div
-                            style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #f5f5f5; border-radius: 6px;">
-                            <div>
-                                <div style="font-weight: 500;">司法涉诉</div>
-                                <div style="font-size: 12px; color: #8c8c8c;">被执行人、裁判文书</div>
+                <!-- 右侧面板 -->
+                <div>
+                    <!-- 银行端联动状态 -->
+                    <div class="sync-panel">
+                        <div class="sync-panel-title">🔗 银行端联动状态</div>
+                        <div class="sync-item">
+                            <span class="sync-org">江苏银行</span>
+                            <div class="sync-stats">
+                                <span>推送 <strong>2</strong></span>
+                                <span>待处理 <strong style="color:#faad14;">1</strong></span>
+                                <span>已处理 <strong style="color:#52c41a;">1</strong></span>
                             </div>
-                            <div style="font-size: 20px; font-weight: 600; color: #ff4d4f;">5</div>
                         </div>
-                        <div
-                            style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #f5f5f5; border-radius: 6px;">
-                            <div>
-                                <div style="font-weight: 500;">工商变更</div>
-                                <div style="font-size: 12px; color: #8c8c8c;">法人、股权、经营范围</div>
+                        <div class="sync-item">
+                            <span class="sync-org">南京银行</span>
+                            <div class="sync-stats">
+                                <span>推送 <strong>1</strong></span>
+                                <span>待处理 <strong style="color:#faad14;">1</strong></span>
                             </div>
-                            <div style="font-size: 20px; font-weight: 600; color: #faad14;">3</div>
                         </div>
-                        <div
-                            style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #f5f5f5; border-radius: 6px;">
-                            <div>
-                                <div style="font-weight: 500;">行政处罚</div>
-                                <div style="font-size: 12px; color: #8c8c8c;">环保、税务、市场监管</div>
+                        <div class="sync-item">
+                            <span class="sync-org">苏州农商行</span>
+                            <div class="sync-stats">
+                                <span>推送 <strong>0</strong></span>
+                                <span style="color:#8c8c8c;">未推送1条</span>
                             </div>
-                            <div style="font-size: 20px; font-weight: 600; color: #faad14;">2</div>
-                        </div>
-                        <div
-                            style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #f5f5f5; border-radius: 6px;">
-                            <div>
-                                <div style="font-weight: 500;">经营异常</div>
-                                <div style="font-size: 12px; color: #8c8c8c;">列入异常名录</div>
-                            </div>
-                            <div style="font-size: 20px; font-weight: 600; color: #1890ff;">1</div>
                         </div>
                     </div>
 
-                    <div
-                        style="margin-top: 20px; padding: 16px; background: linear-gradient(135deg, #fff7e6 0%, #ffe7ba 100%); border-radius: 8px;">
-                        <div style="font-weight: 600; color: #d46b08; margin-bottom: 8px;">💡 预警建议</div>
-                        <ul style="margin: 0; padding-left: 20px; font-size: 13px; color: #595959;">
-                            <li>高风险预警建议24小时内通知合作机构</li>
-                            <li>已授信客户出现预警需重点跟踪</li>
-                            <li>连续出现预警的区域/行业需评估规则</li>
-                        </ul>
+                    <!-- 预警类型统计 -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">📊 预警类型分布</h3>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 12px;">
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #f5f5f5; border-radius: 6px;">
+                                <div>
+                                    <div style="font-weight: 500;">司法涉诉</div>
+                                    <div style="font-size: 12px; color: #8c8c8c;">被执行人、裁判文书</div>
+                                </div>
+                                <div style="font-size: 20px; font-weight: 600; color: #ff4d4f;">5</div>
+                            </div>
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #f5f5f5; border-radius: 6px;">
+                                <div>
+                                    <div style="font-weight: 500;">工商变更</div>
+                                    <div style="font-size: 12px; color: #8c8c8c;">法人、股权、经营范围</div>
+                                </div>
+                                <div style="font-size: 20px; font-weight: 600; color: #faad14;">3</div>
+                            </div>
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #f5f5f5; border-radius: 6px;">
+                                <div>
+                                    <div style="font-weight: 500;">行政处罚</div>
+                                    <div style="font-size: 12px; color: #8c8c8c;">环保、税务、市场监管</div>
+                                </div>
+                                <div style="font-size: 20px; font-weight: 600; color: #faad14;">2</div>
+                            </div>
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #f5f5f5; border-radius: 6px;">
+                                <div>
+                                    <div style="font-weight: 500;">经营异常</div>
+                                    <div style="font-size: 12px; color: #8c8c8c;">列入异常名录</div>
+                                </div>
+                                <div style="font-size: 20px; font-weight: 600; color: #1890ff;">1</div>
+                            </div>
+                        </div>
+
+                        <div
+                            style="margin-top: 20px; padding: 16px; background: linear-gradient(135deg, #fff7e6 0%, #ffe7ba 100%); border-radius: 8px;">
+                            <div style="font-weight: 600; color: #d46b08; margin-bottom: 8px;">💡 预警建议</div>
+                            <ul style="margin: 0; padding-left: 20px; font-size: 13px; color: #595959;">
+                                <li>高风险预警建议24小时内通知合作机构</li>
+                                <li>已授信客户出现预警需重点跟踪</li>
+                                <li>连续出现预警的区域/行业需评估规则</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
         </main>
     </div>
+
+    <script>
+        // 预警数据（含推送状态和银行反馈）
+        const alerts = [
+            {
+                id: 1, company: '苏州某精密机械有限公司', level: 'high', levelText: '高风险',
+                type: '新增被执行人信息', org: '江苏银行', pushTime: '2026-02-01',
+                marketingStatus: '已意向', timeAgo: '2小时前',
+                pushed: true, pushedTime: '2026-02-11 14:30',
+                bankFeedback: 'pending', bankFeedbackText: '银行待处理'
+            },
+            {
+                id: 2, company: '南京某建材贸易有限公司', level: 'high', levelText: '高风险',
+                type: '法人变更', org: '南京银行', pushTime: '2026-01-28',
+                marketingStatus: '已申请', timeAgo: '5小时前',
+                pushed: true, pushedTime: '2026-02-10 10:00',
+                bankFeedback: 'pending', bankFeedbackText: '银行待处理'
+            },
+            {
+                id: 3, company: '常州某电子科技有限公司', level: 'medium', levelText: '中风险',
+                type: '行政处罚（环保）', org: '苏州农商行', pushTime: '2026-02-03',
+                marketingStatus: '已触达', timeAgo: '1天前',
+                pushed: false, pushedTime: null,
+                bankFeedback: null, bankFeedbackText: null
+            },
+            {
+                id: 4, company: '无锡某智能装备有限公司', level: 'medium', levelText: '中风险',
+                type: '股权变更', org: '江苏银行', pushTime: '2026-01-25',
+                marketingStatus: '已授信', timeAgo: '2天前',
+                pushed: true, pushedTime: '2026-02-08 16:00',
+                bankFeedback: 'processed', bankFeedbackText: '银行已处理'
+            }
+        ];
+
+        // 渲染预警列表
+        function renderAlerts() {
+            const container = document.getElementById('alertList');
+            container.innerHTML = alerts.map(a => {
+                // 推送状态标签
+                const pushTag = a.pushed
+                    ? `<span class="push-status pushed">✓ 已推送 ${a.pushedTime}</span>`
+                    : `<span class="push-status not-pushed">未推送</span>`;
+
+                // 银行反馈标签
+                let feedbackTag = '';
+                if (a.pushed && a.bankFeedback) {
+                    const cls = a.bankFeedback === 'processed' ? 'processed' : a.bankFeedback === 'paused' ? 'paused' : 'pending';
+                    feedbackTag = `<span class="bank-feedback ${cls}">${a.bankFeedbackText}</span>`;
+                }
+
+                // 通知按钮
+                const pushBtn = a.pushed
+                    ? `<button class="btn btn-default btn-sm" disabled style="opacity:0.5;cursor:default;">✓ 已通知</button>`
+                    : `<button class="btn btn-primary btn-sm" onclick="pushToBank(${a.id})">📤 通知银行</button>`;
+
+                return `
+                <div class="alert-card ${a.level}">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div>
+                            <div style="font-weight: 600;">${a.level === 'high' ? '🔴' : '🟡'} ${a.company}</div>
+                            <div style="font-size: 13px; color: #595959; margin-top: 4px;">
+                                <strong>预警类型：</strong>${a.type}
+                            </div>
+                            <div style="font-size: 12px; color: #8c8c8c; margin-top: 4px;">
+                                推送机构：${a.org} | 推送时间：${a.pushTime} | 当前状态：${a.marketingStatus}
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <span class="tag tag-${a.level === 'high' ? 'red' : 'orange'}">${a.levelText}</span>
+                            <div style="font-size: 11px; color: #8c8c8c; margin-top: 4px;">${a.timeAgo}</div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 10px; display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+                        ${pushTag}
+                        ${feedbackTag}
+                    </div>
+                    <div style="margin-top: 12px; display: flex; gap: 8px;">
+                        ${pushBtn}
+                        <button class="btn btn-default btn-sm">查看详情</button>
+                        <button class="btn btn-text btn-sm">忽略</button>
+                    </div>
+                </div>`;
+            }).join('');
+
+            updateStats();
+        }
+
+        // 推送单条预警至银行
+        function pushToBank(id) {
+            const a = alerts.find(x => x.id === id);
+            if (!a || a.pushed) return;
+            a.pushed = true;
+            a.pushedTime = '2026-02-13 16:12';
+            a.bankFeedback = 'pending';
+            a.bankFeedbackText = '银行待处理';
+            showToast(`已推送「${a.company}」预警至 ${a.org}`);
+            renderAlerts();
+        }
+
+        // 一键推送全部未通知预警
+        function pushAllToBank() {
+            const unpushed = alerts.filter(a => !a.pushed);
+            if (unpushed.length === 0) {
+                showToast('所有预警均已推送');
+                return;
+            }
+            unpushed.forEach(a => {
+                a.pushed = true;
+                a.pushedTime = '2026-02-13 16:12';
+                a.bankFeedback = 'pending';
+                a.bankFeedbackText = '银行待处理';
+            });
+            showToast(`已批量推送 ${unpushed.length} 条预警至对应银行`);
+            renderAlerts();
+        }
+
+        // 全部标为已读
+        function markAllRead() {
+            showToast('已全部标为已读');
+        }
+
+        // 更新统计
+        function updateStats() {
+            const pushed = alerts.filter(a => a.pushed).length;
+            document.getElementById('statPushed').innerHTML = `${pushed}<span class="stat-suffix">条</span>`;
+        }
+
+        // Toast
+        function showToast(msg) {
+            const t = document.createElement('div');
+            t.className = 'toast';
+            t.textContent = '✓ ' + msg;
+            document.body.appendChild(t);
+            setTimeout(() => t.remove(), 2500);
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => renderAlerts());
+    </script>
 </body>
 
 </html>

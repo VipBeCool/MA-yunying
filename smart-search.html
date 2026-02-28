@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能探客 - 智能营销平台</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .sidebar {
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+        }
+
+        .nav-item.active {
+            background: rgba(82, 196, 26, 0.2);
+            border-left-color: #52c41a;
+        }
+
+        .logo-icon {
+            background: #52c41a;
+        }
+
+        /* 探客专属样式 */
+        .search-layout {
+            display: flex;
+            gap: 16px;
+            height: calc(100vh - 120px);
+        }
+
+        /* 左侧策略库 */
+        .strategy-sidebar {
+            width: 240px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .strategy-header {
+            padding: 16px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+        }
+
+        .strategy-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px 0;
+        }
+
+        .strategy-item {
+            padding: 10px 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .strategy-item:hover {
+            background: #f5f5f5;
+        }
+
+        .strategy-item.active {
+            background: #e6f7ff;
+            border-left-color: #1890ff;
+            color: #1890ff;
+        }
+
+        .strategy-icon {
+            color: #8c8c8c;
+        }
+
+        .strategy-item.active .strategy-icon {
+            color: #1890ff;
+        }
+
+        .strategy-group-title {
+            font-size: 12px;
+            color: #8c8c8c;
+            padding: 8px 16px 4px;
+            margin-top: 8px;
+        }
+
+        /* 右侧主工作区 */
+        .search-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            min-width: 0;
+        }
+
+        /* AI 对话框 */
+        .ai-search-box {
+            background: linear-gradient(135deg, #f6ffed 0%, #e6f7ff 100%);
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid #b7eb8f;
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+        }
+
+        .ai-icon {
+            font-size: 24px;
+            background: #fff;
+            padding: 8px;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .ai-input-wrapper {
+            flex: 1;
+            position: relative;
+        }
+
+        .ai-input {
+            width: 100%;
+            padding: 12px 40px 12px 16px;
+            border: 1px solid #d9d9d9;
+            border-radius: 20px;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .ai-input:focus {
+            border-color: #52c41a;
+            box-shadow: 0 0 0 2px rgba(82, 196, 26, 0.2);
+        }
+
+        .ai-submit {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #52c41a;
+            font-size: 16px;
+        }
+
+        .ai-action-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #8c8c8c;
+            font-size: 16px;
+            padding: 4px;
+            transition: color 0.2s;
+        }
+
+        .ai-action-btn:hover {
+            color: #52c41a;
+        }
+
+        .ai-hints {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
+        .ai-hint-tag {
+            font-size: 12px;
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid #d9d9d9;
+            padding: 2px 8px;
+            border-radius: 12px;
+            cursor: pointer;
+            color: #595959;
+        }
+
+        .ai-hint-tag:hover {
+            border-color: #52c41a;
+            color: #52c41a;
+        }
+
+        /* 高级条件组合器 */
+        .query-builder {
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .qb-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .qb-logic-group {
+            border-left: 2px solid #91d5ff;
+            padding-left: 16px;
+            margin-left: 8px;
+            position: relative;
+        }
+
+        .qb-logic-operator {
+            position: absolute;
+            left: -14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #e6f7ff;
+            color: #1890ff;
+            border: 1px solid #91d5ff;
+            font-size: 12px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .qb-rule {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            background: #fafafa;
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 1px solid #f0f0f0;
+        }
+
+        .qb-field {
+            width: 140px;
+        }
+
+        .qb-operator {
+            width: 100px;
+        }
+
+        .qb-value {
+            flex: 1;
+        }
+
+        .qb-action {
+            color: #ff4d4f;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .qb-add-btn {
+            color: #1890ff;
+            cursor: pointer;
+            font-size: 13px;
+            margin-top: 8px;
+            display: inline-block;
+        }
+
+        /* 结果区域 */
+        .result-area {
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .result-stats {
+            color: #595959;
+            font-size: 14px;
+        }
+
+        .result-table-wrapper {
+            flex: 1;
+            overflow: auto;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            background: #f5f5f5;
+            border: 1px solid #d9d9d9;
+            margin-right: 4px;
+        }
+
+        .tag-blue {
+            background: #e6f7ff;
+            border-color: #91d5ff;
+            color: #1890ff;
+        }
+
+        .tag-green {
+            background: #f6ffed;
+            border-color: #b7eb8f;
+            color: #52c41a;
+        }
+
+        .tag-orange {
+            background: #fff7e6;
+            border-color: #ffd591;
+            color: #fa8c16;
+        }
+
+        /* Tabs 面板 */
+        .search-tabs {
+            display: flex;
+            border-bottom: 1px solid #f0f0f0;
+            margin-bottom: 16px;
+        }
+
+        .search-tab {
+            padding: 8px 16px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            color: #595959;
+            margin-right: 16px;
+        }
+
+        .search-tab.active {
+            border-bottom-color: #1890ff;
+            color: #1890ff;
+            font-weight: 500;
+        }
+
+        /* 地图内部 Tabs */
+        .map-tabs {
+            position: absolute;
+            top: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #fff;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            display: flex;
+            overflow: hidden;
+            z-index: 10;
+        }
+
+        .map-tab {
+            padding: 8px 16px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-right: 1px solid #f0f0f0;
+            color: #595959;
+        }
+
+        .map-tab:last-child {
+            border-right: none;
+        }
+
+        .map-tab:hover {
+            background: #fafafa;
+        }
+
+        .map-tab.active {
+            background: #e6f7ff;
+            color: #1890ff;
+            font-weight: 500;
+            box-shadow: inset 0 2px 0 #1890ff;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- 侧边栏 -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <div class="logo-icon">⚙️</div>
+                <h1>运营管控台</h1>
+            </div>
+
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-item "><span class="nav-icon">📊</span><span
+                        class="nav-text">运营概览</span></a>
+
+                <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 8px 16px;"></div>
+                <div style="font-size: 12px; color: rgba(255,255,255,0.45); padding: 8px 24px; margin-top: 4px;">数据交付
+                </div>
+                <a href="smart-search.html" class="nav-item active"><span class="nav-icon">🎯</span><span
+                        class="nav-text">智能探客</span></a>
+                <a href="batch-enrich.html" class="nav-item "><span class="nav-icon">📑</span><span
+                        class="nav-text">批量画像查询</span></a>
+
+                <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 8px 16px;"></div>
+                <div style="font-size: 12px; color: rgba(255,255,255,0.45); padding: 8px 24px; margin-top: 4px;">业务管理
+                </div>
+                <a href="institutions.html" class="nav-item "><span class="nav-icon">🏛️</span><span
+                        class="nav-text">机构管理</span></a>
+                <a href="customer-pool.html" class="nav-item "><span class="nav-icon">🏊</span><span
+                        class="nav-text">客户池</span></a>
+                <a href="products.html" class="nav-item "><span class="nav-icon">📦</span><span
+                        class="nav-text">产品配置</span></a>
+                <a href="rules.html" class="nav-item "><span class="nav-icon">🎯</span><span
+                        class="nav-text">规则引擎</span></a>
+                <a href="distribution.html" class="nav-item "><span class="nav-icon">🔀</span><span
+                        class="nav-text">分发管理</span></a>
+                <a href="analytics.html" class="nav-item "><span class="nav-icon">📈</span><span
+                        class="nav-text">效果分析</span></a>
+                <a href="billing.html" class="nav-item "><span class="nav-icon">💰</span><span
+                        class="nav-text">收费结算</span></a>
+                <a href="reconciliation.html" class="nav-item "><span class="nav-icon">📑</span><span
+                        class="nav-text">对账管理</span></a>
+                <a href="risk-alert.html" class="nav-item "><span class="nav-icon">⚠️</span><span
+                        class="nav-text">风险预警</span></a>
+
+                <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 8px 16px;"></div>
+                <div style="font-size: 12px; color: rgba(255,255,255,0.45); padding: 8px 24px; margin-top: 4px;">系统配置
+                </div>
+                <a href="api-monitor.html" class="nav-item "><span class="nav-icon">🔌</span><span
+                        class="nav-text">API监控</span></a>
+                <a href="downloads.html" class="nav-item "><span class="nav-icon">📥</span><span
+                        class="nav-text">下载中心</span></a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar" style="background: #52c41a;">管</div>
+                    <div>
+                        <div class="user-name">管理员</div>
+                        <div class="user-role">平台运营</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 主内容区 -->
+        <main class="main-content">
+            <div class="page-header"
+                style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom: 20px;">
+                <div>
+                    <h1 class="page-title">智能探客</h1>
+                    <p class="page-breadcrumb"><a href="index.html">数据服务</a> / 智能探客</p>
+                </div>
+                <div>
+                    <button class="btn btn-primary" onclick="alert('结果已准备转入公海客户池')">📥 一键加入客户池</button>
+                </div>
+            </div>
+
+            <div class="search-layout">
+                <!-- 左侧：策略库 -->
+                <div class="strategy-sidebar">
+                    <div class="strategy-header">
+                        <span>我的策略库</span>
+                        <button class="btn btn-text btn-sm" style="padding:0; color:#1890ff;">+ 新建</button>
+                    </div>
+                    <div class="strategy-list">
+                        <div class="strategy-group-title">常用/推荐</div>
+                        <div class="strategy-item active">
+                            <span class="strategy-icon">⭐</span>
+                            <span style="font-size: 13px;">苏南科创智造优企</span>
+                        </div>
+                        <div class="strategy-item">
+                            <span class="strategy-icon">📄</span>
+                            <span style="font-size: 13px;">零诉讼高新企业(注册>500w)</span>
+                        </div>
+
+                        <div class="strategy-group-title">行业专项</div>
+                        <div class="strategy-item">
+                            <span class="strategy-icon">🏭</span>
+                            <span style="font-size: 13px;">专精特新“小巨人”预选</span>
+                        </div>
+                        <div class="strategy-item">
+                            <span class="strategy-icon">💊</span>
+                            <span style="font-size: 13px;">生物医疗领域近三年中标>3次</span>
+                        </div>
+
+                        <div class="strategy-group-title">风控排查</div>
+                        <div class="strategy-item">
+                            <span class="strategy-icon">🛡️</span>
+                            <span style="font-size: 13px;">近期存在高风险变更企业过滤</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 右侧：工作区 -->
+                <div class="search-main">
+
+                    <!-- AI 搜客 -->
+                    <div class="ai-search-box">
+                        <div class="ai-icon">✨</div>
+                        <div style="flex: 1;">
+                            <div
+                                style="font-weight: 500; margin-bottom: 8px; color: #092b00; display: flex; align-items: center; justify-content: space-between;">
+                                <span>AI 自然语言搜客助理</span>
+                                <span
+                                    style="font-size: 12px; color: #8c8c8c; font-weight: normal;">支持文字/语音描述，或直接上传规则提取组合条件</span>
+                            </div>
+                            <div class="ai-input-wrapper"
+                                style="display: flex; gap: 12px; align-items: stretch; background: none; border: none; padding: 0;">
+                                <div style="flex: 1; position: relative;">
+                                    <input type="text" class="ai-input"
+                                        placeholder="请描述您想寻找的客群特征，例如：帮我找出南京市辖区高新技术企业中注册资本大于1000万的..."
+                                        value="帮我寻找苏南地区（宁锡常苏）成立3年以上，拥有专利或者软著的制造业优质企业，要求最近1年内没有失信被执行记录。"
+                                        style="height: 100%; border-radius: 8px;">
+                                </div>
+
+                                <div style="display: flex; gap: 8px;">
+                                    <button class="btn btn-default"
+                                        onclick="alert('系统将解析上传的 PDF/Word 文档中的业务准入描述，转化为下方的具体查询条件。')" title="上传文档自动解析"
+                                        style="display: flex; align-items: center; gap: 6px; padding: 0 16px; border-radius: 8px; color: #595959; height: 100%;">
+                                        <span style="font-size: 16px;">📁</span> 上传规则文档
+                                    </button>
+                                    <button class="btn btn-default" onclick="alert('开始语音倾听...')" title="语音讲述筛客需求"
+                                        style="display: flex; align-items: center; gap: 6px; padding: 0 16px; border-radius: 8px; color: #1890ff; border-color: #91d5ff; background: #e6f7ff; height: 100%;">
+                                        <span style="font-size: 16px;">🎤</span> 语音输入
+                                    </button>
+                                    <button class="btn btn-primary" title="发送给 AI 解析"
+                                        style="display: flex; align-items: center; gap: 6px; padding: 0 24px; border-radius: 8px; height: 100%;">
+                                        <span style="font-size: 16px;">✨</span> AI 智能解析
+                                    </button>
+                                </div>
+                            </div>
+                            <div style="margin-top: 12px;">
+                                <div class="ai-hints">
+                                    <span class="ai-hint-tag">试试："找出园区内有A级纳税人资质的企业"</span>
+                                    <span class="ai-hint-tag">试试："医疗器械行业，近半年有招投标记录的"</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 高级条件组合器 (Query Builder) -->
+                    <div class="query-builder">
+                        <div class="qb-header">
+                            <div style="font-weight: 600;">条件组合 (策略：苏南科创智造优企)</div>
+                            <div>
+                                <button class="btn btn-default btn-sm">清空</button>
+                                <button class="btn btn-primary btn-sm" style="background: #1890ff; color: #fff;">💾
+                                    保存为策略</button>
+                            </div>
+                        </div>
+
+                        <!-- 组合逻辑树展示 -->
+                        <div class="qb-logic-group">
+                            <div class="qb-logic-operator" title="点击切换 AND/OR">AND</div>
+
+                            <!-- 规则：空间地理位置 (新增地图圈选) -->
+                            <div class="qb-rule" style="background: #e6f7ff; border-color: #91d5ff;">
+                                <select class="form-control qb-field"
+                                    style="width: 120px; font-weight: 500; color: #096dd9;">
+                                    <optgroup label="空间位置">
+                                        <option value="map_area" selected>地图空间选区</option>
+                                    </optgroup>
+                                </select>
+                                <select class="form-control qb-operator" style="width: 100px;">
+                                    <option value="in" selected>坐落于</option>
+                                </select>
+                                <div class="qb-value" style="display: flex; align-items: center; gap: 8px;">
+                                    <div id="mapConditionDisplay"
+                                        style="background: #fff; border: 1px dashed #91d5ff; padding: 4px 12px; border-radius: 4px; font-size: 13px; color: #1890ff;">
+                                        暂无选区</div>
+                                    <button class="btn btn-primary btn-sm"
+                                        onclick="document.getElementById('mapModal').style.display='flex'">🗺️
+                                        唤起地图圈选</button>
+                                </div>
+                                <div class="qb-action">✕</div>
+                            </div>
+
+                            <!-- 规则 1 -->
+                            <div class="qb-rule">
+                                <select class="form-control qb-field" style="width: 120px;">
+                                    <optgroup label="基础范围">
+                                        <option value="region" selected>注册地(行政区划)</option>
+                                        <option value="industry">所属行业</option>
+                                    </optgroup>
+                                </select>
+                                <select class="form-control qb-operator" style="width: 100px;">
+                                    <option value="in" selected>包含于</option>
+                                    <option value="notin">不包含于</option>
+                                </select>
+                                <div class="qb-value">
+                                    <span class="tag">南京市 ✕</span><span class="tag">苏州市 ✕</span><span class="tag">无锡市
+                                        ✕</span><span class="tag">常州市 ✕</span>
+                                    <button class="btn btn-text btn-sm" style="padding: 0">+ 选择</button>
+                                </div>
+                                <div class="qb-action">✕</div>
+                            </div>
+
+                            <!-- 规则 2 -->
+                            <div class="qb-rule">
+                                <select class="form-control qb-field" style="width: 120px;">
+                                    <optgroup label="基础维度">
+                                        <option value="age" selected>成立年限</option>
+                                        <option value="capital">注册资本</option>
+                                    </optgroup>
+                                </select>
+                                <select class="form-control qb-operator" style="width: 100px;">
+                                    <option value=">=" selected>大于等于</option>
+                                </select>
+                                <div class="qb-value">
+                                    <input type="number" class="form-control" value="3"
+                                        style="width: 100px; display: inline-block;"> 年
+                                </div>
+                                <div class="qb-action">✕</div>
+                            </div>
+
+                            <!-- 嵌套组合组: OR 逻辑 (科创能力) -->
+                            <div class="qb-logic-group"
+                                style="border-left-color: #ffd591; margin-top: 12px; margin-bottom: 12px;">
+                                <div class="qb-logic-operator"
+                                    style="background: #fff7e6; color: #fa8c16; border-color: #ffd591;">OR</div>
+
+                                <div class="qb-rule">
+                                    <select class="form-control qb-field" style="width: 120px;">
+                                        <optgroup label="无形资产">
+                                            <option value="patent" selected>专利数量</option>
+                                            <option value="copyright">软著数量</option>
+                                        </optgroup>
+                                    </select>
+                                    <select class="form-control qb-operator" style="width: 100px;">
+                                        <option value=">" selected>大于</option>
+                                    </select>
+                                    <div class="qb-value">
+                                        <input type="number" class="form-control" value="0" style="width: 100px;">
+                                    </div>
+                                    <div class="qb-action">✕</div>
+                                </div>
+
+                                <div class="qb-rule">
+                                    <select class="form-control qb-field" style="width: 120px;">
+                                        <optgroup label="科技认定">
+                                            <option value="high_tech" selected>企业荣誉资质</option>
+                                        </optgroup>
+                                    </select>
+                                    <select class="form-control qb-operator" style="width: 100px;">
+                                        <option value="has" selected>包含特征</option>
+                                    </select>
+                                    <div class="qb-value">
+                                        <span class="tag">高新技术企业 ✕</span>
+                                        <span class="tag">科技型中小企业 ✕</span>
+                                        <button class="btn btn-text btn-sm" style="padding: 0">+ 添加资质类别</button>
+                                    </div>
+                                    <div class="qb-action">✕</div>
+                                </div>
+                                <div class="qb-add-btn">+ 添加条件 (OR)</div>
+                            </div>
+                            <!-- 嵌套组合组 END -->
+
+                            <!-- 规则 3 (负面过滤) -->
+                            <div class="qb-rule" style="background: #fff1f0; border-color: #ffccc7;">
+                                <select class="form-control qb-field" style="width: 120px;">
+                                    <optgroup label="司法黑名单">
+                                        <option value="dishonest" selected>被执行人记录</option>
+                                        <option value="tax_abnormal">税务异常</option>
+                                    </optgroup>
+                                </select>
+                                <select class="form-control qb-operator" style="width: 100px;">
+                                    <option value="none_in" selected>近期无该记录</option>
+                                </select>
+                                <div class="qb-value">
+                                    <select class="form-control" style="width: 100px; display: inline-block;">
+                                        <option value="1y" selected>近 1 年</option>
+                                        <option value="all">历史全部</option>
+                                    </select>
+                                </div>
+                                <div class="qb-action">✕</div>
+                            </div>
+
+                            <div class="qb-add-btn">+ 添加条件 (AND)</div>
+                            <div class="qb-add-btn" style="margin-left: 16px; color: #fa8c16;">+ 添加组合规则组</div>
+                        </div>
+
+                        <div style="margin-top: 16px; text-align: center;">
+                            <button class="btn btn-primary" style="padding: 8px 32px;">🔍 立即精确查询</button>
+                        </div>
+                    </div>
+
+                    <!-- 结果区域 -->
+                    <div class="result-area">
+                        <div class="result-header">
+                            <h3 class="card-title">筛选结果</h3>
+                            <div class="result-stats">
+                                命中企业 <strong style="color: #1890ff; font-size: 18px;">1,245</strong> 家，约占库内企业总数 0.008%
+                            </div>
+                            <div>
+                                <button class="btn btn-default btn-sm">⬇️ 导出数据</button>
+                            </div>
+                        </div>
+                        <div class="result-table-wrapper">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>公司名称</th>
+                                        <th>法定代表人</th>
+                                        <th>成立年限</th>
+                                        <th>注册资本</th>
+                                        <th>所属地</th>
+                                        <th>画像标签</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td style="color: #1890ff; font-weight: 500;">南京某瑞智能科技有限公司</td>
+                                        <td>张*</td>
+                                        <td>4.5 年</td>
+                                        <td>1000万元</td>
+                                        <td>南京市 江宁区</td>
+                                        <td>
+                                            <span class="tag tag-blue">高新</span>
+                                            <span class="tag tag-green">专利(12)</span>
+                                            <span class="tag tag-orange">软著(5)</span>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-text btn-sm">查看画像</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="color: #1890ff; font-weight: 500;">苏州某精密机床制造有限公司</td>
+                                        <td>李*</td>
+                                        <td>8 年</td>
+                                        <td>5000万元</td>
+                                        <td>苏州市 吴中区</td>
+                                        <td>
+                                            <span class="tag tag-blue">专精特新</span>
+                                            <span class="tag tag-green">专利(45)</span>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-text btn-sm">查看画像</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="color: #1890ff; font-weight: 500;">无锡某新材料科技有限责任公司</td>
+                                        <td>王*</td>
+                                        <td>3.2 年</td>
+                                        <td>800万元</td>
+                                        <td>无锡市 锡山区</td>
+                                        <td>
+                                            <span class="tag tag-blue">科技型中小</span>
+                                            <span class="tag tag-orange">软著(8)</span>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-text btn-sm">查看画像</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="color: #1890ff; font-weight: 500;">常州某医疗器械股份公司</td>
+                                        <td>陈*</td>
+                                        <td>12 年</td>
+                                        <td>2000万元</td>
+                                        <td>常州市 武进区</td>
+                                        <td>
+                                            <span class="tag tag-blue">高新</span>
+                                            <span class="tag tag-green">专利(21)</span>
+                                            <span class="tag tag-orange">A级纳税</span>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-text btn-sm">查看画像</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-top: 16px; padding-bottom: 24px;">
+                            <span style="color: #8c8c8c; font-size: 13px;">共 1,245 条，每页展示 10 条</span>
+                            <div class="pagination">
+                                <button class="btn btn-default btn-sm" disabled>&lt;</button>
+                                <button class="btn btn-primary btn-sm">1</button>
+                                <button class="btn btn-default btn-sm">2</button>
+                                <button class="btn btn-default btn-sm">3</button>
+                                <button class="btn btn-default btn-sm">...</button>
+                                <button class="btn btn-default btn-sm">125</button>
+                                <button class="btn btn-default btn-sm">&gt;</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 地图圈选弹窗 -->
+    <div id="mapModal"
+        style="display:none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; align-items: center; justify-content: center;">
+        <div
+            style="background: #fff; border-radius: 8px; width: 800px; height: 600px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+            <div
+                style="padding: 16px 24px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="margin: 0; font-size: 16px;">🗺️ 空间位置/园区圈选</h3>
+                <button class="btn btn-text" onclick="document.getElementById('mapModal').style.display='none'"
+                    style="font-size: 20px; line-height: 1; padding: 0; color: #8c8c8c; cursor: pointer;">&times;</button>
+            </div>
+            <div
+                style="flex: 1; position: relative; background: #e6f7ff url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PHBhdGggZD0iTTAgMGg0MHY0MEgweiIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik0wIDM5LTVoNDB2MUgweiIgZmlsbD0icmdiYSgwLDAsMCwwLjA1KSIvPjxwYXRoIGQ9MzkuNSAwdjQwaDFIMHoiIGZpbGw9InJnYmEwLDAsMCwwLjA1KSIvPjwvc3ZnPg==') repeat; overflow: hidden;">
+
+                <!-- 居中 Tabs 切换栏 -->
+                <div class="map-tabs">
+                    <div class="map-tab active"
+                        onclick="document.querySelectorAll('.map-tab').forEach(el=>el.classList.remove('active')); this.classList.add('active'); alert('已切换至：实时框/圈选模式')">
+                        ⭕ 圈选模式</div>
+                    <div class="map-tab"
+                        onclick="document.querySelectorAll('.map-tab').forEach(el=>el.classList.remove('active')); this.classList.add('active'); alert('已切换至：自由拖动视角模式')">
+                        🖐️ 拖动模式</div>
+                    <div class="map-tab"
+                        onclick="document.querySelectorAll('.map-tab').forEach(el=>el.classList.remove('active')); this.classList.add('active'); alert('已开启：地图打点人工标记位置')">
+                        📍 手动标记</div>
+                    <div class="map-tab"
+                        onclick="document.querySelectorAll('.map-tab').forEach(el=>el.classList.remove('active')); this.classList.add('active'); alert('基于行政区划：按市/区/街道批量覆盖全域')">
+                        🌐 选择区域</div>
+                    <div class="map-tab"
+                        onclick="let d = document.getElementById('parkList'); d.style.display = d.style.display === 'block' ? 'none' : 'block';">
+                        🏭 选择园区 ▾</div>
+                </div>
+
+                <!-- 模拟园区下拉面板 -->
+                <div id="parkList"
+                    style="display:none; position: absolute; top: 56px; left: 50%; width: 200px; max-height: 200px; overflow: auto; z-index: 10; background: #fff; border-radius: 4px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+                    <div style="padding: 8px 12px; font-size: 13px; border-bottom: 1px solid #f0f0f0; cursor: pointer;"
+                        onclick="alert('已勾选：苏州工业园区'); this.parentNode.style.display='none'">苏州工业园区</div>
+                    <div style="padding: 8px 12px; font-size: 13px; border-bottom: 1px solid #f0f0f0; cursor: pointer;"
+                        onclick="alert('已勾选：南京软件谷'); this.parentNode.style.display='none'">南京产业园</div>
+                </div>
+
+                <!-- 模拟真实的“圈选”体感：一个大圆环叠加定位标识 -->
+                <div
+                    style="position: absolute; top: 120px; left: 150px; width: 400px; height: 350px; border: 3px solid #1890ff; border-radius: 50%; background: radial-gradient(circle, rgba(24,144,255,0.05) 0%, rgba(24,144,255,0.2) 100%); display: flex; align-items: center; justify-content: center; flex-direction: column; z-index: 5; box-shadow: 0 0 0 9999px rgba(0,0,0,0.15);">
+                    <div style="font-size: 32px; filter: drop-shadow(0 4px 4px rgba(0,0,0,0.2));">📍</div>
+                    <div
+                        style="background: rgba(255,255,255,0.9); padding: 8px 16px; border-radius: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-top: 12px; text-align: center;">
+                        <div style="color: #1890ff; font-weight: bold; font-size: 16px; margin-bottom: 4px;">自定义圈选区域
+                        </div>
+                        <div style="color: #595959; font-size: 12px;">预计覆盖有效市场主体 <strong
+                                style="color:#fa8c16">8,340</strong> 家</div>
+                        <div style="color: #8c8c8c; font-size: 11px; margin-top: 4px;">当前半径: 5.2 km</div>
+                    </div>
+
+                    <!-- 模拟圈选控制点 -->
+                    <div
+                        style="position: absolute; right: -8px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; background: #fff; border: 2px solid #1890ff; border-radius: 50%; cursor: ew-resize; box-shadow: 0 1px 3px rgba(0,0,0,0.2);">
+                    </div>
+                </div>
+            </div>
+            <div
+                style="padding: 16px 24px; border-top: 1px solid #f0f0f0; background: #fafafa; display: flex; justify-content: space-between; align-items: center;">
+                <div style="font-size: 13px; color: #595959;">当前检索：包含 <strong style="color: #1890ff;">1</strong>
+                    个自定义圈划范围</div>
+                <div>
+                    <button class="btn btn-default"
+                        onclick="document.getElementById('mapModal').style.display='none'">取消返回</button>
+                    <button class="btn btn-primary"
+                        onclick="document.getElementById('mapModal').style.display='none'; document.getElementById('mapConditionDisplay').innerHTML='🗺️ 已选：1处自定义地理围栏'">确认并应用至筛选条件</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
