@@ -267,10 +267,8 @@
             border-radius: 8px;
             padding: 20px;
             box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
-            flex: 1;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
         }
 
         .result-header {
@@ -493,6 +491,8 @@
                 <!-- 右侧：工作区 -->
                 <div class="search-main">
 
+
+
                     <!-- AI 搜客 -->
                     <div class="ai-search-box">
                         <div class="ai-icon">✨</div>
@@ -537,13 +537,28 @@
                         </div>
                     </div>
 
+                    <!-- 数据源选择区 (还原至条件组合上方) -->
+                    <div
+                        style="background: #fff; padding: 16px 24px; border-radius: 8px; border: 1px solid #f0f0f0; margin-bottom: 16px; display: flex; align-items: center;">
+                        <span style="font-weight: 600; font-size: 15px; margin-right: 16px;">🎯 检索数据源</span>
+                        <div class="btn-group" style="display: inline-flex;">
+                            <button class="btn btn-primary btn-sm"
+                                style="border-radius: 4px 0 0 4px; box-shadow: none; z-index: 1;">🌐 平台全域数据库
+                                (1400万+)</button>
+                            <button class="btn btn-default btn-sm" style="border-radius: 0 4px 4px 0; border-left: 0;"
+                                onclick="alert('请选择并上传您的存量企业名单（Excel/CSV格式）。\n\n上传后，系统将仅在该私域名单范围内进行极速过滤与数据增信。')">📁
+                                导入外部私域名单...</button>
+                        </div>
+                    </div>
+
                     <!-- 高级条件组合器 (Query Builder) -->
                     <div class="query-builder">
                         <div class="qb-header">
                             <div style="font-weight: 600;">条件组合 (策略：苏南科创智造优企)</div>
                             <div>
                                 <button class="btn btn-default btn-sm">清空</button>
-                                <button class="btn btn-primary btn-sm" style="background: #1890ff; color: #fff;">💾
+                                <button class="btn btn-primary btn-sm" style="background: #1890ff; color: #fff;"
+                                    onclick="document.getElementById('saveStrategyModal').style.display='flex'">💾
                                     保存为策略</button>
                             </div>
                         </div>
@@ -678,13 +693,46 @@
                             <div class="qb-add-btn" style="margin-left: 16px; color: #fa8c16;">+ 添加组合规则组</div>
                         </div>
 
+                        <!-- 阶段八新增：输出字段控制 -->
+                        <div style="margin-top: 24px; padding-top: 16px; border-top: 1px dashed #f0f0f0;">
+                            <div style="font-weight: 500; font-size: 14px; margin-bottom: 12px; color: #262626;">
+                                🛠️ 指定后续输出画像字段 (查询结果带回)
+                            </div>
+                            <div
+                                style="background: #fafafa; border: 1px solid #e8e8e8; border-radius: 4px; padding: 12px; font-size: 13px;">
+                                <div style="margin-bottom: 12px;">
+                                    <span style="display: inline-block; width: 68px; color: #8c8c8c;">必带信息：</span>
+                                    <label style="margin-right: 16px; color: #8c8c8c; cursor: not-allowed;"><input
+                                            type="checkbox" checked disabled style="margin-right: 4px;">企业主体名称</label>
+                                    <label style="color: #8c8c8c; cursor: not-allowed;"><input type="checkbox" checked
+                                            disabled style="margin-right: 4px;">统一社会信用代码</label>
+                                </div>
+                                <div style="display: flex; align-items: flex-start;">
+                                    <span
+                                        style="display: inline-block; width: 68px; color: #8c8c8c; margin-top: 2px;">加载画像：</span>
+                                    <div style="flex: 1; display: flex; flex-wrap: wrap; gap: 8px 16px;">
+                                        <label><input type="checkbox" checked style="margin-right: 4px;">成立年限</label>
+                                        <label><input type="checkbox" checked style="margin-right: 4px;">注册资本</label>
+                                        <label><input type="checkbox" checked style="margin-right: 4px;">所属地分析</label>
+                                        <label><input type="checkbox" checked style="margin-right: 4px;">高新企业资质</label>
+                                        <label><input type="checkbox" style="margin-right: 4px;">专利及软著信息</label>
+                                        <label><input type="checkbox" style="margin-right: 4px;">涉诉黑名单记录</label>
+                                        <label><input type="checkbox" style="margin-right: 4px;">税务评级及异常</label>
+                                        <a href="#" style="color: #1890ff; align-self: center;">+ 从全体画像标签库追加更多...</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div style="margin-top: 16px; text-align: center;">
-                            <button class="btn btn-primary" style="padding: 8px 32px;">🔍 立即精确查询</button>
+                            <button class="btn btn-primary" style="padding: 8px 32px;"
+                                onclick="document.getElementById('queryConfirmModal').style.display='flex'">🔍
+                                开始探查</button>
                         </div>
                     </div>
 
-                    <!-- 结果区域 -->
-                    <div class="result-area">
+                    <!-- 结果区域 (初始屏蔽，跑批后可见) -->
+                    <div class="result-area" style="display: none;">
                         <div class="result-header">
                             <h3 class="card-title">筛选结果</h3>
                             <div class="result-stats">
@@ -694,7 +742,7 @@
                                 <button class="btn btn-default btn-sm">⬇️ 导出数据</button>
                             </div>
                         </div>
-                        <div class="result-table-wrapper">
+                        <div class="result-table-wrapper" style="flex: 1; overflow-y: auto; max-height: 380px;">
                             <table class="table">
                                 <thead>
                                     <tr>
@@ -819,6 +867,9 @@
                     <div class="map-tab"
                         onclick="let d = document.getElementById('parkList'); d.style.display = d.style.display === 'block' ? 'none' : 'block';">
                         🏭 选择园区 ▾</div>
+                    <div class="map-tab"
+                        onclick="let d = document.getElementById('branchPanel'); d.style.display = d.style.display === 'block' ? 'none' : 'block'; document.querySelectorAll('.map-tab').forEach(el=>el.classList.remove('active')); this.classList.add('active');">
+                        🏦 网点导流 ▾</div>
                 </div>
 
                 <!-- 模拟园区下拉面板 -->
@@ -828,6 +879,25 @@
                         onclick="alert('已勾选：苏州工业园区'); this.parentNode.style.display='none'">苏州工业园区</div>
                     <div style="padding: 8px 12px; font-size: 13px; border-bottom: 1px solid #f0f0f0; cursor: pointer;"
                         onclick="alert('已勾选：南京软件谷'); this.parentNode.style.display='none'">南京产业园</div>
+                </div>
+
+                <!-- 网点导流面板 -->
+                <div id="branchPanel"
+                    style="display:none; position: absolute; top: 56px; left: 60%; width: 280px; z-index: 10; background: #fff; border-radius: 4px; box-shadow: 0 2px 12px rgba(0,0,0,0.15); padding: 16px;">
+                    <div style="margin-bottom: 12px;">
+                        <div style="font-size: 13px; color: #595959; margin-bottom: 6px;">1. 选择中心网点：</div>
+                        <input type="text" class="form-control" placeholder="搜索分理处/支行名称..." value="星海广场支行"
+                            style="width: 100%; border-radius: 4px; border: 1px solid #d9d9d9; padding: 6px 8px; font-size: 13px;">
+                    </div>
+                    <div>
+                        <div style="font-size: 13px; color: #595959; margin-bottom: 6px;">2. 设定覆盖辐射半径 (km)：</div>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="number" class="form-control" value="3.5"
+                                style="width: 80px; border-radius: 4px; border: 1px solid #d9d9d9; padding: 6px 8px; font-size: 13px;">
+                            <button class="btn btn-primary btn-sm" style="flex: 1;"
+                                onclick="alert('已锁定中心：星海广场支行\n设定目标辐射半径：3.5公里'); this.parentNode.parentNode.parentNode.style.display='none';">锁定画圆</button>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- 模拟真实的“圈选”体感：一个大圆环叠加定位标识 -->
@@ -863,6 +933,92 @@
         </div>
     </div>
 
+    <!-- 拦击跑批确认弹窗 -->
+    <div id="queryConfirmModal"
+        style="display:none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1050; align-items: center; justify-content: center;">
+        <div
+            style="background: #fff; border-radius: 8px; width: 480px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.15); animation: fade-in 0.2s ease-out;">
+            <div
+                style="padding: 16px 24px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="margin: 0; font-size: 16px; color: #fa8c16; display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 18px;">⚠️</span> 数据拉取确认
+                </h3>
+                <button class="btn btn-text" onclick="document.getElementById('queryConfirmModal').style.display='none'"
+                    style="font-size: 20px; line-height: 1; padding: 0; color: #8c8c8c; cursor: pointer;">&times;</button>
+            </div>
+            <div style="padding: 24px;">
+                <div style="margin-bottom: 16px; font-size: 14px; line-height: 1.6; color: #595959;">
+                    当前组合条件已完成初步极速推演，在大规模拉取全量明细列表前请确认：
+                </div>
+                <div style="background: #e6f7ff; padding: 16px; border-radius: 6px; border: 1px solid #91d5ff;">
+                    <div
+                        style="display: flex; justify-content: space-between; margin-bottom: 12px; align-items: center;">
+                        <span style="color: #096dd9;">📌 预估命中主体：</span>
+                        <strong style="color: #1890ff; font-size: 20px;">1,245 家</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 13px;">
+                        <span style="color: #595959;">📊 输出指标维度：</span>
+                        <strong style="color: #595959;">单家最大包含 45 项标签</strong>
+                    </div>
+                </div>
+            </div>
+            <div
+                style="padding: 16px 24px; border-top: 1px solid #f0f0f0; background: #fafafa; display: flex; justify-content: flex-end; gap: 12px;">
+                <button class="btn btn-default"
+                    onclick="document.getElementById('queryConfirmModal').style.display='none'">调整规则</button>
+                <button class="btn btn-primary"
+                    onclick="document.getElementById('queryConfirmModal').style.display='none'; document.querySelector('.result-area').style.display='flex'; document.querySelector('.result-area').scrollIntoView({behavior: 'smooth'})">🚀
+                    确认拉取</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 保存为策略弹窗 -->
+    <div id="saveStrategyModal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.45); z-index: 1000; justify-content: center; align-items: center;">
+        <div
+            style="background: #fff; width: 480px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); overflow: hidden; display: flex; flex-direction: column;">
+            <div
+                style="padding: 16px 24px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="margin: 0; font-size: 16px; color: #262626; display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 18px;">💾</span> 保存为策略
+                </h3>
+                <button class="btn btn-text" onclick="document.getElementById('saveStrategyModal').style.display='none'"
+                    style="font-size: 20px; line-height: 1; padding: 0; color: #8c8c8c; cursor: pointer;">&times;</button>
+            </div>
+            <div style="padding: 24px; font-size: 14px; color: #595959;">
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; margin-bottom: 8px; color: #262626;"><span
+                            style="color: #ff4d4f; font-family: SimSun;">*</span> 策略名称</label>
+                    <input type="text" id="strategyNameInput" class="form-control" placeholder="例如：苏南科创智造优企"
+                        style="width: 100%; box-sizing: border-box;">
+                </div>
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; margin-bottom: 8px; color: #262626;"><span
+                            style="color: #ff4d4f; font-family: SimSun;">*</span> 保存分组</label>
+                    <select class="form-control" style="width: 100%; box-sizing: border-box;">
+                        <option value="推荐">常用/推荐</option>
+                        <option value="行业">行业专项</option>
+                        <option value="风控">风控排查</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 8px; color: #262626;">策略描述 (选填)</label>
+                    <textarea class="form-control" rows="3" placeholder="简要描述该策略覆盖的客群特征或业务意图..."
+                        style="width: 100%; resize: none; box-sizing: border-box; font-family: inherit; font-size: 14px; padding: 6px 11px;"></textarea>
+                </div>
+            </div>
+            <div
+                style="padding: 16px 24px; border-top: 1px solid #f0f0f0; background: #fafafa; display: flex; justify-content: flex-end; gap: 12px;">
+                <button class="btn btn-default"
+                    onclick="document.getElementById('saveStrategyModal').style.display='none'">取消</button>
+                <button class="btn btn-primary"
+                    onclick="alert('策略「' + (document.getElementById('strategyNameInput').value || '未命名') + '」已成功保存至策略库！'); document.getElementById('saveStrategyModal').style.display='none'">确定保存</button>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>
+
+```
