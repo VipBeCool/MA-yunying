@@ -759,6 +759,7 @@
         </div>
     </div>
 
+    <script src="../js/contact-config.js"></script>
     <script>
         // Mock 数据
         const mockData = [
@@ -878,6 +879,95 @@
                 ⏱ 冷却期截止：<strong>${d.coolingUntil}</strong>
             </div>`;
             }
+
+            // 新增触达路径推荐 - 使用共享 contact-config.js
+            var aVis = MOCK_CONTACT_PATHS.slice(0,3).map(function(p, i){return window.buildContactCard(p, i)}).join('');
+            var aHid = MOCK_CONTACT_PATHS.slice(3).map(function(p, i){return window.buildContactCard(p, i + 3)}).join('');
+            var aHidN = MOCK_CONTACT_PATHS.length - 3;
+
+            html += `<div class="section-title">📞 触达路径推荐</div>
+            <div id="adminTabsContainer_${d.id}">
+                <div style="display:flex; border-bottom: 1px solid #f0f0f0; margin-bottom: 12px;">
+                    <div class="contact-tab-btn" style="padding: 6px 14px; border-bottom: 2px solid #1890ff; color: #1890ff; font-weight: 500; cursor: pointer; font-size: 12px;" onclick="window.switchContactTab(this, 'contactsTab_admin_${d.id}', 'adminTabsContainer_${d.id}')">🏢 本企直接触达</div>
+                    <div class="contact-tab-btn" style="padding: 6px 14px; color: #595959; font-weight: 500; cursor: pointer; font-size: 12px;" onclick="window.switchContactTab(this, 'relEnterpriseTab_admin_${d.id}', 'adminTabsContainer_${d.id}')">🕸️ 关联企业触达</div>
+                    <div class="contact-tab-btn" style="padding: 6px 14px; color: #595959; font-weight: 500; cursor: pointer; font-size: 12px;" onclick="window.switchContactTab(this, 'associationTab_admin_${d.id}', 'adminTabsContainer_${d.id}')">🔗 行内存量关联</div>
+                </div>
+
+                <div id="contactsTab_admin_${d.id}" class="contact-tab-panel">
+                    <div style="font-size:11px;color:#bfbfbf;margin-bottom:10px;display:flex;align-items:center;gap:5px;">
+                        <span style="display:inline-block;width:4px;height:4px;background:#bfbfbf;border-radius:50%;"></span>
+                        以下角色及排序由系统基于多源数据综合推测，仅供参考
+                    </div>
+                    ${aVis}
+                    <div id="moreContactsAdmin_${d.id}" style="display:none;">
+                        ${aHid}
+                    </div>
+                    <div style="text-align:center;margin-bottom:20px;">
+                        <a href="javascript:void(0)" data-count="${aHidN}" onclick="window.toggleMoreContacts(this, 'moreContactsAdmin_${d.id}')" style="font-size:12px;color:#1890ff;text-decoration:none;padding:5px 16px;background:#e6f7ff;border-radius:16px;display:inline-block;">🔽 展开更多 (${aHidN})</a>
+                    </div>
+                </div>
+
+                <div id="relEnterpriseTab_admin_${d.id}" class="contact-tab-panel" style="display:none; margin-bottom: 20px;">
+                    <div style="font-size:11px;color:#bfbfbf;margin-bottom:10px;display:flex;align-items:center;gap:5px;">
+                      <span style="display:inline-block;width:4px;height:4px;background:#bfbfbf;border-radius:50%;"></span>
+                      当本企业无法取得联系时，可尝试通过以下强关联企业建立沟通
+                    </div>
+                    
+                    <div style="padding:12px 14px;background:#fafafa;border:1px solid #f0f0f0;border-radius:10px;margin-bottom:10px;">
+                      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+                        <div>
+                          <div style="font-size:13px;font-weight:600;color:#262626;">无锡市智云科技有限公司</div>
+                          <div style="font-size:10px;color:#722ed1;margin-top:4px;background:#f9f0ff;display:inline-block;padding:2px 6px;border-radius:4px;border:1px solid #d3adf7;">关联关系：控股股东 (持股65%)</div>
+                        </div>
+                        <button style="background:#fff;border:1px solid #d9d9d9;color:#595959;border-radius:4px;padding:3px 10px;font-size:11px;cursor:pointer;" onclick="alert('即将跳转至该企业画像页')">查看画像</button>
+                      </div>
+                      <div style="border-top:1px dashed #e8e8e8;padding-top:8px;">
+                        <div style="display:flex;align-items:center;gap:10px;font-size:13px;">
+                           <span style="color:#1890ff;font-weight:600;">139****8888</span>
+                           <span style="cursor:pointer;opacity:0.5;font-size:12px;" onclick="window.togglePhone(this, '139****8888', '13988888888')">👁️</span>
+                           <span style="font-size:10px;background:#e6f7ff;color:#1890ff;padding:2px 6px;border-radius:4px;border:1px solid #91d5ff;">[企业法人/实控人] 李总</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div style="padding:12px 14px;background:#fafafa;border:1px solid #f0f0f0;border-radius:10px;margin-bottom:10px;">
+                      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+                        <div>
+                          <div style="font-size:13px;font-weight:600;color:#262626;">苏州工业园区智云软件服务中心</div>
+                          <div style="font-size:10px;color:#fa8c16;margin-top:4px;background:#fff7e6;display:inline-block;padding:2px 6px;border-radius:4px;border:1px solid #ffd591;">关联关系：同法定代表人</div>
+                        </div>
+                        <button style="background:#fff;border:1px solid #d9d9d9;color:#595959;border-radius:4px;padding:3px 10px;font-size:11px;cursor:pointer;" onclick="alert('即将跳转至该企业画像页')">查看画像</button>
+                      </div>
+                      <div style="border-top:1px dashed #e8e8e8;padding-top:8px;">
+                        <div style="display:flex;align-items:center;gap:10px;font-size:13px;">
+                           <span style="color:#262626;font-weight:600;">0512-6888****</span>
+                           <span style="cursor:pointer;opacity:0.5;font-size:12px;" onclick="window.togglePhone(this, '0512-6888****', '0512-68889999')">👁️</span>
+                           <span style="font-size:10px;background:#f5f5f5;color:#8c8c8c;padding:2px 6px;border-radius:4px;border:1px solid #d9d9d9;">[工商预留固话]</span>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+
+                <div id="associationTab_admin_${d.id}" class="contact-tab-panel" style="display:none; margin-bottom: 20px;">
+                    <div style="font-size:11px;color:#bfbfbf;margin-bottom:10px;display:flex;align-items:center;gap:5px;">
+                      <span style="display:inline-block;width:4px;height:4px;background:#bfbfbf;border-radius:50%;"></span>
+                      关联关系由系统基于股权、法人、担保等维度自动匹配，仅供参考
+                    </div>
+                    <div style="background:linear-gradient(135deg,#e6f7ff 0%,#f0f5ff 100%);border:1px solid #91d5ff;border-radius:10px;padding:12px 14px;">
+                      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                        <span style="width:32px;height:32px;background:#1890ff;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:600;flex-shrink:0;">关</span>
+                        <div>
+                          <div style="font-size:13px;font-weight:600;color:#262626;">苏州创芯微电子有限公司</div>
+                          <div style="font-size:10px;color:#8c8c8c;margin-top:1px;">行内授信客户 · 贷款余额 800万 · 客户经理：王强</div>
+                        </div>
+                      </div>
+                      <div style="background:#fff;border-radius:6px;padding:8px 10px;font-size:11px;color:#595959;line-height:1.6;">
+                        <div style="margin-bottom:3px;"><b>关联关系：</b>该企业法人 <span style="color:#1890ff;">张明</span> 同时担任行内存量客户的股东（持股32%）</div>
+                        <div><b>触达建议：</b>可通过存量客户的客户经理王强引荐，或以关联企业授信为切入点沟通。</div>
+                      </div>
+                    </div>
+                </div>
+            </div>`;
 
             // 模拟分配历史时间线
             html += `<div class="section-title">📋 分配历史</div><div class="timeline">`;
