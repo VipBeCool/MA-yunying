@@ -7,18 +7,11 @@
     <title>智能探客 - 智能营销平台</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
-        .sidebar {
-            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
-        }
+        
 
-        .nav-item.active {
-            background: rgba(82, 196, 26, 0.2);
-            border-left-color: #52c41a;
-        }
+        
 
-        .logo-icon {
-            background: #52c41a;
-        }
+        
 
         /* 探客专属样式 */
         .search-layout {
@@ -70,8 +63,8 @@
 
         .strategy-item.active {
             background: #e6f7ff;
-            border-left-color: #1890ff;
-            color: #1890ff;
+            border-left-color: var(--brand);
+            color: var(--brand);
         }
 
         .strategy-icon {
@@ -79,7 +72,7 @@
         }
 
         .strategy-item.active .strategy-icon {
-            color: #1890ff;
+            color: var(--brand);
         }
 
         .strategy-group-title {
@@ -166,7 +159,7 @@
         }
 
         .ai-input:focus {
-            border-color: #52c41a;
+            border-color: var(--brand);
             box-shadow: 0 0 0 2px rgba(82, 196, 26, 0.2);
         }
 
@@ -178,7 +171,7 @@
             background: none;
             border: none;
             cursor: pointer;
-            color: #52c41a;
+            color: var(--brand);
             font-size: 16px;
         }
 
@@ -196,7 +189,7 @@
         }
 
         .ai-action-btn:hover {
-            color: #52c41a;
+            color: var(--brand);
         }
 
         .ai-hints {
@@ -217,8 +210,8 @@
         }
 
         .ai-hint-tag:hover {
-            border-color: #52c41a;
-            color: #52c41a;
+            border-color: var(--brand);
+            color: var(--brand);
         }
 
         /* 高级条件组合器 */
@@ -249,7 +242,7 @@
             top: 50%;
             transform: translateY(-50%);
             background: #e6f7ff;
-            color: #1890ff;
+            color: var(--brand);
             border: 1px solid #91d5ff;
             font-size: 12px;
             padding: 2px 6px;
@@ -287,7 +280,7 @@
         }
 
         .qb-add-btn {
-            color: #1890ff;
+            color: var(--brand);
             cursor: pointer;
             font-size: 13px;
             margin-top: 8px;
@@ -334,16 +327,16 @@
         .tag-blue {
             background: #e6f7ff;
             border-color: #91d5ff;
-            color: #1890ff;
+            color: var(--brand);
         }
 
         .tag-green {
             background: #f6ffed;
             border-color: #b7eb8f;
-            color: #52c41a;
+            color: var(--brand);
         }
 
-        .tag-orange {
+        .tag-amber {
             background: #fff7e6;
             border-color: #ffd591;
             color: #fa8c16;
@@ -365,8 +358,8 @@
         }
 
         .search-tab.active {
-            border-bottom-color: #1890ff;
-            color: #1890ff;
+            border-bottom-color: var(--brand);
+            color: var(--brand);
             font-weight: 500;
         }
 
@@ -403,9 +396,9 @@
 
         .map-tab.active {
             background: #e6f7ff;
-            color: #1890ff;
+            color: var(--brand);
             font-weight: 500;
-            box-shadow: inset 0 2px 0 #1890ff;
+            box-shadow: inset 0 2px 0 var(--brand);
         }
     </style>
 </head>
@@ -413,67 +406,10 @@
 <body>
     <div class="app-container">
         <!-- 侧边栏 -->
-        <aside class="sidebar">
-            <div class="sidebar-logo">
-                <div class="logo-icon">⚙️</div>
-                <h1>运营管控台</h1>
-            </div>
-
-            <nav class="nav-menu">
-                <a href="index.html" class="nav-item "><span class="nav-icon">📊</span><span
-                        class="nav-text">运营概览</span></a>
-
-                <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 8px 16px;"></div>
-                <div style="font-size: 12px; color: rgba(255,255,255,0.45); padding: 8px 24px; margin-top: 4px;">数据交付
-                </div>
-                <a href="smart-search.html" class="nav-item active"><span class="nav-icon">🎯</span><span
-                        class="nav-text">智能探客</span></a>
-                <a href="batch-enrich.html" class="nav-item "><span class="nav-icon">📑</span><span
-                        class="nav-text">批量画像查询</span></a>
-
-                <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 8px 16px;"></div>
-                <div style="font-size: 12px; color: rgba(255,255,255,0.45); padding: 8px 24px; margin-top: 4px;">业务管理
-                </div>
-                <a href="institutions.html" class="nav-item "><span class="nav-icon">🏛️</span><span
-                        class="nav-text">机构管理</span></a>
-                <a href="customer-pool.html" class="nav-item "><span class="nav-icon">🏊</span><span
-                        class="nav-text">客户池</span></a>
-                <a href="products.html" class="nav-item "><span class="nav-icon">📦</span><span
-                        class="nav-text">产品配置</span></a>
-                <a href="rules.html" class="nav-item "><span class="nav-icon">🎯</span><span
-                        class="nav-text">规则引擎</span></a>
-                <a href="distribution.html" class="nav-item "><span class="nav-icon">🔀</span><span
-                        class="nav-text">分发管理</span></a>
-                <a href="analytics.html" class="nav-item "><span class="nav-icon">📈</span><span
-                        class="nav-text">效果分析</span></a>
-                <a href="billing.html" class="nav-item "><span class="nav-icon">💰</span><span
-                        class="nav-text">收费结算</span></a>
-                <a href="reconciliation.html" class="nav-item "><span class="nav-icon">📑</span><span
-                        class="nav-text">对账管理</span></a>
-                <a href="risk-alert.html" class="nav-item "><span class="nav-icon">⚠️</span><span
-                        class="nav-text">风险预警</span></a>
-
-                <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 8px 16px;"></div>
-                <div style="font-size: 12px; color: rgba(255,255,255,0.45); padding: 8px 24px; margin-top: 4px;">系统配置
-                </div>
-                <a href="api-monitor.html" class="nav-item "><span class="nav-icon">🔌</span><span
-                        class="nav-text">API监控</span></a>
-                <a href="downloads.html" class="nav-item "><span class="nav-icon">📥</span><span
-                        class="nav-text">下载中心</span></a>
-            </nav>
-            <div class="sidebar-footer">
-                <div class="user-info">
-                    <div class="user-avatar" style="background: #52c41a;">管</div>
-                    <div>
-                        <div class="user-name">管理员</div>
-                        <div class="user-role">平台运营</div>
-                    </div>
-                </div>
-            </div>
-        </aside>
+        <aside class="sidebar" id="sidebar"></aside>
 
         <!-- 主内容区 -->
-        <main class="main-content">
+        <main class="main-content anim-fade-in">
             <div class="page-header"
                 style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom: 20px;">
                 <div>
@@ -490,7 +426,7 @@
                 <div class="strategy-sidebar">
                     <div class="strategy-header">
                         <span>我的规则库</span>
-                        <button class="btn btn-text btn-sm" style="padding:0; color:#1890ff;">+ 新建</button>
+                        <button class="btn btn-text btn-sm" style="padding:0; color:var(--brand);">+ 新建</button>
                     </div>
                     <div class="strategy-list">
                         <div class="strategy-group-title">常用/推荐</div>
@@ -593,7 +529,7 @@
                                         <span style="font-size: 16px;">📁</span> 上传规则文档
                                     </button>
                                     <button class="btn btn-default" onclick="alert('开始语音倾听...')" title="语音讲述筛客需求"
-                                        style="display: flex; align-items: center; gap: 6px; padding: 0 16px; border-radius: 8px; color: #1890ff; border-color: #91d5ff; background: #e6f7ff; height: 100%;">
+                                        style="display: flex; align-items: center; gap: 6px; padding: 0 16px; border-radius: 8px; color: var(--brand); border-color: #91d5ff; background: #e6f7ff; height: 100%;">
                                         <span style="font-size: 16px;">🎤</span> 语音输入
                                     </button>
                                     <button class="btn btn-primary" title="发送给 AI 解析" onclick="triggerAIParsing()"
@@ -619,7 +555,7 @@
                             <div style="font-weight: 600;">条件组合 (规则：苏南科创智造优企)</div>
                             <div>
                                 <button class="btn btn-default btn-sm">清空</button>
-                                <button class="btn btn-primary btn-sm" style="background: #1890ff; color: #fff;"
+                                <button class="btn btn-primary btn-sm" style="background: var(--brand); color: #fff;"
                                     onclick="document.getElementById('saveStrategyModal').style.display='flex'">💾
                                     保存为规则</button>
                             </div>
@@ -642,7 +578,7 @@
                                 </select>
                                 <div class="qb-value" style="display: flex; align-items: center; gap: 8px;">
                                     <div id="mapConditionDisplay"
-                                        style="background: #fff; border: 1px dashed #91d5ff; padding: 4px 12px; border-radius: 4px; font-size: 13px; color: #1890ff;">
+                                        style="background: #fff; border: 1px dashed #91d5ff; padding: 4px 12px; border-radius: 4px; font-size: 13px; color: var(--brand);">
                                         暂无选区</div>
                                     <button class="btn btn-primary btn-sm"
                                         onclick="document.getElementById('mapModal').style.display='flex'">🗺️
@@ -779,103 +715,103 @@
                                         <!-- 基础特征 -->
                                         <div>
                                             <div
-                                                style="font-weight: 600; font-size: 13px; color: #1890ff; margin-bottom: 8px; border-left: 3px solid #1890ff; padding-left: 6px; line-height: 1;">
+                                                style="font-weight: 600; font-size: 13px; color: var(--brand); margin-bottom: 8px; border-left: 3px solid var(--brand); padding-left: 6px; line-height: 1;">
                                                 基础特征</div>
                                             <div style="display: flex; flex-wrap: wrap; gap: 8px 16px;">
                                                 <label><input type="checkbox" checked
-                                                        style="margin-right: 4px; accent-color:#1890ff;">所属地</label>
+                                                        style="margin-right: 4px; accent-color:var(--brand);">所属地</label>
                                                 <label><input type="checkbox" checked
-                                                        style="margin-right: 4px; accent-color:#1890ff;">是否授权</label>
+                                                        style="margin-right: 4px; accent-color:var(--brand);">是否授权</label>
                                                 <label><input type="checkbox" checked
-                                                        style="margin-right: 4px; accent-color:#1890ff;">行业分类</label>
+                                                        style="margin-right: 4px; accent-color:var(--brand);">行业分类</label>
                                                 <label><input type="checkbox" checked
-                                                        style="margin-right: 4px; accent-color:#1890ff;">注册资本</label>
+                                                        style="margin-right: 4px; accent-color:var(--brand);">注册资本</label>
                                                 <label><input type="checkbox"
-                                                        style="margin-right: 4px; accent-color:#1890ff;">注册资本币种</label>
+                                                        style="margin-right: 4px; accent-color:var(--brand);">注册资本币种</label>
                                                 <label><input type="checkbox" checked
-                                                        style="margin-right: 4px; accent-color:#1890ff;">成立年限</label>
+                                                        style="margin-right: 4px; accent-color:var(--brand);">成立年限</label>
                                                 <label><input type="checkbox"
-                                                        style="margin-right: 4px; accent-color:#1890ff;">是否小微企业</label>
+                                                        style="margin-right: 4px; accent-color:var(--brand);">是否小微企业</label>
                                                 <label><input type="checkbox"
-                                                        style="margin-right: 4px; accent-color:#1890ff;">实体类型</label>
+                                                        style="margin-right: 4px; accent-color:var(--brand);">实体类型</label>
                                                 <label><input type="checkbox"
-                                                        style="margin-right: 4px; accent-color:#1890ff;">企业状态</label>
+                                                        style="margin-right: 4px; accent-color:var(--brand);">企业状态</label>
                                                 <label><input type="checkbox"
-                                                        style="margin-right: 4px; accent-color:#1890ff;">联系电话</label>
+                                                        style="margin-right: 4px; accent-color:var(--brand);">联系电话</label>
                                                 <label><input type="checkbox"
-                                                        style="margin-right: 4px; accent-color:#1890ff;">工商变更记录</label>
+                                                        style="margin-right: 4px; accent-color:var(--brand);">工商变更记录</label>
                                                 <label><input type="checkbox"
-                                                        style="margin-right: 4px; accent-color:#1890ff;">特色认证</label>
+                                                        style="margin-right: 4px; accent-color:var(--brand);">特色认证</label>
                                             </div>
                                         </div>
                                         <!-- 司法风险 -->
                                         <div>
                                             <div
-                                                style="font-weight: 600; font-size: 13px; color: #1890ff; margin-bottom: 8px; border-left: 3px solid #fa8c16; color: #fa8c16; padding-left: 6px; line-height: 1;">
+                                                style="font-weight: 600; font-size: 13px; color: var(--brand); margin-bottom: 8px; border-left: 3px solid #fa8c16; color: #fa8c16; padding-left: 6px; line-height: 1;">
                                                 司法风险</div>
                                             <div style="display: flex; flex-wrap: wrap; gap: 8px 16px;">
                                                 <label><input type="checkbox"
-                                                        style="margin-right: 4px; accent-color:#1890ff;">股权冻结</label>
+                                                        style="margin-right: 4px; accent-color:var(--brand);">股权冻结</label>
                                                 <label><input type="checkbox"
-                                                        style="margin-right: 4px; accent-color:#1890ff;">被执行人</label>
+                                                        style="margin-right: 4px; accent-color:var(--brand);">被执行人</label>
                                                 <label><input type="checkbox"
-                                                        style="margin-right: 4px; accent-color:#1890ff;">失信信息</label>
+                                                        style="margin-right: 4px; accent-color:var(--brand);">失信信息</label>
                                                 <label><input type="checkbox"
-                                                        style="margin-right: 4px; accent-color:#1890ff;">刑事案件</label>
+                                                        style="margin-right: 4px; accent-color:var(--brand);">刑事案件</label>
                                                 <label><input type="checkbox"
-                                                        style="margin-right: 4px; accent-color:#1890ff;">民间借贷</label>
+                                                        style="margin-right: 4px; accent-color:var(--brand);">民间借贷</label>
                                             </div>
                                         </div>
                                         <!-- 经营信息 -->
                                         <div>
                                             <div
-                                                style="font-weight: 600; font-size: 13px; color: #1890ff; margin-bottom: 8px; border-left: 3px solid #52c41a; color: #52c41a; padding-left: 6px; line-height: 1;">
+                                                style="font-weight: 600; font-size: 13px; color: var(--brand); margin-bottom: 8px; border-left: 3px solid var(--brand); color: var(--brand); padding-left: 6px; line-height: 1;">
                                                 经营信息</div>
                                             <div style="display: flex; flex-wrap: wrap; gap: 8px 16px;">
                                                 <label><input type="checkbox"
-                                                        style="margin-right: 4px; accent-color:#1890ff;">营业收入</label>
+                                                        style="margin-right: 4px; accent-color:var(--brand);">营业收入</label>
                                                 <label><input type="checkbox"
-                                                        style="margin-right: 4px; accent-color:#1890ff;">行政处罚</label>
+                                                        style="margin-right: 4px; accent-color:var(--brand);">行政处罚</label>
                                                 <label><input type="checkbox"
-                                                        style="margin-right: 4px; accent-color:#1890ff;">股权出质</label>
+                                                        style="margin-right: 4px; accent-color:var(--brand);">股权出质</label>
                                                 <label><input type="checkbox"
-                                                        style="margin-right: 4px; accent-color:#1890ff;">纳税信用</label>
+                                                        style="margin-right: 4px; accent-color:var(--brand);">纳税信用</label>
                                                 <label><input type="checkbox"
-                                                        style="margin-right: 4px; accent-color:#1890ff;">从业人数</label>
+                                                        style="margin-right: 4px; accent-color:var(--brand);">从业人数</label>
                                                 <label><input type="checkbox"
-                                                        style="margin-right: 4px; accent-color:#1890ff;">环保评级</label>
+                                                        style="margin-right: 4px; accent-color:var(--brand);">环保评级</label>
                                                 <label><input type="checkbox"
-                                                        style="margin-right: 4px; accent-color:#1890ff;">海关注册</label>
+                                                        style="margin-right: 4px; accent-color:var(--brand);">海关注册</label>
                                                 <label><input type="checkbox"
-                                                        style="margin-right: 4px; accent-color:#1890ff;">经营异常</label>
+                                                        style="margin-right: 4px; accent-color:var(--brand);">经营异常</label>
                                             </div>
                                         </div>
                                         <!-- 信贷特征 -->
                                         <div>
                                             <div
-                                                style="font-weight: 600; font-size: 13px; color: #1890ff; margin-bottom: 8px; border-left: 3px solid #722ed1; color: #722ed1; padding-left: 6px; line-height: 1;">
+                                                style="font-weight: 600; font-size: 13px; color: var(--brand); margin-bottom: 8px; border-left: 3px solid #722ed1; color: #722ed1; padding-left: 6px; line-height: 1;">
                                                 信贷及资产特征</div>
                                             <div style="display: flex; flex-wrap: wrap; gap: 8px 16px;">
                                                 <label><input type="checkbox"
-                                                        style="margin-right: 4px; accent-color:#1890ff;">无贷户</label>
+                                                        style="margin-right: 4px; accent-color:var(--brand);">无贷户</label>
                                                 <label><input type="checkbox"
-                                                        style="margin-right: 4px; accent-color:#1890ff;">当前贷款</label>
+                                                        style="margin-right: 4px; accent-color:var(--brand);">当前贷款</label>
                                                 <label><input type="checkbox"
-                                                        style="margin-right: 4px; accent-color:#1890ff;">贷款银行数</label>
+                                                        style="margin-right: 4px; accent-color:var(--brand);">贷款银行数</label>
                                                 <label><input type="checkbox"
-                                                        style="margin-right: 4px; accent-color:#1890ff;">贷款状态</label>
+                                                        style="margin-right: 4px; accent-color:var(--brand);">贷款状态</label>
                                                 <label><input type="checkbox"
-                                                        style="margin-right: 4px; accent-color:#1890ff;">房地产信息</label>
+                                                        style="margin-right: 4px; accent-color:var(--brand);">房地产信息</label>
                                                 <label><input type="checkbox"
-                                                        style="margin-right: 4px; accent-color:#1890ff;">房地产抵押</label>
+                                                        style="margin-right: 4px; accent-color:var(--brand);">房地产抵押</label>
                                                 <label><input type="checkbox"
-                                                        style="margin-right: 4px; accent-color:#1890ff;">房地产查封</label>
+                                                        style="margin-right: 4px; accent-color:var(--brand);">房地产查封</label>
                                                 <label><input type="checkbox"
-                                                        style="margin-right: 4px; accent-color:#1890ff;">烟草许可</label>
+                                                        style="margin-right: 4px; accent-color:var(--brand);">烟草许可</label>
                                                 <label><input type="checkbox"
-                                                        style="margin-right: 4px; accent-color:#1890ff;">近三个月贷款</label>
+                                                        style="margin-right: 4px; accent-color:var(--brand);">近三个月贷款</label>
                                                 <label><input type="checkbox"
-                                                        style="margin-right: 4px; accent-color:#1890ff;">贷销比</label>
+                                                        style="margin-right: 4px; accent-color:var(--brand);">贷销比</label>
                                             </div>
                                         </div>
                                     </div>
@@ -1161,11 +1097,11 @@
 
                 <!-- 模拟真实的“圈选”体感：一个大圆环叠加定位标识 -->
                 <div
-                    style="position: absolute; top: 120px; left: 150px; width: 400px; height: 350px; border: 3px solid #1890ff; border-radius: 50%; background: radial-gradient(circle, rgba(24,144,255,0.05) 0%, rgba(24,144,255,0.2) 100%); display: flex; align-items: center; justify-content: center; flex-direction: column; z-index: 5; box-shadow: 0 0 0 9999px rgba(0,0,0,0.15);">
+                    style="position: absolute; top: 120px; left: 150px; width: 400px; height: 350px; border: 3px solid var(--brand); border-radius: 50%; background: radial-gradient(circle, rgba(24,144,255,0.05) 0%, rgba(24,144,255,0.2) 100%); display: flex; align-items: center; justify-content: center; flex-direction: column; z-index: 5; box-shadow: 0 0 0 9999px rgba(0,0,0,0.15);">
                     <div style="font-size: 32px; filter: drop-shadow(0 4px 4px rgba(0,0,0,0.2));">📍</div>
                     <div
                         style="background: rgba(255,255,255,0.9); padding: 8px 16px; border-radius: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-top: 12px; text-align: center;">
-                        <div style="color: #1890ff; font-weight: bold; font-size: 16px; margin-bottom: 4px;">自定义圈选区域
+                        <div style="color: var(--brand); font-weight: bold; font-size: 16px; margin-bottom: 4px;">自定义圈选区域
                         </div>
                         <div style="color: #595959; font-size: 12px;">预计覆盖有效市场主体 <strong
                                 style="color:#fa8c16">8,340</strong> 家</div>
@@ -1174,7 +1110,7 @@
 
                     <!-- 模拟圈选控制点 -->
                     <div
-                        style="position: absolute; right: -8px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; background: #fff; border: 2px solid #1890ff; border-radius: 50%; cursor: ew-resize; box-shadow: 0 1px 3px rgba(0,0,0,0.2);">
+                        style="position: absolute; right: -8px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; background: #fff; border: 2px solid var(--brand); border-radius: 50%; cursor: ew-resize; box-shadow: 0 1px 3px rgba(0,0,0,0.2);">
                     </div>
                 </div>
             </div>
@@ -1212,7 +1148,7 @@
                     <div
                         style="display: flex; justify-content: space-between; margin-bottom: 12px; align-items: center;">
                         <span style="color: #096dd9;">📌 预估命中主体：</span>
-                        <strong style="color: #1890ff; font-size: 20px;">1,245 家</strong>
+                        <strong style="color: var(--brand); font-size: 20px;">1,245 家</strong>
                     </div>
                     <div style="display: flex; justify-content: space-between; font-size: 13px;">
                         <span style="color: #595959;">📊 输出指标维度：</span>
@@ -1299,45 +1235,45 @@
                 <!-- 基础特征 -->
                 <div style="margin-bottom: 20px;">
                     <div
-                        style="font-weight: 600; font-size: 14px; color: #1890ff; margin-bottom: 10px; border-left: 3px solid #1890ff; padding-left: 8px;">
+                        style="font-weight: 600; font-size: 14px; color: var(--brand); margin-bottom: 10px; border-left: 3px solid var(--brand); padding-left: 8px;">
                         基础特征</div>
                     <div style="display: flex; flex-wrap: wrap; gap: 6px;">
                         <label
                             style="display: flex; align-items: center; gap: 4px; padding: 6px 12px; background: #f5f5f5; border-radius: 4px; cursor: pointer; white-space: nowrap;"><input
-                                type="checkbox" style="accent-color: #1890ff;"> 所属地 ▾</label>
+                                type="checkbox" style="accent-color: var(--brand);"> 所属地 ▾</label>
                         <label
                             style="display: flex; align-items: center; gap: 4px; padding: 6px 12px; background: #f5f5f5; border-radius: 4px; cursor: pointer; white-space: nowrap;"><input
-                                type="checkbox" style="accent-color: #1890ff;"> 是否授权</label>
+                                type="checkbox" style="accent-color: var(--brand);"> 是否授权</label>
                         <label
                             style="display: flex; align-items: center; gap: 4px; padding: 6px 12px; background: #f5f5f5; border-radius: 4px; cursor: pointer; white-space: nowrap;"><input
-                                type="checkbox" style="accent-color: #1890ff;"> 行业分类 ▾</label>
+                                type="checkbox" style="accent-color: var(--brand);"> 行业分类 ▾</label>
                         <label
                             style="display: flex; align-items: center; gap: 4px; padding: 6px 12px; background: #f5f5f5; border-radius: 4px; cursor: pointer; white-space: nowrap;"><input
-                                type="checkbox" style="accent-color: #1890ff;"> 注册资本 ▾</label>
+                                type="checkbox" style="accent-color: var(--brand);"> 注册资本 ▾</label>
                         <label
                             style="display: flex; align-items: center; gap: 4px; padding: 6px 12px; background: #f5f5f5; border-radius: 4px; cursor: pointer; white-space: nowrap;"><input
-                                type="checkbox" style="accent-color: #1890ff;"> 注册资本币种 ▾</label>
+                                type="checkbox" style="accent-color: var(--brand);"> 注册资本币种 ▾</label>
                         <label
                             style="display: flex; align-items: center; gap: 4px; padding: 6px 12px; background: #f5f5f5; border-radius: 4px; cursor: pointer; white-space: nowrap;"><input
-                                type="checkbox" style="accent-color: #1890ff;"> 成立年限 ▾</label>
+                                type="checkbox" style="accent-color: var(--brand);"> 成立年限 ▾</label>
                         <label
                             style="display: flex; align-items: center; gap: 4px; padding: 6px 12px; background: #f5f5f5; border-radius: 4px; cursor: pointer; white-space: nowrap;"><input
-                                type="checkbox" style="accent-color: #1890ff;"> 是否小微企业 ▾</label>
+                                type="checkbox" style="accent-color: var(--brand);"> 是否小微企业 ▾</label>
                         <label
                             style="display: flex; align-items: center; gap: 4px; padding: 6px 12px; background: #f5f5f5; border-radius: 4px; cursor: pointer; white-space: nowrap;"><input
-                                type="checkbox" style="accent-color: #1890ff;"> 实体类型 ▾</label>
+                                type="checkbox" style="accent-color: var(--brand);"> 实体类型 ▾</label>
                         <label
                             style="display: flex; align-items: center; gap: 4px; padding: 6px 12px; background: #f5f5f5; border-radius: 4px; cursor: pointer; white-space: nowrap;"><input
-                                type="checkbox" style="accent-color: #1890ff;"> 企业状态 ▾</label>
+                                type="checkbox" style="accent-color: var(--brand);"> 企业状态 ▾</label>
                         <label
                             style="display: flex; align-items: center; gap: 4px; padding: 6px 12px; background: #f5f5f5; border-radius: 4px; cursor: pointer; white-space: nowrap;"><input
-                                type="checkbox" style="accent-color: #1890ff;"> 联系电话 ▾</label>
+                                type="checkbox" style="accent-color: var(--brand);"> 联系电话 ▾</label>
                         <label
                             style="display: flex; align-items: center; gap: 4px; padding: 6px 12px; background: #f5f5f5; border-radius: 4px; cursor: pointer; white-space: nowrap;"><input
-                                type="checkbox" style="accent-color: #1890ff;"> 工商变更记录 ▾</label>
+                                type="checkbox" style="accent-color: var(--brand);"> 工商变更记录 ▾</label>
                         <label
                             style="display: flex; align-items: center; gap: 4px; padding: 6px 12px; background: #f5f5f5; border-radius: 4px; cursor: pointer; white-space: nowrap;"><input
-                                type="checkbox" style="accent-color: #1890ff;"> 特色认证 ▾</label>
+                                type="checkbox" style="accent-color: var(--brand);"> 特色认证 ▾</label>
                     </div>
                 </div>
                 <!-- 司法风险 -->
@@ -1366,36 +1302,36 @@
                 <!-- 经营信息 -->
                 <div style="margin-bottom: 20px;">
                     <div
-                        style="font-weight: 600; font-size: 14px; color: #52c41a; margin-bottom: 10px; border-left: 3px solid #52c41a; padding-left: 8px;">
+                        style="font-weight: 600; font-size: 14px; color: var(--brand); margin-bottom: 10px; border-left: 3px solid var(--brand); padding-left: 8px;">
                         经营信息</div>
                     <div style="display: flex; flex-wrap: wrap; gap: 6px;">
                         <label
                             style="display: flex; align-items: center; gap: 4px; padding: 6px 12px; background: #f5f5f5; border-radius: 4px; cursor: pointer; white-space: nowrap;"><input
-                                type="checkbox" style="accent-color: #52c41a;"> 营业收入 ▾</label>
+                                type="checkbox" style="accent-color: var(--brand);"> 营业收入 ▾</label>
                         <label
                             style="display: flex; align-items: center; gap: 4px; padding: 6px 12px; background: #f5f5f5; border-radius: 4px; cursor: pointer; white-space: nowrap;"><input
-                                type="checkbox" style="accent-color: #52c41a;"> 行政处罚 ▾</label>
+                                type="checkbox" style="accent-color: var(--brand);"> 行政处罚 ▾</label>
                         <label
                             style="display: flex; align-items: center; gap: 4px; padding: 6px 12px; background: #f5f5f5; border-radius: 4px; cursor: pointer; white-space: nowrap;"><input
-                                type="checkbox" style="accent-color: #52c41a;"> 股权出质 ▾</label>
+                                type="checkbox" style="accent-color: var(--brand);"> 股权出质 ▾</label>
                         <label
                             style="display: flex; align-items: center; gap: 4px; padding: 6px 12px; background: #f5f5f5; border-radius: 4px; cursor: pointer; white-space: nowrap;"><input
-                                type="checkbox" style="accent-color: #52c41a;"> 纳税信用 ▾</label>
+                                type="checkbox" style="accent-color: var(--brand);"> 纳税信用 ▾</label>
                         <label
                             style="display: flex; align-items: center; gap: 4px; padding: 6px 12px; background: #f5f5f5; border-radius: 4px; cursor: pointer; white-space: nowrap;"><input
-                                type="checkbox" style="accent-color: #52c41a;"> 从业人数 ▾</label>
+                                type="checkbox" style="accent-color: var(--brand);"> 从业人数 ▾</label>
                         <label
                             style="display: flex; align-items: center; gap: 4px; padding: 6px 12px; background: #f5f5f5; border-radius: 4px; cursor: pointer; white-space: nowrap;"><input
-                                type="checkbox" style="accent-color: #52c41a;"> 环保评级 ▾</label>
+                                type="checkbox" style="accent-color: var(--brand);"> 环保评级 ▾</label>
                         <label
                             style="display: flex; align-items: center; gap: 4px; padding: 6px 12px; background: #f5f5f5; border-radius: 4px; cursor: pointer; white-space: nowrap;"><input
-                                type="checkbox" style="accent-color: #52c41a;"> 海关注册 ▾</label>
+                                type="checkbox" style="accent-color: var(--brand);"> 海关注册 ▾</label>
                         <label
                             style="display: flex; align-items: center; gap: 4px; padding: 6px 12px; background: #f5f5f5; border-radius: 4px; cursor: pointer; white-space: nowrap;"><input
-                                type="checkbox" style="accent-color: #52c41a;"> 经营异常 ▾</label>
+                                type="checkbox" style="accent-color: var(--brand);"> 经营异常 ▾</label>
                         <label
                             style="display: flex; align-items: center; gap: 4px; padding: 6px 12px; background: #f5f5f5; border-radius: 4px; cursor: pointer; white-space: nowrap;"><input
-                                type="checkbox" style="accent-color: #52c41a;"> 烟草许可 ▾</label>
+                                type="checkbox" style="accent-color: var(--brand);"> 烟草许可 ▾</label>
                     </div>
                 </div>
                 <!-- 信贷及资产特征 -->
@@ -1438,7 +1374,7 @@
             <div
                 style="padding: 12px 24px; border-top: 1px solid #f0f0f0; background: #fafafa; display: flex; justify-content: space-between; align-items: center;">
                 <span style="font-size: 13px; color: #8c8c8c;">已选 <strong id="indicatorCount"
-                        style="color: #1890ff;">0</strong> 个条件</span>
+                        style="color: var(--brand);">0</strong> 个条件</span>
                 <div>
                     <button class="btn btn-default"
                         onclick="document.getElementById('indicatorModal').style.display='none'">取消</button>
@@ -1465,7 +1401,7 @@
                 </div>
                 <div
                     style="border: 1px dashed #d9d9d9; border-radius: 8px; padding: 40px 20px; text-align: center; background: #fafafa; cursor: pointer;">
-                    <div style="font-size: 32px; color: #1890ff; margin-bottom: 12px;">📄</div>
+                    <div style="font-size: 32px; color: var(--brand); margin-bottom: 12px;">📄</div>
                     <div style="font-size: 14px; color: #262626; margin-bottom: 8px;">点击或将文件拖拽到这里上传</div>
                     <div style="font-size: 12px; color: #8c8c8c;">支持扩展名：.pdf, .doc, .docx, .txt，文件大小不超过 10MB</div>
                 </div>
@@ -1507,7 +1443,7 @@
                 <div id="aiParsingLoading"
                     style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 0;">
                     <div
-                        style="width: 40px; height: 40px; border: 3px solid #f0f0f0; border-top: 3px solid #1890ff; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 16px;">
+                        style="width: 40px; height: 40px; border: 3px solid #f0f0f0; border-top: 3px solid var(--brand); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 16px;">
                     </div>
                     <div style="color: #262626; font-size: 15px; font-weight: 500; margin-bottom: 8px;">AI 正在深度理解您的语意...
                     </div>
@@ -1528,7 +1464,7 @@
                 <!-- 结果状态 -->
                 <div id="aiParsingResult" style="display: none;">
                     <div style="margin-bottom: 16px; font-size: 14px; color: #595959;">
-                        基于您的描述，AI 已为您匹配并生成以下 <strong style="color: #1890ff;">5</strong> 个筛选条件：
+                        基于您的描述，AI 已为您匹配并生成以下 <strong style="color: var(--brand);">5</strong> 个筛选条件：
                     </div>
 
                     <div
@@ -1614,7 +1550,7 @@
                 t.style.background = 'transparent'; t.style.color = '#262626';
                 t.classList.remove('active');
             });
-            el.style.background = '#1890ff'; el.style.color = '#fff';
+            el.style.background = 'var(--brand)'; el.style.color = '#fff';
             el.classList.add('active');
         }
         // 园区面板区县标签切换
@@ -1623,7 +1559,7 @@
                 document.querySelectorAll('.park-dist-tag').forEach(function (t) {
                     t.style.background = 'transparent'; t.style.color = '#262626';
                 });
-                e.target.style.background = '#1890ff'; e.target.style.color = '#fff';
+                e.target.style.background = 'var(--brand)'; e.target.style.color = '#fff';
             }
         });
     </script>
@@ -1641,15 +1577,15 @@
             <div style="padding: 24px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
                     <span style="font-size: 14px; color: #262626;">请上传包含企业名称或统一社会信用代码的 Excel/CSV 文件。</span>
-                    <a href="javascript:void(0)" style="color: #1890ff; font-size: 13px; text-decoration: none;">📥
+                    <a href="javascript:void(0)" style="color: var(--brand); font-size: 13px; text-decoration: none;">📥
                         下载名单模板</a>
                 </div>
                 <!-- 上传区域 -->
                 <div style="border: 2px dashed #91d5ff; border-radius: 8px; background: #f0f9ff; padding: 40px; text-align: center; cursor: pointer; transition: all 0.3s;"
-                    onmouseover="this.style.borderColor='#1890ff'; this.style.background='#e6f7ff'"
+                    onmouseover="this.style.borderColor='var(--brand)'; this.style.background='#e6f7ff'"
                     onmouseout="this.style.borderColor='#91d5ff'; this.style.background='#f0f9ff'">
-                    <div style="font-size: 40px; color: #1890ff; margin-bottom: 12px;">📁</div>
-                    <div style="font-size: 15px; color: #1890ff; font-weight: 500;">点击或将文件拖拽到这里上传</div>
+                    <div style="font-size: 40px; color: var(--brand); margin-bottom: 12px;">📁</div>
+                    <div style="font-size: 15px; color: var(--brand); font-weight: 500;">点击或将文件拖拽到这里上传</div>
                     <div style="font-size: 13px; color: #8c8c8c; margin-top: 8px;">支持 .xls, .xlsx, .csv 格式，文件大小不超过 5MB
                     </div>
                 </div>
@@ -1663,6 +1599,11 @@
             </div>
         </div>
     </div>
+
+  <script src="js/sidebar.js"></script>
+  <script>
+    renderSidebar({ currentPage: 'smart-search' });
+  </script>
 </body>
 
 </html>

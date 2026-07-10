@@ -6,71 +6,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>规则引擎 - 智能营销平台</title>
     <link rel="stylesheet" href="css/style.css">
-    <style>
-        .sidebar {
-            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
-        }
-
-        .nav-item.active {
-            background: rgba(82, 196, 26, 0.2);
-            border-left-color: #52c41a;
-        }
-
-        .logo-icon {
-            background: #52c41a;
-        }
-    </style>
+    
 </head>
 
 <body>
     <div class="app-container">
-        <aside class="sidebar">
-            <div class="sidebar-logo">
-                <div class="logo-icon">⚙️</div>
-                <h1>运营管控台</h1>
-            </div>
-            
-            <nav class="nav-menu">
-                <a href="index.html" class="nav-item "><span class="nav-icon">📊</span><span class="nav-text">运营概览</span></a>
-                
-                <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 8px 16px;"></div>
-                <div style="font-size: 12px; color: rgba(255,255,255,0.45); padding: 8px 24px; margin-top: 4px;">数据交付</div>
-                <a href="smart-search.html" class="nav-item "><span class="nav-icon">🎯</span><span class="nav-text">智能探客</span></a>
-                <a href="batch-enrich.html" class="nav-item "><span class="nav-icon">📑</span><span class="nav-text">批量画像查询</span></a>
-                
-                <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 8px 16px;"></div>
-                <div style="font-size: 12px; color: rgba(255,255,255,0.45); padding: 8px 24px; margin-top: 4px;">业务管理</div>
-                <a href="institutions.html" class="nav-item "><span class="nav-icon">🏛️</span><span class="nav-text">机构管理</span></a>
-                <a href="customer-pool.html" class="nav-item "><span class="nav-icon">🏊</span><span class="nav-text">客户池</span></a>
-                <a href="products.html" class="nav-item "><span class="nav-icon">📦</span><span class="nav-text">产品配置</span></a>
-                <a href="rules.html" class="nav-item active"><span class="nav-icon">🎯</span><span class="nav-text">规则引擎</span></a>
-                <a href="distribution.html" class="nav-item "><span class="nav-icon">🔀</span><span class="nav-text">分发管理</span></a>
-                <a href="analytics.html" class="nav-item "><span class="nav-icon">📈</span><span class="nav-text">效果分析</span></a>
-                <a href="billing.html" class="nav-item "><span class="nav-icon">💰</span><span class="nav-text">收费结算</span></a>
-                <a href="reconciliation.html" class="nav-item "><span class="nav-icon">📑</span><span class="nav-text">对账管理</span></a>
-                <a href="risk-alert.html" class="nav-item "><span class="nav-icon">⚠️</span><span class="nav-text">风险预警</span></a>
-                
-                <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 8px 16px;"></div>
-                <div style="font-size: 12px; color: rgba(255,255,255,0.45); padding: 8px 24px; margin-top: 4px;">系统配置</div>
-                <a href="api-monitor.html" class="nav-item "><span class="nav-icon">🔌</span><span class="nav-text">API监控</span></a>
-                <a href="downloads.html" class="nav-item "><span class="nav-icon">📥</span><span class="nav-text">下载中心</span></a>
-            </nav>
-            <div class="sidebar-footer">
-                <div class="user-info">
-                    <div class="user-avatar" style="background: #52c41a;">管</div>
-                    <div>
-                        <div class="user-name">管理员</div>
-                        <div class="user-role">平台运营</div>
-                    </div>
-                </div>
-            </div>
-        </aside>
+        <aside class="sidebar" id="sidebar"></aside>
 
-        <main class="main-content">
+        <main class="main-content anim-fade-in">
             <div class="page-header" style="display: flex; justify-content: space-between; align-items: center;">
                 <div>
                     <h1 class="page-title">规则引擎</h1>
-                    <p class="page-breadcrumb"><a href="index.html">运营概览</a> / 规则引擎</p>
+                    <p class="page-breadcrumb"><a href="index.html">工作台</a> / 规则引擎</p>
                 </div>
                 <button class="btn btn-primary" onclick="openModal('ruleModal')">+ 新建规则</button>
             </div>
@@ -98,8 +45,8 @@
                             <td>江苏银行-科技贷</td>
                             <td style="font-size: 12px; color: #595959;">高新技术企业 + 苏信分≥750 + 专利≥5</td>
                             <td>3,200</td>
-                            <td style="color: #52c41a; font-weight: 600;">4.2%</td>
-                            <td><span class="status-badge status-success">运行中</span></td>
+                            <td style="color: var(--brand); font-weight: 600;">4.2%</td>
+                            <td><span class="status-dot dot-green">运行中</span></td>
                             <td>
                                 <button class="btn btn-text btn-sm">编辑</button>
                                 <button class="btn btn-text btn-sm">暂停</button>
@@ -110,8 +57,8 @@
                             <td>江苏银行-科技贷</td>
                             <td style="font-size: 12px; color: #595959;">专精特新认定 + 营收≥2000万</td>
                             <td>2,800</td>
-                            <td style="color: #52c41a; font-weight: 600;">3.8%</td>
-                            <td><span class="status-badge status-success">运行中</span></td>
+                            <td style="color: var(--brand); font-weight: 600;">3.8%</td>
+                            <td><span class="status-dot dot-green">运行中</span></td>
                             <td>
                                 <button class="btn btn-text btn-sm">编辑</button>
                                 <button class="btn btn-text btn-sm">暂停</button>
@@ -122,8 +69,8 @@
                             <td>江苏银行-税e融</td>
                             <td style="font-size: 12px; color: #595959;">年纳税≥100万 + 无司法案件</td>
                             <td>2,500</td>
-                            <td style="color: #1890ff; font-weight: 600;">3.5%</td>
-                            <td><span class="status-badge status-success">运行中</span></td>
+                            <td style="color: var(--brand); font-weight: 600;">3.5%</td>
+                            <td><span class="status-dot dot-green">运行中</span></td>
                             <td>
                                 <button class="btn btn-text btn-sm">编辑</button>
                                 <button class="btn btn-text btn-sm">暂停</button>
@@ -134,8 +81,8 @@
                             <td>苏州农商行-园区贷</td>
                             <td style="font-size: 12px; color: #595959;">苏州工业园区 + 制造业</td>
                             <td>3,000</td>
-                            <td style="color: #1890ff; font-weight: 600;">3.1%</td>
-                            <td><span class="status-badge status-pending">已暂停</span></td>
+                            <td style="color: var(--brand); font-weight: 600;">3.1%</td>
+                            <td><span class="status-dot dot-amber">已暂停</span></td>
                             <td>
                                 <button class="btn btn-text btn-sm">编辑</button>
                                 <button class="btn btn-text btn-sm">启用</button>
@@ -157,11 +104,11 @@
             <div class="modal-body">
                 <div class="form-group">
                     <label class="form-label">规则名称 *</label>
-                    <input type="text" class="form-input" placeholder="例如：规则E-高成长企业">
+                    <input type="text" class="form-control" placeholder="例如：规则E-高成长企业">
                 </div>
                 <div class="form-group">
                     <label class="form-label">所属产品 *</label>
-                    <select class="form-select">
+                    <select class="form-control">
                         <option>江苏银行-科技贷</option>
                         <option>江苏银行-税e融</option>
                         <option>南京银行-专精特新贷</option>
@@ -172,13 +119,13 @@
                     <div style="background: #f5f5f5; padding: 12px; border-radius: 6px;">
                         <div style="margin-bottom: 12px;">
                             <label style="display: flex; align-items: center; gap: 8px; font-size: 13px;">
-                                <input type="checkbox" checked> 苏信分 ≥ <input type="number" class="form-input"
+                                <input type="checkbox" checked> 苏信分 ≥ <input type="number" class="form-control"
                                     style="width: 80px;" value="700">
                             </label>
                         </div>
                         <div style="margin-bottom: 12px;">
                             <label style="display: flex; align-items: center; gap: 8px; font-size: 13px;">
-                                <input type="checkbox"> 年营收 ≥ <input type="number" class="form-input"
+                                <input type="checkbox"> 年营收 ≥ <input type="number" class="form-control"
                                     style="width: 80px;" placeholder="万元"> 万元
                             </label>
                         </div>
@@ -196,7 +143,7 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label">每日推送上限</label>
-                    <input type="number" class="form-input" placeholder="默认不限制" value="100">
+                    <input type="number" class="form-control" placeholder="默认不限制" value="100">
                 </div>
             </div>
             <div class="modal-footer">
@@ -210,6 +157,11 @@
         function openModal(id) { document.getElementById(id).classList.add('active'); }
         function closeModal(id) { document.getElementById(id).classList.remove('active'); }
     </script>
+
+  <script src="js/sidebar.js"></script>
+  <script>
+    renderSidebar({ currentPage: 'rules' });
+  </script>
 </body>
 
 </html>

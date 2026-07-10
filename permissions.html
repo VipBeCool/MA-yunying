@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>账号权限 - 智能营销平台</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* ===== 表格样式 ===== */
+    .permission-table {
+      width: 100%;
+    }
+    .role-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .role-super { background: #fff1f0; color: #f5222d; border: 1px solid #ffa39e; }
+    .role-ops { background: #e6f7ff; color: var(--brand); border: 1px solid #91d5ff; }
+    .role-finance { background: #f6ffed; color: #52c41a; border: 1px solid #b7eb8f; }
+
+    /* ===== 菜单权限树 ===== */
+    .menu-tree {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      background: #fafafa;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .tree-group {
+      margin-bottom: 12px;
+    }
+    .tree-group-title {
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--gray-800);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .tree-items {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding-left: 24px;
+    }
+    .tree-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--gray-600);
+    }
+    
+    .status-dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      margin-right: 6px;
+    }
+    .dot-active { background: #52c41a; }
+    .dot-inactive { background: #d9d9d9; }
+  </style>
+</head>
+<body>
+<div class="app-layout">
+  <aside class="sidebar" id="sidebar"></aside>
+
+  <main class="main-content anim-fade-in">
+    <div class="page-header" style="display: flex; justify-content: space-between; align-items: center;">
+      <div class="page-header-left">
+        <h1 class="page-title">账号权限</h1>
+        <p class="page-breadcrumb">
+          <a href="index.html">工作台</a><span class="sep">/</span>系统设置<span class="sep">/</span>账号权限
+        </p>
+      </div>
+      <button class="btn btn-primary" onclick="openModal('new')">
+        <svg width="15" height="15" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        新增管理员
+      </button>
+    </div>
+
+    <!-- 筛选栏 -->
+    <div class="filter-bar" style="margin-bottom: 20px;">
+      <select class="form-control" id="filterRole" style="width: 150px;">
+        <option value="">全部角色</option>
+        <option value="super">超级管理员</option>
+        <option value="ops">运营专员</option>
+        <option value="finance">财务专员</option>
+      </select>
+      <input type="text" class="form-control" placeholder="搜索用户名 / 姓名" style="width: 250px;">
+      <button class="btn btn-default">筛选</button>
+    </div>
+
+    <!-- 表格卡片 -->
+    <div class="card" style="padding: 0;">
+      <table class="table permission-table">
+        <thead>
+          <tr>
+            <th>用户名</th>
+            <th>姓名</th>
+            <th>角色</th>
+            <th>可访问模块</th>
+            <th>状态</th>
+            <th>最后登录时间</th>
+            <th style="width: 120px;">操作</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+          <!-- JS 渲染 -->
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+
+<!-- 新建/编辑管理员弹窗 -->
+<div class="drawer-overlay" id="permModal">
+  <div class="drawer-box" style="width: 600px; max-width: 90vw;">
+    <div class="modal-header">
+      <h3 class="modal-title" id="modalTitle">新增管理员</h3>
+      <button class="modal-close" onclick="closeModal()">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+        <div>
+          <label style="display:block; font-size:13px; font-weight:600; margin-bottom:6px;">用户名 <span style="color:#f5222d">*</span></label>
+          <input type="text" class="form-control" id="f_username" placeholder="如: zhangsan" style="width:100%;">
+        </div>
+        <div>
+          <label style="display:block; font-size:13px; font-weight:600; margin-bottom:6px;">姓名 <span style="color:#f5222d">*</span></label>
+          <input type="text" class="form-control" id="f_name" placeholder="真实姓名" style="width:100%;">
+        </div>
+      </div>
+      
+      <div style="margin-bottom: 20px;">
+        <label style="display:block; font-size:13px; font-weight:600; margin-bottom:6px;">角色预设</label>
+        <select class="form-control" id="f_role" style="width:100%;" onchange="applyRolePreset(this.value)">
+          <option value="custom">自定义权限</option>
+          <option value="super">超级管理员 (全部权限)</option>
+          <option value="ops">运营专员 (业务运营相关)</option>
+        </select>
+      </div>
+
+      <div>
+        <label style="display:block; font-size:13px; font-weight:600; margin-bottom:6px;">菜单权限配置 <span style="color:#f5222d">*</span></label>
+        <div class="menu-tree" id="menuTree">
+          
+          <div class="tree-group">
+            <div class="tree-group-title">
+              <input type="checkbox" class="g-cb" data-group="g1" onchange="toggleGroup(this)"> 机构营销
+            </div>
+            <div class="tree-items" id="g1">
+              <label class="tree-item"><input type="checkbox" class="item-cb" value="customers"> 客户名单</label>
+              <label class="tree-item"><input type="checkbox" class="item-cb" value="allocation"> 名单分配</label>
+              <label class="tree-item"><input type="checkbox" class="item-cb" value="team"> 机构业绩</label>
+            </div>
+          </div>
+
+          <div class="tree-group">
+            <div class="tree-group-title">
+              <input type="checkbox" class="g-cb" data-group="g2" onchange="toggleGroup(this)"> 运营工具
+            </div>
+            <div class="tree-items" id="g2">
+              <label class="tree-item"><input type="checkbox" class="item-cb" value="smart-search"> 智能探客</label>
+              <label class="tree-item"><input type="checkbox" class="item-cb" value="batch-enrich"> 批量画像查询</label>
+              <label class="tree-item"><input type="checkbox" class="item-cb" value="agents"> 智能体管理</label>
+            </div>
+          </div>
+
+          <div class="tree-group">
+            <div class="tree-group-title">
+              <input type="checkbox" class="g-cb" data-group="g3" onchange="toggleGroup(this)"> 合作机构管理
+            </div>
+            <div class="tree-items" id="g3">
+              <label class="tree-item"><input type="checkbox" class="item-cb" value="institutions"> 合作机构管理</label>
+              <label class="tree-item"><input type="checkbox" class="item-cb" value="org-config"> 组织与成员管理</label>
+            </div>
+          </div>
+
+          <div class="tree-group">
+            <div class="tree-group-title">
+              <input type="checkbox" class="g-cb" data-group="g5" onchange="toggleGroup(this)"> 系统
+            </div>
+            <div class="tree-items" id="g5">
+              <label class="tree-item"><input type="checkbox" class="item-cb" value="permissions"> 账号权限</label>
+              <label class="tree-item"><input type="checkbox" class="item-cb" value="downloads"> 下载中心</label>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer" style="padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 12px; background: #fafafa; border-radius: 0 0 16px 16px;">
+      <button class="btn btn-default" onclick="closeModal()">取消</button>
+      <button class="btn btn-primary" onclick="saveAdmin()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" style="position:fixed;top:20px;right:20px;background:var(--brand);color:#fff;padding:12px 24px;border-radius:8px;z-index:9999;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);opacity:0;transition:opacity 0.3s;pointer-events:none;"></div>
+
+<script src="js/sidebar.js"></script>
+<script>
+  // mock data
+  let admins = [
+    { id: 1, username: 'admin', name: '系统管理员', role: 'super', roleName: '超级管理员', modules: '全部模块', status: 1, lastLogin: '2026-07-09 09:12' },
+    { id: 2, username: 'lihua', name: '李华', role: 'ops', roleName: '运营专员', modules: '机构营销、运营工具、机构管理', status: 1, lastLogin: '2026-07-08 16:30' },
+    { id: 3, username: 'wangcw', name: '王财务', role: 'finance', roleName: '财务专员', modules: '财务模块', status: 0, lastLogin: '2026-06-25 10:15' }
+  ];
+
+  function renderTable() {
+    const tbody = document.getElementById('tableBody');
+    let html = '';
+    admins.forEach(a => {
+      let roleClass = a.role === 'super' ? 'role-super' : a.role === 'ops' ? 'role-ops' : 'role-finance';
+      let statusHtml = a.status === 1 ? '<span class="status-dot dot-active"></span>正常' : '<span class="status-dot dot-inactive"></span>停用';
+      html += `
+        <tr>
+          <td style="font-weight: 600;">${a.username}</td>
+          <td>${a.name}</td>
+          <td><span class="role-badge ${roleClass}">${a.roleName}</span></td>
+          <td style="color: var(--gray-500); font-size: 13px;">${a.modules}</td>
+          <td>${statusHtml}</td>
+          <td style="color: var(--gray-500); font-size: 13px;">${a.lastLogin}</td>
+          <td>
+            <button class="btn btn-default" style="padding: 4px 8px; font-size: 12px;" onclick="openModal('edit', ${a.id})">编辑</button>
+            <button class="btn btn-default" style="padding: 4px 8px; font-size: 12px; margin-left: 4px; color: ${a.status===1?'#f5222d':'#52c41a'};" onclick="toggleStatus(${a.id})">${a.status===1?'停用':'启用'}</button>
+          </td>
+        </tr>
+      `;
+    });
+    tbody.innerHTML = html;
+  }
+
+  function openModal(type, id) {
+    document.getElementById('permModal').classList.add('show');
+    document.getElementById('modalTitle').textContent = type === 'new' ? '新增管理员' : '编辑管理员';
+    if(type === 'new') {
+      document.getElementById('f_username').value = '';
+      document.getElementById('f_name').value = '';
+      document.getElementById('f_role').value = 'custom';
+      applyRolePreset('custom');
+    } else {
+      let a = admins.find(x => x.id === id);
+      document.getElementById('f_username').value = a.username;
+      document.getElementById('f_name').value = a.name;
+      document.getElementById('f_role').value = a.role;
+      applyRolePreset(a.role);
+    }
+  }
+
+  function closeModal() {
+    document.getElementById('permModal').classList.remove('show');
+  }
+
+  function toggleStatus(id) {
+    let a = admins.find(x => x.id === id);
+    if(a) {
+      a.status = a.status === 1 ? 0 : 1;
+      renderTable();
+      showToast(a.status === 1 ? '已启用账号' : '已停用账号');
+    }
+  }
+
+  function saveAdmin() {
+    showToast('保存成功');
+    closeModal();
+    renderTable();
+  }
+
+  function toggleGroup(checkbox) {
+    const gid = checkbox.getAttribute('data-group');
+    const items = document.getElementById(gid).querySelectorAll('.item-cb');
+    items.forEach(cb => cb.checked = checkbox.checked);
+  }
+
+  function applyRolePreset(role) {
+    const allCbs = document.querySelectorAll('.item-cb, .g-cb');
+    
+    if(role === 'super') {
+      allCbs.forEach(cb => cb.checked = true);
+    } else if (role === 'ops') {
+      allCbs.forEach(cb => cb.checked = false);
+      ['g1', 'g2', 'g3'].forEach(gid => {
+        document.querySelector('.g-cb[data-group="' + gid + '"]').checked = true;
+        document.getElementById(gid).querySelectorAll('.item-cb').forEach(cb => cb.checked = true);
+      });
+    } else {
+      allCbs.forEach(cb => cb.checked = false);
+    }
+  }
+
+  // 绑定项改变时更新组的全选状态
+  document.querySelectorAll('.item-cb').forEach(cb => {
+    cb.addEventListener('change', function() {
+      const groupDiv = this.closest('.tree-items');
+      const gid = groupDiv.id;
+      const allChecked = Array.from(groupDiv.querySelectorAll('.item-cb')).every(x => x.checked);
+      document.querySelector('.g-cb[data-group="' + gid + '"]').checked = allChecked;
+      document.getElementById('f_role').value = 'custom';
+    });
+  });
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = '✓ ' + msg;
+    t.style.opacity = 1;
+    setTimeout(() => { t.style.opacity = 0; }, 2500);
+  }
+
+  renderSidebar({ currentPage: 'permissions', role: 'admin' });
+  renderTable();
+</script>
+</body>
+</html>

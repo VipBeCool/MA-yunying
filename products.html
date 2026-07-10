@@ -7,18 +7,11 @@
     <title>产品配置 - 运营管控台</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
-        .sidebar {
-            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
-        }
+        
 
-        .nav-item.active {
-            background: rgba(82, 196, 26, 0.2);
-            border-left-color: #52c41a;
-        }
+        
 
-        .logo-icon {
-            background: #52c41a;
-        }
+        
 
         /* 产品状态标签 */
         .status-tag {
@@ -33,7 +26,7 @@
 
         .status-tag.running {
             background: #f6ffed;
-            color: #52c41a;
+            color: var(--brand);
         }
 
         .status-tag.paused {
@@ -54,7 +47,7 @@
         }
 
         .status-dot.running {
-            background: #52c41a;
+            background: var(--brand);
             animation: blink 1.5s infinite;
         }
 
@@ -83,7 +76,7 @@
             border-radius: 4px;
             font-size: 11px;
             background: #e6f7ff;
-            color: #1890ff;
+            color: var(--brand);
             font-weight: 500;
         }
 
@@ -234,7 +227,7 @@
         .form-group input:focus,
         .form-group select:focus,
         .form-group textarea:focus {
-            border-color: #1890ff;
+            border-color: var(--brand);
             outline: none;
             box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
         }
@@ -268,14 +261,14 @@
         }
 
         .radio-item.selected {
-            border-color: #1890ff;
+            border-color: var(--brand);
             background: #e6f7ff;
-            color: #1890ff;
+            color: var(--brand);
             font-weight: 500;
         }
 
         .radio-item input[type="radio"] {
-            accent-color: #1890ff;
+            accent-color: var(--brand);
             width: 14px;
             height: 14px;
         }
@@ -304,12 +297,12 @@
         }
 
         .field-check.checked {
-            border-color: #1890ff;
+            border-color: var(--brand);
             background: #f0f8ff;
         }
 
         .field-check input[type="checkbox"] {
-            accent-color: #1890ff;
+            accent-color: var(--brand);
             width: 15px;
             height: 15px;
         }
@@ -345,7 +338,7 @@
         .rule-cond-tag {
             padding: 3px 10px;
             background: #e6f7ff;
-            color: #1890ff;
+            color: var(--brand);
             border-radius: 6px;
             font-size: 12px;
         }
@@ -393,7 +386,7 @@
         }
 
         .toggle-switch input:checked+.toggle-slider {
-            background: #52c41a;
+            background: var(--brand);
         }
 
         .toggle-switch input:checked+.toggle-slider:before {
@@ -417,7 +410,7 @@
             position: fixed;
             top: 20px;
             right: 20px;
-            background: #52c41a;
+            background: var(--brand);
             color: #fff;
             padding: 12px 24px;
             border-radius: 8px;
@@ -443,49 +436,9 @@
 
 <body>
     <div class="app-container">
-        <aside class="sidebar">
-            <div class="sidebar-logo">
-                <div class="logo-icon">⚙️</div>
-                <h1>运营管控台</h1>
-            </div>
-            
-            <nav class="nav-menu">
-                <a href="index.html" class="nav-item "><span class="nav-icon">📊</span><span class="nav-text">运营概览</span></a>
-                
-                <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 8px 16px;"></div>
-                <div style="font-size: 12px; color: rgba(255,255,255,0.45); padding: 8px 24px; margin-top: 4px;">数据交付</div>
-                <a href="smart-search.html" class="nav-item "><span class="nav-icon">🎯</span><span class="nav-text">智能探客</span></a>
-                <a href="batch-enrich.html" class="nav-item "><span class="nav-icon">📑</span><span class="nav-text">批量画像查询</span></a>
-                
-                <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 8px 16px;"></div>
-                <div style="font-size: 12px; color: rgba(255,255,255,0.45); padding: 8px 24px; margin-top: 4px;">业务管理</div>
-                <a href="institutions.html" class="nav-item "><span class="nav-icon">🏛️</span><span class="nav-text">机构管理</span></a>
-                <a href="customer-pool.html" class="nav-item "><span class="nav-icon">🏊</span><span class="nav-text">客户池</span></a>
-                <a href="products.html" class="nav-item active"><span class="nav-icon">📦</span><span class="nav-text">产品配置</span></a>
-                <a href="rules.html" class="nav-item "><span class="nav-icon">🎯</span><span class="nav-text">规则引擎</span></a>
-                <a href="distribution.html" class="nav-item "><span class="nav-icon">🔀</span><span class="nav-text">分发管理</span></a>
-                <a href="analytics.html" class="nav-item "><span class="nav-icon">📈</span><span class="nav-text">效果分析</span></a>
-                <a href="billing.html" class="nav-item "><span class="nav-icon">💰</span><span class="nav-text">收费结算</span></a>
-                <a href="reconciliation.html" class="nav-item "><span class="nav-icon">📑</span><span class="nav-text">对账管理</span></a>
-                <a href="risk-alert.html" class="nav-item "><span class="nav-icon">⚠️</span><span class="nav-text">风险预警</span></a>
-                
-                <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 8px 16px;"></div>
-                <div style="font-size: 12px; color: rgba(255,255,255,0.45); padding: 8px 24px; margin-top: 4px;">系统配置</div>
-                <a href="api-monitor.html" class="nav-item "><span class="nav-icon">🔌</span><span class="nav-text">API监控</span></a>
-                <a href="downloads.html" class="nav-item "><span class="nav-icon">📥</span><span class="nav-text">下载中心</span></a>
-            </nav>
-            <div class="sidebar-footer">
-                <div class="user-info">
-                    <div class="user-avatar" style="background: #52c41a;">管</div>
-                    <div>
-                        <div class="user-name">管理员</div>
-                        <div class="user-role">平台运营</div>
-                    </div>
-                </div>
-            </div>
-        </aside>
+        <aside class="sidebar" id="sidebar"></aside>
 
-        <main class="main-content">
+        <main class="main-content anim-fade-in">
             <div class="page-header" style="display:flex;justify-content:space-between;align-items:center;">
                 <div>
                     <h2>产品配置</h2>
@@ -498,7 +451,7 @@
             <div class="filter-bar">
                 <div class="filter-item">
                     <label>所属机构</label>
-                    <select class="form-select" id="filterOrg" onchange="filterProducts()">
+                    <select class="form-control" id="filterOrg" onchange="filterProducts()">
                         <option value="">全部机构</option>
                         <option>江苏银行</option>
                         <option>南京银行</option>
@@ -507,7 +460,7 @@
                 </div>
                 <div class="filter-item">
                     <label>产品类型</label>
-                    <select class="form-select" id="filterType" onchange="filterProducts()">
+                    <select class="form-control" id="filterType" onchange="filterProducts()">
                         <option value="">全部类型</option>
                         <option>信用贷</option>
                         <option>抵押贷</option>
@@ -515,7 +468,7 @@
                 </div>
                 <div class="filter-item">
                     <label>状态</label>
-                    <select class="form-select" id="filterStatus" onchange="filterProducts()">
+                    <select class="form-control" id="filterStatus" onchange="filterProducts()">
                         <option value="">全部状态</option>
                         <option value="running">运行中</option>
                         <option value="paused">已暂停</option>
@@ -835,7 +788,7 @@
                     <td><span class="time-text">${p.lastRun}</span></td>
                     <td><span class="time-text">${p.nextRun}</span></td>
                     <td>${p.pushCount.toLocaleString()}</td>
-                    <td style="color:${parseFloat(p.conversion) >= 4 ? '#52c41a' : '#1890ff'};font-weight:600;">${p.conversion}</td>
+                    <td style="color:${parseFloat(p.conversion) >= 4 ? 'var(--brand)' : 'var(--brand)'};font-weight:600;">${p.conversion}</td>
                     <td>
                         <button class="btn btn-text btn-sm" onclick="editProduct(${p.id})">编辑</button>
                         <button class="btn btn-text btn-sm" onclick="toggleProductStatus(${p.id})">${p.status === 'running' ? '暂停' : '启用'}</button>
@@ -957,6 +910,11 @@
         // 初始化
         document.addEventListener('DOMContentLoaded', () => renderProducts(products));
     </script>
+
+  <script src="js/sidebar.js"></script>
+  <script>
+    renderSidebar({ currentPage: 'products' });
+  </script>
 </body>
 
 </html>

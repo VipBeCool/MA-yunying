@@ -2,268 +2,568 @@
 <html lang="zh-CN">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>运营管控台 - 智能营销平台</title>
-    <link rel="stylesheet" href="css/style.css">
-    <style>
-        .sidebar {
-            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>工作台 - 智能营销平台</title>
+  <meta name="description" content="联合征信运营管控台 — 平台运营全局数据概览">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* 核心指标卡片 (复用机构端样式) */
+    .wb-metrics {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
 
-        .nav-item.active {
-            background: rgba(82, 196, 26, 0.2);
-            border-left-color: #52c41a;
-        }
+    .wb-metric-hero {
+      position: relative;
+      overflow: hidden;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: #fff;
+      padding: 24px 28px 22px;
+      box-shadow: 0 10px 28px -8px rgba(16, 185, 129, 0.45);
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
 
-        .logo-icon {
-            background: #52c41a;
-        }
-    </style>
+    .wb-metric-hero:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 32px -8px rgba(16, 185, 129, 0.55);
+    }
+
+    .wb-metric-hero::before {
+      content: '';
+      position: absolute;
+      right: 28px;
+      top: -24px;
+      bottom: -24px;
+      width: 56px;
+      background: rgba(255, 255, 255, 0.1);
+      transform: skewX(-25deg);
+    }
+
+    .wb-metric-hero::after {
+      content: '';
+      position: absolute;
+      right: 100px;
+      top: -24px;
+      bottom: -24px;
+      width: 20px;
+      background: rgba(255, 255, 255, 0.15);
+      transform: skewX(-25deg);
+    }
+
+    .wb-metric-hero-label {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.9);
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+
+    .wb-metric-hero-val {
+      font-size: 44px;
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -1px;
+    }
+
+    .wb-metric-hero-suffix {
+      font-size: 18px;
+      font-weight: 600;
+      margin-left: 4px;
+      opacity: 0.9;
+    }
+
+    .wb-metric-hero-arrow {
+      position: absolute;
+      right: 28px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 28px;
+      font-weight: 700;
+      opacity: 0.9;
+    }
+
+    .wb-metric-hero-foot {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 16px;
+      margin-right: 32px;
+    }
+
+    .wb-metric-hero-trend {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 100px;
+      display: inline-block;
+    }
+
+    .wb-metric-smalls {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+    }
+
+    .wb-metric-small {
+      background: #f8fafc;
+      border: 1px solid var(--gray-100);
+      border-radius: 14px;
+      padding: 16px 18px;
+      transition: all 0.2s;
+    }
+
+    .wb-metric-small:hover {
+      background: #fff;
+      border-color: #dbeafe;
+      box-shadow: 0 4px 12px -4px rgba(37, 99, 235, 0.12);
+      transform: translateY(-2px);
+    }
+
+    .wb-metric-small-label {
+      font-size: 12.5px;
+      color: var(--gray-500);
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+
+    .wb-metric-small-val {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--gray-900);
+      line-height: 1;
+    }
+
+    .wb-metric-small-suffix {
+      font-size: 12px;
+      color: var(--gray-500);
+      margin-left: 3px;
+      font-weight: 500;
+    }
+
+    /* 快捷入口 */
+    .shortcut-card {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .shortcut-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 24px -8px rgba(16, 185, 129, 0.25);
+      border-color: var(--brand) !important;
+    }
+
+    .shortcut-icon-box {
+      transition: all 0.3s ease;
+    }
+
+    .shortcut-card:hover .shortcut-icon-box {
+      background: var(--brand) !important;
+      color: white !important;
+      transform: scale(1.1);
+    }
+
+    /* 排行榜勋章 */
+    .medal {
+      color: white;
+      border-radius: 50%;
+      width: 26px;
+      height: 26px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 12px;
+    }
+
+    .medal-1 {
+      background: linear-gradient(135deg, #fcd34d, #f59e0b);
+      box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3);
+    }
+
+    .medal-2 {
+      background: linear-gradient(135deg, #e2e8f0, #94a3b8);
+      box-shadow: 0 4px 10px rgba(148, 163, 184, 0.3);
+    }
+
+    .medal-3 {
+      background: linear-gradient(135deg, #fdba74, #ea580c);
+      box-shadow: 0 4px 10px rgba(234, 88, 12, 0.3);
+    }
+  </style>
 </head>
 
 <body>
-    <div class="app-container">
-        <aside class="sidebar">
-            <div class="sidebar-logo">
-                <div class="logo-icon">⚙️</div>
-                <h1>运营管控台</h1>
-            </div>
-            
-            <nav class="nav-menu">
-                <a href="index.html" class="nav-item active"><span class="nav-icon">📊</span><span class="nav-text">运营概览</span></a>
-                
-                <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 8px 16px;"></div>
-                <div style="font-size: 12px; color: rgba(255,255,255,0.45); padding: 8px 24px; margin-top: 4px;">数据交付</div>
-                <a href="smart-search.html" class="nav-item "><span class="nav-icon">🎯</span><span class="nav-text">智能探客</span></a>
-                <a href="batch-enrich.html" class="nav-item "><span class="nav-icon">📑</span><span class="nav-text">批量画像查询</span></a>
-                
-                <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 8px 16px;"></div>
-                <div style="font-size: 12px; color: rgba(255,255,255,0.45); padding: 8px 24px; margin-top: 4px;">业务管理</div>
-                <a href="institutions.html" class="nav-item "><span class="nav-icon">🏛️</span><span class="nav-text">机构管理</span></a>
-                <a href="customer-pool.html" class="nav-item "><span class="nav-icon">🏊</span><span class="nav-text">客户池</span></a>
-                <a href="products.html" class="nav-item "><span class="nav-icon">📦</span><span class="nav-text">产品配置</span></a>
-                <a href="rules.html" class="nav-item "><span class="nav-icon">🎯</span><span class="nav-text">规则引擎</span></a>
-                <a href="distribution.html" class="nav-item "><span class="nav-icon">🔀</span><span class="nav-text">分发管理</span></a>
-                <a href="analytics.html" class="nav-item "><span class="nav-icon">📈</span><span class="nav-text">效果分析</span></a>
-                <a href="billing.html" class="nav-item "><span class="nav-icon">💰</span><span class="nav-text">收费结算</span></a>
-                <a href="reconciliation.html" class="nav-item "><span class="nav-icon">📑</span><span class="nav-text">对账管理</span></a>
-                <a href="risk-alert.html" class="nav-item "><span class="nav-icon">⚠️</span><span class="nav-text">风险预警</span></a>
-                
-                <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 8px 16px;"></div>
-                <div style="font-size: 12px; color: rgba(255,255,255,0.45); padding: 8px 24px; margin-top: 4px;">系统配置</div>
-                <a href="api-monitor.html" class="nav-item "><span class="nav-icon">🔌</span><span class="nav-text">API监控</span></a>
-                <a href="downloads.html" class="nav-item "><span class="nav-icon">📥</span><span class="nav-text">下载中心</span></a>
-            </nav>
-            <div class="sidebar-footer">
-                <div class="user-info">
-                    <div class="user-avatar" style="background: #52c41a;">管</div>
-                    <div>
-                        <div class="user-name">管理员</div>
-                        <div class="user-role">平台运营</div>
-                    </div>
-                </div>
-            </div>
-        </aside>
+  <div class="app-container">
+    <aside class="sidebar" id="sidebar"></aside>
 
-        <main class="main-content">
-            <div class="page-header">
-                <h1 class="page-title">运营概览</h1>
-                <p class="page-breadcrumb">智能营销平台运营管控台</p>
+    <main class="main-content anim-fade-in">
+      <div class="page-header">
+        <div class="page-header-left">
+          <h1 class="page-title">工作台</h1>
+          <p class="page-breadcrumb">智能营销平台运营管控台</p>
+        </div>
+      </div>
+
+      <!-- 核心指标 -->
+      <div class="wb-metrics">
+        <!-- 大主卡 -->
+        <div class="wb-metric-hero" onclick="location.href='customers.html'">
+          <div class="wb-metric-hero-arrow">›</div>
+          <div class="wb-metric-hero-label" title="统计全部智能体生成的各个批次的企业名单的去重总数">名单池总量</div>
+          <div class="wb-metric-hero-val">865,240</div>
+          <div class="wb-metric-hero-foot">
+            <div class="wb-metric-hero-trend" style="margin-top:0;">
+              未去重名单 <span style="font-family:'SF Mono',monospace;font-weight:700;">1,284,500</span>
             </div>
-
-            <!-- 核心指标 -->
-            <div class="stat-cards">
-                <div class="stat-card primary">
-                    <div class="stat-label">企业池总量</div>
-                    <div class="stat-value">1,400<span class="stat-suffix">万</span></div>
-                    <div class="stat-trend">已授权 200万</div>
-                </div>
-                <div class="stat-card success">
-                    <div class="stat-label">合作机构</div>
-                    <div class="stat-value">15<span class="stat-suffix">家</span></div>
-                    <div class="stat-trend">活跃产品 28个</div>
-                </div>
-                <div class="stat-card warning">
-                    <div class="stat-label">本月推送</div>
-                    <div class="stat-value">8.5<span class="stat-suffix">万</span></div>
-                    <div class="stat-trend up">↑ 15% 较上月</div>
-                </div>
-                <div class="stat-card danger">
-                    <div class="stat-label">本月放款</div>
-                    <div class="stat-value">2.58<span class="stat-suffix">亿</span></div>
-                    <div class="stat-trend up">↑ 22% 较上月</div>
-                </div>
+            <div style="color:rgba(255,255,255,0.9);font-size:13px;font-weight:500;">
+              名单批次 <span style="font-size:13px;font-family:'SF Mono',monospace;font-weight:700;color:#fff;">1,245</span>
             </div>
+          </div>
+        </div>
+        <!-- 小卡横排 -->
+        <div class="wb-metric-smalls">
+          <div class="wb-metric-small">
+            <div class="wb-metric-small-label">本月推送</div>
+            <div class="wb-metric-small-val">85,000<span class="wb-metric-small-suffix">家</span></div>
+          </div>
+          <div class="wb-metric-small">
+            <div class="wb-metric-small-label">本月意向</div>
+            <div class="wb-metric-small-val">460<span class="wb-metric-small-suffix">家</span></div>
+          </div>
+          <div class="wb-metric-small">
+            <div class="wb-metric-small-label">本月申请</div>
+            <div class="wb-metric-small-val">85<span class="wb-metric-small-suffix">家</span></div>
+          </div>
+          <div class="wb-metric-small">
+            <div class="wb-metric-small-label">本月授信</div>
+            <div class="wb-metric-small-val">3,250<span class="wb-metric-small-suffix">万</span></div>
+          </div>
+        </div>
+      </div>
 
-            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px;">
-                <!-- 机构业绩排行 -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">🏆 机构业绩排行</h3>
-                        <span class="card-extra">本月放款金额</span>
-                    </div>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>排名</th>
-                                <th>机构名称</th>
-                                <th>合作等级</th>
-                                <th>推送量</th>
-                                <th>放款金额</th>
-                                <th>转化率</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><span class="rank-number top">1</span></td>
-                                <td><a href="institutions.html" class="company-name">江苏银行</a></td>
-                                <td><span class="tag tag-purple">战略合作</span></td>
-                                <td>12,000</td>
-                                <td style="font-weight: 600; color: #52c41a;">8,500万</td>
-                                <td>4.2%</td>
-                            </tr>
-                            <tr>
-                                <td><span class="rank-number top">2</span></td>
-                                <td><a href="institutions.html" class="company-name">南京银行</a></td>
-                                <td><span class="tag tag-purple">战略合作</span></td>
-                                <td>10,000</td>
-                                <td style="font-weight: 600; color: #52c41a;">6,800万</td>
-                                <td>3.8%</td>
-                            </tr>
-                            <tr>
-                                <td><span class="rank-number top">3</span></td>
-                                <td><a href="institutions.html" class="company-name">苏州农商行</a></td>
-                                <td><span class="tag tag-blue">重点合作</span></td>
-                                <td>8,000</td>
-                                <td style="font-weight: 600; color: #52c41a;">4,200万</td>
-                                <td>3.2%</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+      <!-- 快捷入口 (全宽) -->
+      <div style="margin-bottom: 24px;">
+        <div class="card" style="box-shadow:0 4px 20px rgba(0,0,0,0.03);border:none;">
+          <div class="card-header">
+            <h3 class="card-title">
+              <span class="card-title-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="12 2 2 7 12 12 22 7 12 2" />
+                  <polyline points="2 12 12 17 22 12" />
+                  <polyline points="2 17 12 22 22 17" />
+                </svg></span>
+              快捷入口
+            </h3>
+          </div>
+          <div class="card-body" style="padding-top:16px;">
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;">
 
-                <!-- 快捷操作 -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">⚡ 快捷操作</h3>
-                    </div>
-                    <div style="display: flex; flex-direction: column; gap: 12px;">
-                        <a href="institutions.html" class="btn btn-default" style="justify-content: flex-start;">🏛️
-                            新增合作机构</a>
-                        <a href="products.html" class="btn btn-default" style="justify-content: flex-start;">📦
-                            配置新产品</a>
-                        <a href="rules.html" class="btn btn-default" style="justify-content: flex-start;">🎯 创建获客规则</a>
-                        <a href="distribution.html" class="btn btn-default" style="justify-content: flex-start;">🔀
-                            查看据量池</a>
-                    </div>
+              <a href="customers.html" class="shortcut-card"
+                style="display:flex;flex-direction:row;align-items:center;gap:16px;padding:18px 20px;border-radius:14px;border:1px solid var(--gray-100);text-decoration:none;background:linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);color:var(--gray-800);">
+                <span class="shortcut-icon-box"
+                  style="width:46px;height:46px;flex-shrink:0;background:var(--brand-light);border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--brand);">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:24px;height:24px;">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                  </svg>
+                </span>
+                <div style="display:flex;flex-direction:column;align-items:flex-start;gap:2px;">
+                  <span style="font-size:14px;font-weight:700;white-space:nowrap;color:var(--gray-900);">客户名单</span>
+                  <span style="font-size:12px;color:var(--gray-400);white-space:nowrap;">统筹分配营销线索</span>
                 </div>
+              </a>
+              <a href="agents.html" class="shortcut-card"
+                style="display:flex;flex-direction:row;align-items:center;gap:16px;padding:18px 20px;border-radius:14px;border:1px solid var(--gray-100);text-decoration:none;background:linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);color:var(--gray-800);">
+                <span class="shortcut-icon-box"
+                  style="width:46px;height:46px;flex-shrink:0;background:var(--brand-light);border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--brand);">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:24px;height:24px;">
+                    <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+                    <rect x="9" y="9" width="6" height="6"></rect>
+                    <line x1="9" y1="1" x2="9" y2="4"></line>
+                    <line x1="15" y1="1" x2="15" y2="4"></line>
+                    <line x1="9" y1="20" x2="9" y2="23"></line>
+                    <line x1="15" y1="20" x2="15" y2="23"></line>
+                    <line x1="20" y1="9" x2="23" y2="9"></line>
+                    <line x1="20" y1="14" x2="23" y2="14"></line>
+                    <line x1="1" y1="9" x2="4" y2="9"></line>
+                    <line x1="1" y1="14" x2="4" y2="14"></line>
+                  </svg>
+                </span>
+                <div style="display:flex;flex-direction:column;align-items:flex-start;gap:2px;">
+                  <span style="font-size:14px;font-weight:700;white-space:nowrap;color:var(--gray-900);">智能体管理</span>
+                  <span style="font-size:12px;color:var(--gray-400);white-space:nowrap;">构建智能获客引擎</span>
+                </div>
+              </a>
+              <a href="institutions.html" class="shortcut-card"
+                style="display:flex;flex-direction:row;align-items:center;gap:16px;padding:18px 20px;border-radius:14px;border:1px solid var(--gray-100);text-decoration:none;background:linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);color:var(--gray-800);">
+                <span class="shortcut-icon-box"
+                  style="width:46px;height:46px;flex-shrink:0;background:var(--brand-light);border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--brand);">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:24px;height:24px;">
+                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                  </svg>
+                </span>
+                <div style="display:flex;flex-direction:column;align-items:flex-start;gap:2px;">
+                  <span style="font-size:14px;font-weight:700;white-space:nowrap;color:var(--gray-900);">合作机构</span>
+                  <span style="font-size:12px;color:var(--gray-400);white-space:nowrap;">灵活配置机构层级</span>
+                </div>
+              </a>
+              <a href="downloads.html" class="shortcut-card"
+                style="display:flex;flex-direction:row;align-items:center;gap:16px;padding:18px 20px;border-radius:14px;border:1px solid var(--gray-100);text-decoration:none;background:linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);color:var(--gray-800);">
+                <span class="shortcut-icon-box"
+                  style="width:46px;height:46px;flex-shrink:0;background:var(--brand-light);border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--brand);">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:24px;height:24px;">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                  </svg>
+                </span>
+                <div style="display:flex;flex-direction:column;align-items:flex-start;gap:2px;">
+                  <span style="font-size:14px;font-weight:700;white-space:nowrap;color:var(--gray-900);">下载中心</span>
+                  <span style="font-size:12px;color:var(--gray-400);white-space:nowrap;">集中下载生成名单</span>
+                </div>
+              </a>
             </div>
+          </div>
+        </div>
+      </div>
 
-            <!-- 整体漏斗 + 规则效果 -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">📊 整体转化漏斗</h3>
-                    </div>
-                    <div class="funnel-chart">
-                        <div class="funnel-step">
-                            <div class="funnel-label">推送</div>
-                            <div class="funnel-bar-container">
-                                <div class="funnel-bar"
-                                    style="width: 100%; background: linear-gradient(90deg, #1890ff 0%, #40a9ff 100%);">
-                                    85,000</div>
-                            </div>
-                            <div class="funnel-value">100%</div>
-                        </div>
-                        <div class="funnel-step">
-                            <div class="funnel-label">触达</div>
-                            <div class="funnel-bar-container">
-                                <div class="funnel-bar"
-                                    style="width: 58%; background: linear-gradient(90deg, #13c2c2 0%, #36cfc9 100%);">
-                                    49,300</div>
-                            </div>
-                            <div class="funnel-value">58%</div>
-                        </div>
-                        <div class="funnel-step">
-                            <div class="funnel-label">意向</div>
-                            <div class="funnel-bar-container">
-                                <div class="funnel-bar"
-                                    style="width: 18%; background: linear-gradient(90deg, #52c41a 0%, #73d13d 100%);">
-                                    15,300</div>
-                            </div>
-                            <div class="funnel-value">18%</div>
-                        </div>
-                        <div class="funnel-step">
-                            <div class="funnel-label">申请</div>
-                            <div class="funnel-bar-container">
-                                <div class="funnel-bar"
-                                    style="width: 9.4%; background: linear-gradient(90deg, #faad14 0%, #ffc53d 100%);">
-                                    8,000</div>
-                            </div>
-                            <div class="funnel-value">9.4%</div>
-                        </div>
-                        <div class="funnel-step">
-                            <div class="funnel-label">授信</div>
-                            <div class="funnel-bar-container">
-                                <div class="funnel-bar"
-                                    style="width: 5.9%; background: linear-gradient(90deg, #eb2f96 0%, #f759ab 100%);">
-                                    5,000</div>
-                            </div>
-                            <div class="funnel-value">5.9%</div>
-                        </div>
-                        <div class="funnel-step">
-                            <div class="funnel-label">放款</div>
-                            <div class="funnel-bar-container">
-                                <div class="funnel-bar"
-                                    style="width: 3.6%; background: linear-gradient(90deg, #722ed1 0%, #9254de 100%);">
-                                    3,060</div>
-                            </div>
-                            <div class="funnel-value">3.6%</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">🎯 规则效果TOP5</h3>
-                    </div>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>规则名称</th>
-                                <th>转化率</th>
-                                <th>效果</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>规则A-高新科技</td>
-                                <td style="color: #52c41a; font-weight: 600;">4.2%</td>
-                                <td><span class="tag tag-green">优秀</span></td>
-                            </tr>
-                            <tr>
-                                <td>规则B-专精特新</td>
-                                <td style="color: #52c41a; font-weight: 600;">4.0%</td>
-                                <td><span class="tag tag-green">优秀</span></td>
-                            </tr>
-                            <tr>
-                                <td>规则C-纳税大户</td>
-                                <td style="color: #1890ff; font-weight: 600;">3.5%</td>
-                                <td><span class="tag tag-blue">良好</span></td>
-                            </tr>
-                            <tr>
-                                <td>规则D-制造业</td>
-                                <td style="color: #1890ff; font-weight: 600;">3.1%</td>
-                                <td><span class="tag tag-blue">良好</span></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+      <!-- 机构排行 + 转化漏斗 (网格) -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;">
+        <!-- 机构业绩排行 -->
+        <div class="card" style="box-shadow:0 4px 20px rgba(0,0,0,0.03);border:none;">
+          <div class="card-header">
+            <h3 class="card-title">
+              <span class="card-title-icon"><svg viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10" />
+                  <circle cx="12" cy="12" r="6" />
+                  <circle cx="12" cy="12" r="2" />
+                </svg></span>
+              机构业绩排行
+            </h3>
+            <div class="card-extra">
+              <select id="rank-metric-select" class="form-control" onchange="updateRankTable()" style="width: 110px;">
+                <option value="意向">意向</option>
+                <option value="申请" selected>申请</option>
+                <option value="授信">授信</option>
+                <option value="放款">放款</option>
+              </select>
             </div>
-        </main>
-    </div>
-    <script src="js/mock-data.js"></script>
+          </div>
+          <div class="card-body" style="padding-top: 12px;">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>排名</th>
+                  <th>机构名称</th>
+                  <th>合作等级</th>
+                  <th>推送量</th>
+                  <th id="rank-table-metric-th">申请客户数</th>
+                  <th>转化率</th>
+                </tr>
+              </thead>
+              <tbody id="rank-table-body">
+                <tr>
+                  <td><span class="medal" style="background: #f1f5f9; color: #475569; box-shadow: none;">1</span></td>
+                  <td><a href="institution-detail.html" class="company-name">江苏银行</a></td>
+                  <td><span class="tag tag-blue">战略合作</span></td>
+                  <td>12,000</td>
+                  <td style="font-weight: 600; color: var(--brand);">8,500万</td>
+                  <td>4.2%</td>
+                </tr>
+                <tr>
+                  <td><span class="medal" style="background: #f1f5f9; color: #475569; box-shadow: none;">2</span></td>
+                  <td><a href="institution-detail.html" class="company-name">南京银行</a></td>
+                  <td><span class="tag tag-blue">战略合作</span></td>
+                  <td>10,000</td>
+                  <td style="font-weight: 600; color: var(--brand);">6,800万</td>
+                  <td>3.8%</td>
+                </tr>
+                <tr>
+                  <td><span class="medal" style="background: #f1f5f9; color: #475569; box-shadow: none;">3</span></td>
+                  <td><a href="institution-detail.html" class="company-name">苏州农商行</a></td>
+                  <td><span class="tag tag-green">重点合作</span></td>
+                  <td>8,000</td>
+                  <td style="font-weight: 600; color: var(--brand);">4,200万</td>
+                  <td>3.2%</td>
+                </tr>
+                <tr>
+                  <td><span class="medal" style="background: #f1f5f9; color: #475569; box-shadow: none;">4</span></td>
+                  <td><a href="institution-detail.html" class="company-name">无锡银行</a></td>
+                  <td><span class="tag tag-green">重点合作</span></td>
+                  <td>7,500</td>
+                  <td style="font-weight: 600; color: var(--brand);">3,800万</td>
+                  <td>2.9%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 整体转化漏斗 -->
+        <div class="card" style="box-shadow:0 4px 20px rgba(0,0,0,0.03);border:none;">
+          <div class="card-header">
+            <h3 class="card-title">
+              <span class="card-title-icon"><svg viewBox="0 0 24 24">
+                  <line x1="18" y1="20" x2="18" y2="10" />
+                  <line x1="12" y1="20" x2="12" y2="4" />
+                  <line x1="6" y1="20" x2="6" y2="14" />
+                </svg></span>
+              整体转化漏斗
+            </h3>
+          </div>
+          <div class="card-body">
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <span
+                  style="width: 36px; font-size: 12px; color: var(--gray-500); font-weight: 500; text-align: right;">推送</span>
+                <div style="flex: 1; height: 28px; background: var(--gray-100); border-radius: 6px; overflow: hidden;">
+                  <div
+                    style="width: 100%; height: 100%; background: linear-gradient(90deg, var(--brand) 0%, #34d399 100%); border-radius: 6px; display: flex; align-items: center; padding-left: 10px; color: #fff; font-size: 12px; font-weight: 600;">
+                    85,000</div>
+                </div>
+                <span style="width: 36px; font-size: 12px; color: var(--gray-500); font-weight: 600;">100%</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <span
+                  style="width: 36px; font-size: 12px; color: var(--gray-500); font-weight: 500; text-align: right;">触达</span>
+                <div style="flex: 1; height: 28px; background: var(--gray-100); border-radius: 6px; overflow: hidden;">
+                  <div
+                    style="width: 58%; height: 100%; background: linear-gradient(90deg, var(--brand) 0%, #34d399 100%); border-radius: 6px; display: flex; align-items: center; padding-left: 10px; color: #fff; font-size: 12px; font-weight: 600;">
+                    49,300</div>
+                </div>
+                <span style="width: 36px; font-size: 12px; color: var(--gray-500); font-weight: 600;">58%</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <span
+                  style="width: 36px; font-size: 12px; color: var(--gray-500); font-weight: 500; text-align: right;">意向</span>
+                <div style="flex: 1; height: 28px; background: var(--gray-100); border-radius: 6px; overflow: hidden;">
+                  <div
+                    style="width: 25%; height: 100%; background: linear-gradient(90deg, var(--brand) 0%, #34d399 100%); border-radius: 6px; display: flex; align-items: center; padding-left: 10px; color: #fff; font-size: 12px; font-weight: 600;">
+                    460</div>
+                </div>
+                <span style="width: 36px; font-size: 12px; color: var(--gray-500); font-weight: 600;">0.5%</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <span
+                  style="width: 36px; font-size: 12px; color: var(--gray-500); font-weight: 500; text-align: right;">申请</span>
+                <div style="flex: 1; height: 28px; background: var(--gray-100); border-radius: 6px; overflow: hidden;">
+                  <div
+                    style="width: 15%; height: 100%; background: linear-gradient(90deg, var(--brand) 0%, #34d399 100%); border-radius: 6px; display: flex; align-items: center; padding-left: 10px; color: #fff; font-size: 12px; font-weight: 600;">
+                    85</div>
+                </div>
+                <span style="width: 36px; font-size: 12px; color: var(--gray-500); font-weight: 600;">0.1%</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <span
+                  style="width: 36px; font-size: 12px; color: var(--gray-500); font-weight: 500; text-align: right;">授信</span>
+                <div style="flex: 1; height: 28px; background: var(--gray-100); border-radius: 6px; overflow: hidden;">
+                  <div
+                    style="width: 8%; height: 100%; background: linear-gradient(90deg, var(--brand) 0%, #34d399 100%); border-radius: 6px; display: flex; align-items: center; padding-left: 10px; color: #fff; font-size: 12px; font-weight: 600;">
+                    22</div>
+                </div>
+                <span style="width: 36px; font-size: 12px; color: var(--gray-500); font-weight: 600;">0.0%</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <span
+                  style="width: 36px; font-size: 12px; color: var(--gray-500); font-weight: 500; text-align: right;">放款</span>
+                <div style="flex: 1; height: 28px; background: var(--gray-100); border-radius: 6px; overflow: hidden;">
+                  <div
+                    style="width: 4%; height: 100%; background: linear-gradient(90deg, var(--brand) 0%, #34d399 100%); border-radius: 6px; display: flex; align-items: center; padding-left: 10px; color: #fff; font-size: 12px; font-weight: 600;">
+                    15</div>
+                </div>
+                <span style="width: 36px; font-size: 12px; color: var(--gray-500); font-weight: 600;">0.0%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/sidebar.js"></script>
+  <script>
+    renderSidebar({ currentPage: 'home' });
+
+    const rankData = {
+      "意向": [
+        { name: "江苏银行", level: "战略合作", tag: "blue", push: "12,000", value: "850", valueSuffix: "", rate: "7.08%" },
+        { name: "南京银行", level: "战略合作", tag: "blue", push: "10,000", value: "680", valueSuffix: "", rate: "6.8%" },
+        { name: "苏州农商行", level: "重点合作", tag: "green", push: "8,000", value: "450", valueSuffix: "", rate: "5.6%" },
+        { name: "无锡银行", level: "重点合作", tag: "green", push: "7,500", value: "380", valueSuffix: "", rate: "5.0%" }
+      ],
+      "申请": [
+        { name: "江苏银行", level: "战略合作", tag: "blue", push: "12,000", value: "240", valueSuffix: "", rate: "2.0%" },
+        { name: "南京银行", level: "战略合作", tag: "blue", push: "10,000", value: "185", valueSuffix: "", rate: "1.85%" },
+        { name: "苏州农商行", level: "重点合作", tag: "green", push: "8,000", value: "120", valueSuffix: "", rate: "1.5%" },
+        { name: "无锡银行", level: "重点合作", tag: "green", push: "7,500", value: "98", valueSuffix: "", rate: "1.3%" }
+      ],
+      "授信": [
+        { name: "江苏银行", level: "战略合作", tag: "blue", push: "12,000", value: "12,500", valueSuffix: "万", rate: "15%" },
+        { name: "南京银行", level: "战略合作", tag: "blue", push: "10,000", value: "9,800", valueSuffix: "万", rate: "12%" },
+        { name: "苏州农商行", level: "重点合作", tag: "green", push: "8,000", value: "6,500", valueSuffix: "万", rate: "10%" },
+        { name: "无锡银行", level: "重点合作", tag: "green", push: "7,500", value: "5,200", valueSuffix: "万", rate: "9%" }
+      ],
+      "放款": [
+        { name: "江苏银行", level: "战略合作", tag: "blue", push: "12,000", value: "8,500", valueSuffix: "万", rate: "4.2%" },
+        { name: "南京银行", level: "战略合作", tag: "blue", push: "10,000", value: "6,800", valueSuffix: "万", rate: "3.8%" },
+        { name: "苏州农商行", level: "重点合作", tag: "green", push: "8,000", value: "4,200", valueSuffix: "万", rate: "3.2%" },
+        { name: "无锡银行", level: "重点合作", tag: "green", push: "7,500", value: "3,800", valueSuffix: "万", rate: "3.0%" }
+      ]
+    };
+
+    function updateRankTable() {
+      const select = document.getElementById("rank-metric-select");
+      if(!select) return;
+      const metric = select.value;
+      const data = rankData[metric];
+      
+      const th = document.getElementById("rank-table-metric-th");
+      if (th) {
+        if (metric === "意向" || metric === "申请") {
+          th.innerText = metric + "客户数";
+        } else {
+          th.innerText = metric + "金额";
+        }
+      }
+
+      const tbody = document.getElementById("rank-table-body");
+      if (tbody && data) {
+        let html = "";
+        data.forEach((row, index) => {
+          let medalColor = "#f1f5f9";
+          let medalTextColor = "#475569";
+          if (index === 0) { medalColor = "#fef3c7"; medalTextColor = "#d97706"; }
+          else if (index === 1) { medalColor = "#f1f5f9"; medalTextColor = "#64748b"; }
+          else if (index === 2) { medalColor = "#fff7ed"; medalTextColor = "#ea580c"; }
+          
+          html += `
+            <tr>
+              <td><span class="medal" style="background: ${medalColor}; color: ${medalTextColor}; box-shadow: none;">${index + 1}</span></td>
+              <td><a href="institution-detail.html" class="company-name">${row.name}</a></td>
+              <td><span class="tag tag-${row.tag}">${row.level}</span></td>
+              <td>${row.push}</td>
+              <td style="font-weight: 600; color: var(--brand);">${row.value}${row.valueSuffix}</td>
+              <td>${row.rate}</td>
+            </tr>
+          `;
+        });
+        tbody.innerHTML = html;
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+      updateRankTable();
+    });
+  </script>
 </body>
 
 </html>

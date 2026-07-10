@@ -7,18 +7,11 @@
     <title>客户池管理 - 运营管控台</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
-        .sidebar {
-            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
-        }
+        
 
-        .nav-item.active {
-            background: rgba(82, 196, 26, 0.2);
-            border-left-color: #52c41a;
-        }
+        
 
-        .logo-icon {
-            background: #52c41a;
-        }
+        
 
         /* 统计卡片区 */
         .pool-stats {
@@ -60,19 +53,19 @@
         }
 
         .stat-card.total {
-            border-left-color: #1890ff;
+            border-left-color: var(--brand);
         }
 
         .stat-card.total .stat-value {
-            color: #1890ff;
+            color: var(--brand);
         }
 
         .stat-card.available {
-            border-left-color: #52c41a;
+            border-left-color: var(--brand);
         }
 
         .stat-card.available .stat-value {
-            color: #52c41a;
+            color: var(--brand);
         }
 
         .stat-card.marketing {
@@ -160,11 +153,11 @@
 
         .pool-status.s-available {
             background: #f6ffed;
-            color: #52c41a;
+            color: var(--brand);
         }
 
         .pool-status.s-available::before {
-            background: #52c41a;
+            background: var(--brand);
         }
 
         .pool-status.s-locked {
@@ -178,11 +171,11 @@
 
         .pool-status.s-assigned {
             background: #e6f7ff;
-            color: #1890ff;
+            color: var(--brand);
         }
 
         .pool-status.s-assigned::before {
-            background: #1890ff;
+            background: var(--brand);
         }
 
         .pool-status.s-contacting {
@@ -409,13 +402,13 @@
             width: 12px;
             height: 12px;
             border-radius: 50%;
-            border: 2px solid #1890ff;
+            border: 2px solid var(--brand);
             background: #fff;
         }
 
         .timeline-item.success::before {
-            border-color: #52c41a;
-            background: #52c41a;
+            border-color: var(--brand);
+            background: var(--brand);
         }
 
         .timeline-item.warning::before {
@@ -510,63 +503,23 @@
         }
 
         .page-btn:hover {
-            border-color: #1890ff;
-            color: #1890ff;
+            border-color: var(--brand);
+            color: var(--brand);
         }
 
         .page-btn.active {
-            background: #1890ff;
+            background: var(--brand);
             color: #fff;
-            border-color: #1890ff;
+            border-color: var(--brand);
         }
     </style>
 </head>
 
 <body>
     <div class="app-container">
-        <aside class="sidebar">
-            <div class="sidebar-logo">
-                <div class="logo-icon">⚙️</div>
-                <h1>运营管控台</h1>
-            </div>
-            
-            <nav class="nav-menu">
-                <a href="index.html" class="nav-item "><span class="nav-icon">📊</span><span class="nav-text">运营概览</span></a>
-                
-                <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 8px 16px;"></div>
-                <div style="font-size: 12px; color: rgba(255,255,255,0.45); padding: 8px 24px; margin-top: 4px;">数据交付</div>
-                <a href="smart-search.html" class="nav-item "><span class="nav-icon">🎯</span><span class="nav-text">智能探客</span></a>
-                <a href="batch-enrich.html" class="nav-item "><span class="nav-icon">📑</span><span class="nav-text">批量画像查询</span></a>
-                
-                <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 8px 16px;"></div>
-                <div style="font-size: 12px; color: rgba(255,255,255,0.45); padding: 8px 24px; margin-top: 4px;">业务管理</div>
-                <a href="institutions.html" class="nav-item "><span class="nav-icon">🏛️</span><span class="nav-text">机构管理</span></a>
-                <a href="customer-pool.html" class="nav-item active"><span class="nav-icon">🏊</span><span class="nav-text">客户池</span></a>
-                <a href="products.html" class="nav-item "><span class="nav-icon">📦</span><span class="nav-text">产品配置</span></a>
-                <a href="rules.html" class="nav-item "><span class="nav-icon">🎯</span><span class="nav-text">规则引擎</span></a>
-                <a href="distribution.html" class="nav-item "><span class="nav-icon">🔀</span><span class="nav-text">分发管理</span></a>
-                <a href="analytics.html" class="nav-item "><span class="nav-icon">📈</span><span class="nav-text">效果分析</span></a>
-                <a href="billing.html" class="nav-item "><span class="nav-icon">💰</span><span class="nav-text">收费结算</span></a>
-                <a href="reconciliation.html" class="nav-item "><span class="nav-icon">📑</span><span class="nav-text">对账管理</span></a>
-                <a href="risk-alert.html" class="nav-item "><span class="nav-icon">⚠️</span><span class="nav-text">风险预警</span></a>
-                
-                <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 8px 16px;"></div>
-                <div style="font-size: 12px; color: rgba(255,255,255,0.45); padding: 8px 24px; margin-top: 4px;">系统配置</div>
-                <a href="api-monitor.html" class="nav-item "><span class="nav-icon">🔌</span><span class="nav-text">API监控</span></a>
-                <a href="downloads.html" class="nav-item "><span class="nav-icon">📥</span><span class="nav-text">下载中心</span></a>
-            </nav>
-            <div class="sidebar-footer">
-                <div class="user-info">
-                    <div class="user-avatar" style="background: #52c41a;">管</div>
-                    <div>
-                        <div class="user-name">管理员</div>
-                        <div class="user-role">平台运营</div>
-                    </div>
-                </div>
-            </div>
-        </aside>
+        <aside class="sidebar" id="sidebar"></aside>
 
-        <main class="main-content">
+        <main class="main-content anim-fade-in">
             <div class="page-header" style="display:flex;justify-content:space-between;align-items:center;">
                 <div>
                     <h2>客户池管理</h2>
@@ -583,12 +536,12 @@
                 <div class="stat-card total">
                     <div class="stat-value">324,186</div>
                     <div class="stat-label">总入池</div>
-                    <div class="stat-trend" style="color:#52c41a;">↑ 1,240 今日新增</div>
+                    <div class="stat-trend" style="color:var(--brand);">↑ 1,240 今日新增</div>
                 </div>
                 <div class="stat-card available">
                     <div class="stat-value">187,432</div>
                     <div class="stat-label">可分配</div>
-                    <div class="stat-trend" style="color:#52c41a;">占 57.8%</div>
+                    <div class="stat-trend" style="color:var(--brand);">占 57.8%</div>
                 </div>
                 <div class="stat-card marketing">
                     <div class="stat-value">52,318</div>
@@ -715,7 +668,7 @@
                                     style="width:60px;padding:4px 8px;border:1px solid #d9d9d9;border-radius:4px;"> 天
                             </td>
                             <td>跨机构</td>
-                            <td><span class="status-badge status-success">启用</span></td>
+                            <td><span class="status-dot dot-green">启用</span></td>
                         </tr>
                         <tr>
                             <td>客户明确拒绝</td>
@@ -723,7 +676,7 @@
                                     style="width:60px;padding:4px 8px;border:1px solid #d9d9d9;border-radius:4px;"> 天
                             </td>
                             <td>跨机构</td>
-                            <td><span class="status-badge status-success">启用</span></td>
+                            <td><span class="status-dot dot-green">启用</span></td>
                         </tr>
                         <tr>
                             <td>银行退回</td>
@@ -731,7 +684,7 @@
                                     style="width:60px;padding:4px 8px;border:1px solid #d9d9d9;border-radius:4px;"> 天
                             </td>
                             <td>跨机构</td>
-                            <td><span class="status-badge status-success">启用</span></td>
+                            <td><span class="status-dot dot-green">启用</span></td>
                         </tr>
                         <tr>
                             <td>放款完成</td>
@@ -739,7 +692,7 @@
                                     style="width:60px;padding:4px 8px;border:1px solid #d9d9d9;border-radius:4px;"> 天
                             </td>
                             <td>同机构</td>
-                            <td><span class="status-badge status-success">启用</span></td>
+                            <td><span class="status-dot dot-green">启用</span></td>
                         </tr>
                         <tr>
                             <td>同机构重推</td>
@@ -747,7 +700,7 @@
                                     style="width:60px;padding:4px 8px;border:1px solid #d9d9d9;border-radius:4px;"> 天
                             </td>
                             <td>同机构</td>
-                            <td><span class="status-badge status-success">启用</span></td>
+                            <td><span class="status-dot dot-green">启用</span></td>
                         </tr>
                     </tbody>
                 </table>
@@ -804,9 +757,9 @@
                     actions += `<button class="btn btn-text btn-sm" onclick="freezeEnt(${d.id})" style="color:#fa8c16;">冻结</button>`;
                     actions += `<button class="btn btn-text btn-sm" onclick="blacklistEnt(${d.id})" style="color:#f5222d;">拉黑</button>`;
                 } else if (d.status === 'COOLING') {
-                    actions += `<button class="btn btn-text btn-sm" onclick="releaseEnt(${d.id})" style="color:#52c41a;">释放</button>`;
+                    actions += `<button class="btn btn-text btn-sm" onclick="releaseEnt(${d.id})" style="color:var(--brand);">释放</button>`;
                 } else if (d.status === 'BLACKLISTED') {
-                    actions += `<button class="btn btn-text btn-sm" onclick="unblacklist(${d.id})" style="color:#52c41a;">移出</button>`;
+                    actions += `<button class="btn btn-text btn-sm" onclick="unblacklist(${d.id})" style="color:var(--brand);">移出</button>`;
                 }
 
                 return `<tr>
@@ -888,7 +841,7 @@
             html += `<div class="section-title">📞 触达路径推荐</div>
             <div id="adminTabsContainer_${d.id}">
                 <div style="display:flex; border-bottom: 1px solid #f0f0f0; margin-bottom: 12px;">
-                    <div class="contact-tab-btn" style="padding: 6px 14px; border-bottom: 2px solid #1890ff; color: #1890ff; font-weight: 500; cursor: pointer; font-size: 12px;" onclick="window.switchContactTab(this, 'contactsTab_admin_${d.id}', 'adminTabsContainer_${d.id}')">🏢 本企直接触达</div>
+                    <div class="contact-tab-btn" style="padding: 6px 14px; border-bottom: 2px solid var(--brand); color: var(--brand); font-weight: 500; cursor: pointer; font-size: 12px;" onclick="window.switchContactTab(this, 'contactsTab_admin_${d.id}', 'adminTabsContainer_${d.id}')">🏢 本企直接触达</div>
                     <div class="contact-tab-btn" style="padding: 6px 14px; color: #595959; font-weight: 500; cursor: pointer; font-size: 12px;" onclick="window.switchContactTab(this, 'relEnterpriseTab_admin_${d.id}', 'adminTabsContainer_${d.id}')">🕸️ 关联企业触达</div>
                     <div class="contact-tab-btn" style="padding: 6px 14px; color: #595959; font-weight: 500; cursor: pointer; font-size: 12px;" onclick="window.switchContactTab(this, 'associationTab_admin_${d.id}', 'adminTabsContainer_${d.id}')">🔗 行内存量关联</div>
                 </div>
@@ -903,7 +856,7 @@
                         ${aHid}
                     </div>
                     <div style="text-align:center;margin-bottom:20px;">
-                        <a href="javascript:void(0)" data-count="${aHidN}" onclick="window.toggleMoreContacts(this, 'moreContactsAdmin_${d.id}')" style="font-size:12px;color:#1890ff;text-decoration:none;padding:5px 16px;background:#e6f7ff;border-radius:16px;display:inline-block;">🔽 展开更多 (${aHidN})</a>
+                        <a href="javascript:void(0)" data-count="${aHidN}" onclick="window.toggleMoreContacts(this, 'moreContactsAdmin_${d.id}')" style="font-size:12px;color:var(--brand);text-decoration:none;padding:5px 16px;background:#e6f7ff;border-radius:16px;display:inline-block;">🔽 展开更多 (${aHidN})</a>
                     </div>
                 </div>
 
@@ -923,9 +876,9 @@
                       </div>
                       <div style="border-top:1px dashed #e8e8e8;padding-top:8px;">
                         <div style="display:flex;align-items:center;gap:10px;font-size:13px;">
-                           <span style="color:#1890ff;font-weight:600;">139****8888</span>
+                           <span style="color:var(--brand);font-weight:600;">139****8888</span>
                            <span style="cursor:pointer;opacity:0.5;font-size:12px;" onclick="window.togglePhone(this, '139****8888', '13988888888')">👁️</span>
-                           <span style="font-size:10px;background:#e6f7ff;color:#1890ff;padding:2px 6px;border-radius:4px;border:1px solid #91d5ff;">[企业法人/实控人] 李总</span>
+                           <span style="font-size:10px;background:#e6f7ff;color:var(--brand);padding:2px 6px;border-radius:4px;border:1px solid #91d5ff;">[企业法人/实控人] 李总</span>
                         </div>
                       </div>
                     </div>
@@ -955,14 +908,14 @@
                     </div>
                     <div style="background:linear-gradient(135deg,#e6f7ff 0%,#f0f5ff 100%);border:1px solid #91d5ff;border-radius:10px;padding:12px 14px;">
                       <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
-                        <span style="width:32px;height:32px;background:#1890ff;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:600;flex-shrink:0;">关</span>
+                        <span style="width:32px;height:32px;background:var(--brand);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:600;flex-shrink:0;">关</span>
                         <div>
                           <div style="font-size:13px;font-weight:600;color:#262626;">苏州创芯微电子有限公司</div>
                           <div style="font-size:10px;color:#8c8c8c;margin-top:1px;">行内授信客户 · 贷款余额 800万 · 客户经理：王强</div>
                         </div>
                       </div>
                       <div style="background:#fff;border-radius:6px;padding:8px 10px;font-size:11px;color:#595959;line-height:1.6;">
-                        <div style="margin-bottom:3px;"><b>关联关系：</b>该企业法人 <span style="color:#1890ff;">张明</span> 同时担任行内存量客户的股东（持股32%）</div>
+                        <div style="margin-bottom:3px;"><b>关联关系：</b>该企业法人 <span style="color:var(--brand);">张明</span> 同时担任行内存量客户的股东（持股32%）</div>
                         <div><b>触达建议：</b>可通过存量客户的客户经理王强引荐，或以关联企业授信为切入点沟通。</div>
                       </div>
                     </div>
@@ -1014,7 +967,7 @@
 
         function showToast(msg) {
             const t = document.createElement('div');
-            t.style.cssText = 'position:fixed;top:20px;right:20px;background:#52c41a;color:#fff;padding:12px 24px;border-radius:8px;z-index:9999;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);animation:fadeIn 0.3s;';
+            t.style.cssText = 'position:fixed;top:20px;right:20px;background:var(--brand);color:#fff;padding:12px 24px;border-radius:8px;z-index:9999;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);animation:fadeIn 0.3s;';
             t.textContent = '✓ ' + msg;
             document.body.appendChild(t);
             setTimeout(() => t.remove(), 2500);
@@ -1023,6 +976,11 @@
         // 初始化
         document.addEventListener('DOMContentLoaded', () => renderTable(mockData));
     </script>
+
+  <script src="js/sidebar.js"></script>
+  <script>
+    renderSidebar({ currentPage: 'customer-pool' });
+  </script>
 </body>
 
 </html>

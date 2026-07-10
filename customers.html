@@ -1,0 +1,1915 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>客户名单 - 智能营销平台</title>
+  <meta name="description" content="客户经理全量客户名单，支持多维筛选、状态标记与触达路径">
+  <link rel="stylesheet" href="css/style.css?v=3">
+  <style>
+    /* ===== 页面布局 ===== */
+    .customers-layout {
+      display: block;
+    }
+
+    /* ===== 左侧筛选面板 ===== */
+    .filter-panel {
+      background: var(--bg-card);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      position: sticky;
+      top: 24px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.03);
+    }
+    .filter-panel-header {
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--gray-100);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .filter-panel-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--gray-900);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .filter-reset-btn {
+      font-size: 12px;
+      color: var(--brand);
+      cursor: pointer;
+      font-weight: 500;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: background 0.2s;
+    }
+    .filter-reset-btn:hover { background: var(--brand-light); }
+
+    .filter-section {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--gray-100);
+    }
+    .filter-section:last-child { border-bottom: none; }
+    .filter-section-label {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--gray-400);
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+    .filter-option {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 14px;
+      border-radius: 100px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--gray-600);
+      background: #fff;
+      border: 1px solid var(--gray-200);
+      transition: all 0.2s;
+    }
+    .filter-option:hover { background: var(--gray-50); border-color: var(--gray-300); }
+    .filter-option.active {
+      background: var(--brand-light);
+      color: var(--brand);
+      border-color: var(--brand-light);
+      font-weight: 600;
+    }
+    .filter-option-count {
+      font-size: 11.5px;
+      color: var(--gray-400);
+      background: var(--gray-100);
+      padding: 1px 6px;
+      border-radius: 10px;
+      font-weight: 500;
+    }
+    .filter-option.active .filter-option-count {
+      background: rgba(37,99,235,0.15);
+      color: var(--brand);
+    }
+    .filter-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* ===== 右侧主内容 ===== */
+    .main-panel { min-width: 0; }
+
+    /* ===== 工具栏 ===== */
+    .toolbar {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+    .toolbar-search {
+      flex: 1;
+      min-width: 200px;
+      max-width: 400px;
+      position: relative;
+    }
+    .toolbar-search input {
+      width: 100%;
+      padding: 9px 14px 9px 38px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 13.5px;
+      color: var(--gray-900);
+      background: var(--bg-card);
+      transition: all 0.2s;
+      box-sizing: border-box;
+    }
+    .toolbar-search input:focus {
+      outline: none;
+      border-color: var(--brand);
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.08);
+    }
+    .toolbar-search .search-icon {
+      position: absolute;
+      left: 11px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--gray-400);
+      width: 16px;
+      height: 16px;
+    }
+    .toolbar-filters {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .toolbar-filters .custom-singleselect,
+    .toolbar-filters .custom-cascader,
+    .toolbar-filters select.sort-select {
+      width: 135px;
+    }
+    .toolbar-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: auto;
+    }
+    .toolbar-right .custom-singleselect {
+      width: 140px;
+    }
+    .sort-select {
+      padding: 8px 30px 8px 12px; /* Add right padding for the arrow */
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 13px;
+      color: var(--gray-700);
+      background: var(--bg-card) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") no-repeat right 10px center;
+      cursor: pointer;
+      outline: none;
+      transition: border-color 0.2s;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+    }
+    .sort-select:focus { border-color: var(--brand); }
+    .view-toggle {
+      display: flex;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      background: var(--bg-card);
+    }
+    .view-btn {
+      padding: 8px 12px;
+      cursor: pointer;
+      color: var(--gray-500);
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+    }
+    .view-btn:first-child { border-right: 1px solid var(--border); }
+    .view-btn.active { background: var(--brand-light); color: var(--brand); }
+    .view-btn svg { width: 15px; height: 15px; }
+
+    /* ===== 状态信息栏 ===== */
+    .list-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 11px 16px;
+      background: var(--gray-50);
+      border-radius: 10px;
+      margin-bottom: 14px;
+      font-size: 12.5px;
+      color: var(--gray-500);
+    }
+    .list-meta strong { color: var(--brand); font-size: 15px; font-weight: 700; }
+    .list-meta-divider { width: 1px; height: 14px; background: var(--gray-200); }
+
+    /* ===== 表格视图 ===== */
+    .cust-table-wrapper {
+      background: var(--bg-card);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.03);
+    }
+    .cust-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .cust-table thead th {
+      padding: 12px 16px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--gray-500);
+      text-align: left;
+      background: var(--gray-50);
+      border-bottom: 1px solid var(--gray-100);
+      white-space: nowrap;
+      letter-spacing: 0.3px;
+    }
+    .cust-table thead th:first-child { border-radius: 0; }
+    .cust-table tbody tr {
+      border-bottom: 1px solid var(--gray-100);
+      transition: background 0.15s;
+    }
+    .cust-table tbody tr:last-child { border-bottom: none; }
+    .cust-table tbody tr:hover { background: var(--gray-50); }
+    .cust-table td {
+      padding: 13px 16px;
+      font-size: 13.5px;
+      color: var(--gray-800);
+      vertical-align: middle;
+    }
+    .company-name-cell {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .company-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      background: var(--brand-light);
+      color: var(--brand);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .company-name-text { font-weight: 600; color: var(--gray-900); }
+    .company-uscc { font-size: 11.5px; color: var(--gray-400); margin-top: 2px; font-family: monospace; }
+    .product-tags { display: flex; gap: 4px; flex-wrap: wrap; }
+    .product-tag {
+      padding: 2px 8px;
+      background: #eff6ff;
+      color: var(--brand);
+      border-radius: 6px;
+      font-size: 11.5px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .product-tag.expired {
+      background: var(--gray-100);
+      color: var(--gray-400);
+      text-decoration: line-through;
+    }
+
+    /* 状态徽章 */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .status-badge-dot { width: 6px; height: 6px; border-radius: 50%; }
+
+    /* 行操作 */
+    .row-actions {
+      display: flex;
+      gap: 6px;
+    }
+    .row-action-btn {
+      padding: 5px 10px;
+      border-radius: 7px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .btn-mark {
+      background: var(--gray-100);
+      color: var(--gray-700);
+    }
+    .btn-mark:hover { background: var(--gray-200); }
+    .btn-contact {
+      background: var(--brand-light);
+      color: var(--brand);
+    }
+    .btn-contact:hover { background: rgba(37,99,235,0.2); }
+    .btn-detail {
+      background: var(--brand);
+      color: white;
+      box-shadow: 0 2px 6px rgba(37,99,235,0.25);
+    }
+    .btn-detail:hover { background: var(--brand-dark); }
+
+    /* ===== 卡片视图 ===== */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+      gap: 16px;
+    }
+    
+    /* ===== 分页控件使用全局 style.css 中的 .pagination ===== */
+    .page-btn:hover:not(:disabled) {
+      border-color: var(--brand);
+      color: var(--brand);
+    }
+    .page-btn.active {
+      background: var(--brand);
+      color: white;
+      border-color: var(--brand);
+    }
+    .page-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      background: var(--gray-50);
+    }
+    .page-info {
+      font-size: 13px;
+      color: var(--gray-500);
+      margin-right: auto;
+    }
+    .cust-card-pc {
+      background: var(--bg-card);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      padding: 18px;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.02);
+    }
+    .cust-card-pc:hover {
+      border-color: rgba(37,99,235,0.3);
+      box-shadow: 0 6px 18px rgba(37,99,235,0.1);
+      transform: translateY(-2px);
+    }
+    .card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; }
+    .card-company { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+    .card-company-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--gray-900);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .card-company-uscc {
+      font-size: 11px;
+      color: var(--gray-400);
+      font-family: monospace;
+      margin-top: 2px;
+    }
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--gray-100);
+    }
+    .card-addr {
+      font-size: 12px;
+      color: var(--gray-400);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex: 1;
+      min-width: 0;
+    }
+    .card-addr span {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .card-actions { display: flex; gap: 6px; flex-shrink: 0; }
+    .card-action-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+    .card-action-btn.mark { background: var(--gray-100); color: var(--gray-600); }
+    .card-action-btn.mark:hover { background: var(--gray-200); }
+    .card-action-btn.contact { background: var(--brand-light); color: var(--brand); }
+    .card-action-btn.contact:hover { background: rgba(37,99,235,0.2); }
+
+    /* ===== 触达路径弹窗 (右侧抽屉) ===== */
+    .drawer-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 1000;
+      display: none;
+      justify-content: flex-end;
+      backdrop-filter: blur(3px);
+    }
+    .drawer-overlay.show { display: flex; animation: fadeIn 0.2s ease; }
+    .drawer-box {
+      background: var(--bg-card);
+      width: 440px;
+      max-width: 90vw;
+      height: 100vh;
+      overflow-y: auto;
+      box-shadow: -10px 0 30px rgba(0,0,0,0.1);
+      animation: slideLeft 0.25s cubic-bezier(0.4,0,0.2,1);
+      padding: 28px;
+    }
+    @keyframes slideLeft { from{transform:translateX(100%)} to{transform:translateX(0)} }
+    
+    @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+    @keyframes slideUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .modal-title { font-size: 17px; font-weight: 700; color: var(--gray-900); }
+    .modal-subtitle { font-size: 13px; color: var(--gray-500); margin-top: 2px; }
+    .modal-close {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      border: none;
+      background: var(--gray-100);
+      color: var(--gray-500);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+    .modal-close:hover { background: var(--gray-200); }
+
+    /* 触达路径 Tabs */
+    .contact-tabs {
+      display: flex;
+      gap: 4px;
+      border-bottom: 1px solid var(--gray-100);
+      margin-bottom: 18px;
+    }
+    .contact-tab {
+      padding: 10px 16px;
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--gray-500);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: all 0.2s;
+    }
+    .contact-tab.active {
+      color: var(--brand);
+      font-weight: 700;
+      border-bottom-color: var(--brand);
+    }
+    .contact-pane { display: none; }
+    .contact-pane.active { display: block; }
+
+    /* 触达路径列表 (对齐移动端样式) */
+    .cp-card {
+      background: #fff; border-radius: 12px; padding: 16px;
+      margin-bottom: 12px; border: 1px solid var(--gray-200);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+    }
+    .cp-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+    .cp-phone { font-size: 18px; font-weight: 700; font-family: monospace; color: var(--gray-900); }
+    .cp-role {
+      font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 8px;
+    }
+    .cp-tips { font-size: 13px; color: var(--gray-500); line-height: 1.5; margin-bottom: 12px; background: var(--gray-50); padding: 8px 12px; border-radius: 8px; }
+    .cp-actions-main { display: flex; justify-content: space-between; align-items: center; gap: 8px; border-top: 1px dashed var(--gray-200); padding-top: 12px; margin-top: 12px; }
+    .cp-btn-call { display: inline-flex; align-items: center; justify-content: center; padding: 6px 16px; border-radius: 100px; font-size: 13px; font-weight: 600; color: #fff; background: var(--brand); border: none; cursor: pointer; transition: all 0.2s;}
+    .cp-btn-call:hover { background: var(--brand-dark); }
+    .cp-btn-fb { padding: 6px 12px; border-radius: 100px; font-size: 12px; font-weight: 500; color: var(--gray-600); background: var(--gray-100); border: none; cursor: pointer; transition: all 0.2s;}
+    .cp-btn-fb:hover { background: var(--gray-200); }
+
+
+
+    /* ===== 状态标记侧边抽屉 ===== */
+    .drawer-panel {
+      position: fixed;
+      right: -480px;
+      top: 0;
+      bottom: 0;
+      width: 440px;
+      background: var(--bg-card);
+      z-index: 1001;
+      box-shadow: -8px 0 40px rgba(0,0,0,0.12);
+      transition: right 0.3s cubic-bezier(0.4,0,0.2,1);
+      display: flex;
+      flex-direction: column;
+    }
+    .drawer-panel.open { right: 0; }
+    .drawer-header {
+      padding: 22px 24px 18px;
+      border-bottom: 1px solid var(--gray-100);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .drawer-title { font-size: 17px; font-weight: 700; color: var(--gray-900); }
+    .drawer-company { font-size: 13px; color: var(--gray-500); margin-top: 3px; }
+    .drawer-body { flex: 1; overflow-y: auto; padding: 20px 24px; }
+    .drawer-footer {
+      padding: 16px 24px;
+      border-top: 1px solid var(--gray-100);
+      display: flex;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+    .drawer-btn {
+      flex: 1;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+    }
+    .drawer-btn.cancel { background: var(--gray-100); color: var(--gray-600); }
+    .drawer-btn.cancel:hover { background: var(--gray-200); }
+    .drawer-btn.save { background: var(--brand); color: white; box-shadow: 0 4px 12px rgba(37,99,235,0.25); }
+    .drawer-btn.save:hover { background: var(--brand-dark); }
+
+    /* 状态标记 Tabs */
+    .mark-tabs {
+      display: flex;
+      background: var(--gray-100);
+      border-radius: 10px;
+      padding: 3px;
+      margin-bottom: 20px;
+    }
+    .mark-tab {
+      flex: 1;
+      text-align: center;
+      padding: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--gray-500);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .mark-tab.active {
+      background: white;
+      color: var(--brand);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+    .mark-pane { display: none; }
+    .mark-pane.active { display: block; }
+
+    /* Chip 组 */
+    .chip-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .chip {
+      padding: 7px 14px;
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 500;
+      border: 1.5px solid var(--gray-200);
+      background: var(--gray-50);
+      color: var(--gray-600);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .chip:hover { border-color: var(--brand); color: var(--brand); }
+    .chip.on {
+      border-color: var(--brand);
+      background: var(--brand-light);
+      color: var(--brand);
+      font-weight: 700;
+    }
+    .form-label {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--gray-800);
+      margin-bottom: 12px;
+      margin-top: 20px;
+    }
+    .form-label:first-child { margin-top: 0; }
+    .form-textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1.5px solid var(--gray-200);
+      font-size: 13.5px;
+      color: var(--gray-800);
+      resize: vertical;
+      min-height: 80px;
+      transition: border-color 0.2s;
+      font-family: inherit;
+      box-sizing: border-box;
+    }
+    .form-textarea:focus { outline: none; border-color: var(--brand); }
+    .quick-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .quick-tag {
+      padding: 4px 10px;
+      background: var(--gray-100);
+      border-radius: 6px;
+      font-size: 12px;
+      color: var(--gray-600);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .quick-tag:hover { background: var(--brand-light); color: var(--brand); }
+
+    /* ===== 空状态 ===== */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--gray-400);
+    }
+    .empty-icon { font-size: 40px; margin-bottom: 12px; }
+    .empty-text { font-size: 14px; font-weight: 600; }
+    .empty-sub { font-size: 13px; margin-top: 4px; }
+    
+    /* 左侧 Tab 筛选样式 */
+    .filter-tabs {
+      display: flex;
+      background: var(--gray-100);
+      border-radius: 8px;
+      padding: 3px;
+      margin: 12px 16px;
+    }
+    .filter-tab-btn {
+      flex: 1;
+      text-align: center;
+      padding: 7px 0;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--gray-500);
+      cursor: pointer;
+      border-radius: 6px;
+      border: none;
+      background: transparent;
+      transition: all 0.15s ease;
+    }
+    .filter-tab-btn.active {
+      background: #fff;
+      color: var(--brand);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+  
+    /* ===== 客户名单表格增强 & 列设置面板 ===== */
+    .cust-table-wrapper {
+      overflow-x: auto;
+      max-width: 100%;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+    .cust-table {
+      min-width: 1200px; /* Force scroll */
+    }
+    .cust-table th, .cust-table td {
+      white-space: nowrap;
+    }
+    
+    .col-settings {
+      position: relative;
+    }
+    .col-settings-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: white;
+      color: var(--gray-700);
+      font-size: 13px;
+      height: 28px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .col-settings-btn:hover {
+      background: var(--gray-50);
+      border-color: var(--brand);
+      color: var(--brand);
+    }
+    .col-popover {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      width: 220px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+      border: 1px solid var(--border);
+      z-index: 100;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-5px);
+      transition: all 0.2s;
+    }
+    .col-popover.show {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    .col-pop-header {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--gray-100);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--gray-800);
+    }
+    .col-pop-reset {
+      font-size: 12.5px;
+      color: var(--brand);
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .col-pop-body {
+      padding: 8px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .col-pop-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .col-pop-item:hover {
+      background: var(--gray-50);
+    }
+    .col-pop-item input {
+      cursor: pointer;
+    }
+    .col-pop-item span {
+      font-size: 13.5px;
+      color: var(--gray-700);
+    }
+
+  
+    /* ===== Fixed Action Column ===== */
+    .col-fixed-action {
+      position: sticky;
+      right: 0;
+      background: white;
+      z-index: 10;
+      box-shadow: -3px 0 6px rgba(0,0,0,0.02);
+    }
+    .cust-table thead th.col-fixed-action {
+      background: var(--gray-50);
+      z-index: 11;
+    }
+    .cust-table tbody tr:hover .col-fixed-action {
+      background: var(--gray-50);
+    }
+    /* ================================= */
+
+  </style>
+</head>
+<body>
+<div class="app-container">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main-content anim-fade-in" id="main">
+
+    <div class="page-header" style="position:relative;">
+<!-- 全局所属机构（居中突出按钮） -->
+      <div id="globalOrgBtn" style="position:absolute; left:50%; transform:translateX(-50%); display:flex;align-items:center;gap:16px;height:44px;box-sizing:border-box;padding:0 6px 0 20px;background:white;border:1.5px solid #e5e7eb;border-radius:22px;cursor:pointer;user-select:none;transition:all 0.2s;box-shadow:0 2px 10px rgba(0,0,0,0.03);">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--brand)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M9 8h1"/><path d="M9 12h1"/><path d="M9 16h1"/><path d="M14 8h1"/><path d="M14 12h1"/><path d="M14 16h1"/><path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"/></svg>
+          <span style="font-size:14px;color:var(--gray-500);font-weight:500;">当前查看：</span>
+          <span style="font-size:15px;font-weight:700;color:var(--gray-900);" id="globalOrgDisplay">平安银行</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:center;height:32px;padding:0 16px;background:var(--brand);color:white;border-radius:16px;font-size:13px;font-weight:600;gap:6px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="M16 21l4-4-4-4"/><path d="M20 17H4"/></svg>
+          切换机构
+        </div>
+      </div>
+      <div class="page-header-left">
+        <h1 class="page-title">客户名单</h1>
+        <p class="page-breadcrumb">
+          <a href="index.html">工作台</a><span class="sep">/</span>机构营销<span class="sep">/</span>客户名单
+        </p>
+      </div>
+      <div style="display:flex;gap:12px;align-items:center;">
+                
+        
+        <button class="btn btn-primary" onclick="exportData()">
+          <span style="width:15px;height:15px;display:flex;"><svg viewBox="0 0 24 24" style="width:100%;height:100%;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>
+          下载名单
+        </button>
+      </div>
+    </div>
+
+    <div class="customers-layout">
+      <!-- ========== 主内容 ========== -->
+      <div class="main-panel">
+        
+        <!-- 1. 顶部搜索和操作 (独立在卡片外部) -->
+        <div class="toolbar-top" style="display:flex; align-items:center; justify-content:space-between; gap:12px; width:100%; margin-bottom:12px;">
+          <div class="toolbar-search">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input type="text" id="searchInput" placeholder="搜索企业名称、统一社会信用代码" oninput="doFilter()">
+          </div>
+          
+          <div class="toolbar-right" style="display:flex; align-items:center; gap:8px;">
+            <select class="form-control sort-select" id="sortSelect" onchange="doFilter()">
+              <option value="default">综合排序</option>
+              <option value="intent_desc">需求意向最高</option>
+              <option value="risk_asc">违约风险最低</option>
+              <option value="alloc_desc">分配时间最近</option>
+              <option value="alloc_asc">分配时间最早</option>
+            </select>
+            <button class="btn btn-default" id="toggleAdvFilterBtn" onclick="toggleAdvFilters()" style="padding:0 12px; height: 35px; border-radius:8px; font-size:13.5px; border:1px solid var(--border); background:white; color:var(--brand); cursor:pointer; display:flex; align-items:center; gap:6px; transition:all 0.2s;">
+              <svg style="width:15px;height:15px;flex-shrink:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+              <span id="advFilterText">收起筛选</span>
+              <svg id="advFilterArrow" style="width:14px;height:14px;flex-shrink:0;transition:transform 0.2s; transform:rotate(180deg);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- 筛选卡片区 -->
+        <div class="toolbar" style="background:#fff; border-radius:12px; border:1px solid var(--border); padding:12px 16px; margin-bottom:16px; box-shadow:0 2px 8px rgba(0,0,0,0.02);">
+          <!-- 2. 常驻高频筛选 (营销状态 & 业务状态) - 单行展示 -->
+          <div style="display:flex; flex-direction:row; align-items:center; flex-wrap:wrap; gap:32px;">
+            <div style="display:flex; align-items:center; gap:16px;">
+              <div style="font-size:13px; font-weight:700; color:var(--gray-500); flex-shrink:0;">营销状态</div>
+              <div style="display:flex; flex-wrap:wrap; gap:10px;">
+                <div class="filter-option active" data-filter="rs" data-val="ALL" onclick="setFilter('rs','ALL',this)">全部</div>
+                <div class="filter-option" data-filter="rs" data-val="PENDING" onclick="setFilter('rs','PENDING',this)">待触达</div>
+                <div class="filter-option" data-filter="rs" data-val="FOLLOWING" onclick="setFilter('rs','FOLLOWING',this)">跟进中</div>
+                <div class="filter-option" data-filter="rs" data-val="REACHED_INTERESTED" onclick="setFilter('rs','REACHED_INTERESTED',this)">有意向</div>
+                <div class="filter-option" data-filter="rs" data-val="REACHED_NO_INTEREST" onclick="setFilter('rs','REACHED_NO_INTEREST',this)">无意向</div>
+                <div class="filter-option" data-filter="rs" data-val="UNREACHED" onclick="setFilter('rs','UNREACHED',this)">触达失败</div>
+              </div>
+            </div>
+            
+            <div style="width:1px; height:16px; background:var(--gray-200);"></div>
+
+            <div style="display:flex; align-items:center; gap:16px;">
+              <div style="font-size:13px; font-weight:700; color:var(--gray-500); flex-shrink:0;">业务状态</div>
+              <div style="display:flex; flex-wrap:wrap; gap:10px;">
+                <div class="filter-option active" data-filter="bs" data-val="ALL" onclick="setFilter('bs','ALL',this)">全部</div>
+                <div class="filter-option" data-filter="bs" data-val="NONE" onclick="setFilter('bs','NONE',this)">未申请</div>
+                <div class="filter-option" data-filter="bs" data-val="APPLIED" onclick="setFilter('bs','APPLIED',this)">已申请</div>
+                <div class="filter-option" data-filter="bs" data-val="REVIEWING" onclick="setFilter('bs','REVIEWING',this)">审批中</div>
+                <div class="filter-option" data-filter="bs" data-val="APPROVED" onclick="setFilter('bs','APPROVED',this)">已授信</div>
+                <div class="filter-option" data-filter="bs" data-val="DISBURSED" onclick="setFilter('bs','DISBURSED',this)">已放款</div>
+                <div class="filter-option" data-filter="bs" data-val="SETTLED" onclick="setFilter('bs','SETTLED',this)">已结清</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 3. 高级筛选 (原下拉框) - 默认展开 -->
+          <div class="toolbar-advanced" id="advancedFilters" style="display:block; padding-top:16px; border-top:1px dashed var(--gray-200); width:100%; box-sizing:border-box;">
+          <div class="toolbar-filters" id="toolbarFiltersContainer">
+            <!-- 1. 名单批次 -->
+            <div class="custom-cascader" id="cascaderBatch">
+              <div class="custom-singleselect-display" onclick="window.cascaderBatch.toggle(event)">
+                <span class="custom-singleselect-text" id="cascaderBatchText">名单批次</span>
+                <span style="display:flex;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </span>
+              </div>
+              <div class="cascader-dropdown" id="cascaderBatchDropdown" style="display:none;">
+                <div class="cascader-columns" id="cascaderBatchCols"></div>
+              </div>
+            </div>
+
+            <!-- 2. 区域 -->
+            <div class="custom-cascader" id="cascaderRegion">
+              <div class="custom-singleselect-display" onclick="window.cascaderRegion.toggle(event)">
+                <span class="custom-singleselect-text" id="cascaderRegionText">区域</span>
+                <span style="display:flex;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </span>
+              </div>
+              <div class="cascader-dropdown" id="cascaderRegionDropdown" style="display:none;">
+                <div class="cascader-columns" id="cascaderRegionCols"></div>
+                <div class="cascader-footer">
+                  <div class="cascader-selected-count">已选: <span id="cascaderRegionCount">0</span> 项</div>
+                  <div style="display:flex;gap:8px;">
+                    <button class="btn btn-default btn-sm" onclick="window.cascaderRegion.reset(event)">重置</button>
+                    <button class="btn btn-primary btn-sm" onclick="window.cascaderRegion.confirm(event)">确定</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 3. 适配产品 -->
+            <select class="form-control sort-select" id="filterProduct" onchange="doFilter()">
+              <option value="ALL">适配产品</option>
+              <option value="橙业贷">橙业贷</option>
+              <option value="厂房贷">厂房贷</option>
+              <option value="税务贷">税务贷</option>
+            </select>
+
+            <!-- 4. 对接机构 -->
+            <div class="custom-cascader" id="cascaderOrg">
+              <div class="custom-singleselect-display" onclick="window.cascaderOrg.toggle(event)">
+                <span class="custom-singleselect-text" id="cascaderOrgText">对接机构</span>
+                <span style="display:flex;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </span>
+              </div>
+              <div class="cascader-dropdown" id="cascaderOrgDropdown" style="display:none;">
+                <div class="cascader-columns" id="cascaderOrgCols"></div>
+              </div>
+            </div>
+
+            <!-- 5. 对接客户经理 -->
+            <select class="form-control sort-select" id="filterOwner" onchange="doFilter()">
+              <option value="ALL">对接客户经理</option>
+              <option value="u1">李明</option>
+              <option value="u2">王静</option>
+              <option value="u3">张强</option>
+              <option value="u4">赵云</option>
+              <option value="u5">陈芳</option>
+              <option value="u6">刘伟</option>
+              <option value="u7">孙琴</option>
+              <option value="u8">周杰</option>
+            </select>
+
+            <!-- 6. 企业性质 -->
+            <select class="form-control sort-select" id="filterNature" onchange="doFilter()">
+              <option value="ALL">企业性质</option>
+              <option value="国有企业">国有企业</option>
+              <option value="民营企业">民营企业</option>
+              <option value="外资企业">外资企业</option>
+              <option value="合资企业">合资企业</option>
+            </select>
+
+            <!-- 7. 荣誉标签 -->
+            <select class="form-control sort-select" id="filterHonor" onchange="doFilter()">
+              <option value="ALL">荣誉标签</option>
+              <option value="专精特新">专精特新</option>
+              <option value="高新技术">高新技术</option>
+              <option value="瞪羚企业">瞪羚企业</option>
+              <option value="独角兽企业">独角兽企业</option>
+            </select>
+
+            <!-- 8. 资金意向 -->
+            <select class="form-control sort-select" id="filterIntent" onchange="doFilter()">
+              <option value="ALL">资金意向</option>
+              <option value="高">高意向</option>
+              <option value="中">中意向</option>
+              <option value="低">低意向</option>
+            </select>
+
+            <!-- 9. 违约风险 -->
+            <select class="form-control sort-select" id="filterRisk" onchange="doFilter()">
+              <option value="ALL">违约风险</option>
+              <option value="低">低风险</option>
+              <option value="中">中风险</option>
+              <option value="高">高风险</option>
+            </select>
+
+            <!-- 10. 联系方式 -->
+            <select class="form-control sort-select" id="filterContact" onchange="doFilter()">
+              <option value="ALL">联系方式</option>
+              <option value="优化联系方式">优化联系方式</option>
+              <option value="默认联系方式">默认联系方式</option>
+              <option value="无联系方式">无联系方式</option>
+            </select>
+          </div>
+          </div>
+        </div>
+        <!-- 列表信息栏 -->
+        <div class="list-meta" style="justify-content: space-between;">
+          <div style="display: flex; align-items: center; gap: 16px;">
+            <span>共 <strong id="listCount">13</strong> 家企业</span>
+            <div class="list-meta-divider"></div>
+            <span>有意向 <strong id="intentCount" style="color:#10b981;">6</strong> 家</span>
+            <div class="list-meta-divider"></div>
+            <span>业务进行中 <strong id="bizCount" style="color:#f59e0b;">5</strong> 家</span>
+          </div>
+          <div style="margin-left: auto;">
+<div class="col-settings">
+              <button class="col-settings-btn" id="colSettingsBtn" onclick="toggleColPopover(event)">
+                <svg style="width:15px;height:15px;flex-shrink:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg>
+                列展示
+              </button>
+              <div class="col-popover" id="colPopover">
+                <div class="col-pop-header">
+                  <span>列展示</span>
+                  <span class="col-pop-reset" onclick="resetColumns()">重置</span>
+                </div>
+                <div class="col-pop-body" id="colPopBody">
+                  <!-- JS generated -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 表格视图 -->
+        <div id="tableView">
+          <div class="cust-table-wrapper">
+            <table class="cust-table">
+              <thead id="tableHead"></thead>
+              <tbody id="tableBody"></tbody>
+            </table>
+            <!-- 分页控件 -->
+            <div class="pagination" id="pagination" style="padding: 16px 24px; border-top: 1px solid var(--gray-100);">
+              <div class="pagination-info" style="display:flex;align-items:center;gap:12px;">
+                <span>显示 1 到 10 条，共 13 条记录</span>
+                <select class="filter-input form-control" style="width: 100px; height: 32px; min-width:unset; padding: 0 10px; font-size: 13px;">
+                    <option>10 条/页</option>
+                    <option>20 条/页</option>
+                </select>
+              </div>
+              <div class="pagination-controls">
+                <button class="btn btn-ghost btn-sm" disabled>上一页</button>
+                <button class="btn btn-primary btn-sm page-num">1</button>
+                <button class="btn btn-ghost btn-sm page-num">2</button>
+                <button class="btn btn-ghost btn-sm">下一页</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 空状态 -->
+        <div class="empty-state" id="emptyState" style="display:none; width:100%; text-align:center; padding: 60px 0; flex-direction:column; align-items:center;">
+          <div class="empty-state-icon" style="width:120px;height:120px;margin:0 auto 24px;border-radius:50%;background:#f3f4f6;display:flex;align-items:center;justify-content:center;">
+            <svg width="84" height="84" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"></path><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path></svg>
+          </div>
+          <div class="empty-title" style="font-size:16px;color:#4b5563;font-weight:500;">当前列表暂无内容</div>
+        </div>
+      </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ===== 触达路径抽屉 ===== -->
+<div class="drawer-overlay" id="contactModal">
+  <div class="drawer-box">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="contactModalTitle">触达路径</div>
+        <div class="modal-subtitle" id="contactModalSub">选择最优触达方式</div>
+      </div>
+      <button class="modal-close" onclick="closeContactModal()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="contact-tabs">
+      <div class="contact-tab active" onclick="contactTab(this,0)">本企触达</div>
+      <div class="contact-tab" onclick="contactTab(this,1)">关联企业</div>
+      <div class="contact-tab" onclick="contactTab(this,2)">行内关联</div>
+    </div>
+    <div class="contact-pane active" id="cPane0">
+      <div style="font-size: 12px; color: var(--gray-400); margin-bottom: 16px; line-height: 1.5; text-align: center;">以下角色及排序由系统基于多源大数据综合预测，仅供参考</div>
+      <div class="cp-card">
+          <div class="cp-top">
+              <span class="cp-phone">138****1234</span>
+              <span class="cp-role" style="background:rgba(37, 99, 235, 0.08);color:var(--brand);"><span style="opacity:0.5;">预测</span> 财务负责人</span>
+          </div>
+          <div class="cp-tips" style="display:flex;align-items:flex-start;gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px;color:var(--brand);opacity:0.7;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+              企业财税核心负责人，熟悉资金流向，信贷和结算类产品的关键对接人。
+          </div>
+          <div class="cp-actions-main">
+              <button class="cp-btn-fb">联系不上？反馈一下 ▾</button>
+              <button class="cp-btn-call" onclick="makeCall('13812341234')">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>拨打
+              </button>
+          </div>
+      </div>
+      <div class="cp-card">
+          <div class="cp-top">
+              <span class="cp-phone">186****8888</span>
+              <span class="cp-role" style="background:rgba(37, 99, 235, 0.08);color:var(--brand);"><span style="opacity:0.5;">预测</span> 融资对接人</span>
+          </div>
+          <div class="cp-tips" style="display:flex;align-items:flex-start;gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px;color:var(--brand);opacity:0.7;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+              曾主导企业融资项目，有明确资金需求，转化意向高。
+          </div>
+          <div class="cp-actions-main">
+              <button class="cp-btn-fb">联系不上？反馈一下 ▾</button>
+              <button class="cp-btn-call" onclick="makeCall('18688888888')">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>拨打
+              </button>
+          </div>
+      </div>
+      <div class="cp-card">
+          <div class="cp-top">
+              <span class="cp-phone">139****5678</span>
+              <span class="cp-role" style="background:rgba(37, 99, 235, 0.08);color:var(--brand);"><span style="opacity:0.5;">预测</span> 资质项目申报人</span>
+          </div>
+          <div class="cp-tips" style="display:flex;align-items:flex-start;gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px;color:var(--brand);opacity:0.7;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+              高新/专精特新资质申报负责人，多为高管或核心骨干。
+          </div>
+          <div class="cp-actions-main">
+              <button class="cp-btn-fb">联系不上？反馈一下 ▾</button>
+              <button class="cp-btn-call" onclick="makeCall('13956785678')">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>拨打
+              </button>
+          </div>
+      </div>
+      <div class="cp-card" style="opacity:0.65;">
+          <div class="cp-top">
+              <span class="cp-phone">0512-6888****</span>
+              <span class="cp-role" style="background:rgba(239, 68, 68, 0.08);color:var(--danger);"><span style="opacity:0.5;">预测</span> 工商预留固话</span>
+          </div>
+          <div class="cp-tips" style="display:flex;align-items:flex-start;gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px;color:var(--danger);opacity:0.7;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+              工商注册预留固话，接通率较低，建议作兜底使用。
+          </div>
+          <div class="cp-actions-main">
+              <button class="cp-btn-fb">联系不上？反馈一下 ▾</button>
+              <button class="cp-btn-call" style="background:var(--gray-300);color:var(--gray-700);" onclick="makeCall('051268881234')">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>拨打
+              </button>
+          </div>
+      </div>
+    </div>
+    <div class="contact-pane" id="cPane1">
+      <div class="cp-card" style="background:#fff;border-radius:12px;padding:16px;margin-bottom:12px;border:1px solid var(--border);">
+        <div style="margin-bottom:12px;">
+          <div style="font-size:15px;font-weight:700;color:var(--gray-900);">无锡市智云科技有限公司</div>
+          <span style="font-size:11px;padding:4px 8px;border-radius:6px;background:rgba(139,92,246,0.1);color:var(--info);margin-top:6px;display:inline-block;font-weight:600;">控股股东 (持股65%)</span>
+        </div>
+        <div style="border-top:1px dashed var(--gray-200);padding-top:12px;margin-top:12px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:15px;font-weight:700;color:var(--gray-900);font-family:monospace;">139****8888</span>
+            <span style="font-size:13px;color:var(--gray-500);font-weight:500;">联系方式</span>
+          </div>
+        </div>
+      </div>
+      <div class="cp-card" style="background:#fff;border-radius:12px;padding:16px;margin-bottom:12px;border:1px solid var(--border);">
+        <div style="margin-bottom:12px;">
+          <div style="font-size:15px;font-weight:700;color:var(--gray-900);">苏州蓝天商贸有限公司</div>
+          <span style="font-size:11px;padding:4px 8px;border-radius:6px;background:rgba(245,158,11,0.1);color:var(--warning);margin-top:6px;display:inline-block;font-weight:600;">法定代表人其他企业</span>
+        </div>
+        <div style="border-top:1px dashed var(--gray-200);padding-top:12px;margin-top:12px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:15px;font-weight:700;color:var(--gray-900);font-family:monospace;">137****1111</span>
+            <span style="font-size:13px;color:var(--gray-500);font-weight:500;">联系方式</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="contact-pane" id="cPane2">
+      <div style="padding:16px;background:linear-gradient(135deg,rgba(37,99,235,0.06),rgba(139,92,246,0.06));border:1px solid rgba(37,99,235,0.15);border-radius:12px;">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+          <span style="width:40px;height:40px;background:var(--brand);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;font-weight:600;box-shadow:0 4px 10px rgba(37,99,235,0.2);">关</span>
+          <div>
+            <div style="font-size:16px;font-weight:700;color:var(--gray-900);">苏州创芯微电子有限公司</div>
+            <div style="font-size:12px;color:var(--gray-500);margin-top:4px;">行内授信 · 贷款余额800万 · 经理：王强</div>
+          </div>
+        </div>
+        <div style="background:rgba(255,255,255,0.6);border-radius:8px;padding:12px;font-size:13px;color:var(--gray-700);line-height:1.6;border:1px solid rgba(255,255,255,0.8);">
+          <div style="margin-bottom:6px;"><b>关联关系：</b>该企业法人 <span style="color:var(--brand);font-weight:600;">张明</span> 同时担任行内存量客户的股东（持股32%）</div>
+          <div><b>触达建议：</b>可通过存量客户经理王强引荐，或以关联企业授信为切入点沟通</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 全局机构切换弹窗（直接内联，绕过缓存）-->
+<div id="globalOrgModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;">
+  <div style="background:white;border-radius:16px;width:480px;max-width:90vw;max-height:80vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.2);">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 24px;border-bottom:1px solid #e5e7eb;">
+      <h3 style="font-size:16px;font-weight:700;color:#111827;margin:0;">切换机构</h3>
+      <button onclick="closeOrgModal()" style="background:none;border:none;cursor:pointer;color:#6b7280;padding:4px;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div style="padding:20px 24px;overflow-y:auto;">
+      <input type="text" placeholder="搜索机构名称..." oninput="filterOrgs(this.value)" style="width:100%;padding:8px 12px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:13px;margin-bottom:16px;box-sizing:border-box;outline:none;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div onclick="selectOrg(this,'平安银行')" class="org-choice" style="padding:14px;border:1.5px solid #10b981;background:#ecfdf5;border-radius:10px;cursor:pointer;text-align:center;"><div style="font-size:14px;font-weight:600;color:#10b981;">平安银行</div></div>
+        <div onclick="selectOrg(this,'南京银行')" class="org-choice" style="padding:14px;border:1.5px solid #e5e7eb;background:white;border-radius:10px;cursor:pointer;text-align:center;"><div style="font-size:14px;font-weight:600;color:#1f2937;">南京银行</div></div>
+        <div onclick="selectOrg(this,'无锡银行')" class="org-choice" style="padding:14px;border:1.5px solid #e5e7eb;background:white;border-radius:10px;cursor:pointer;text-align:center;"><div style="font-size:14px;font-weight:600;color:#1f2937;">无锡银行</div></div>
+        <div onclick="selectOrg(this,'苏州农商行')" class="org-choice" style="padding:14px;border:1.5px solid #e5e7eb;background:white;border-radius:10px;cursor:pointer;text-align:center;"><div style="font-size:14px;font-weight:600;color:#1f2937;">苏州农商行</div></div>
+        <div onclick="selectOrg(this,'某小贷公司A')" class="org-choice" style="padding:14px;border:1.5px solid #e5e7eb;background:white;border-radius:10px;cursor:pointer;text-align:center;"><div style="font-size:14px;font-weight:600;color:#1f2937;">某小贷公司A</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+if(!window._orgModalInited) {
+  window._orgModalInited = true;
+  function openOrgModal() { document.getElementById("globalOrgModal").style.display="flex"; }
+  function closeOrgModal() { document.getElementById("globalOrgModal").style.display="none"; }
+  function selectOrg(el,name) {
+    document.querySelectorAll(".org-choice").forEach(function(c){ c.style.borderColor="#e5e7eb"; c.style.background="white"; c.querySelector("div").style.color="#1f2937"; });
+    el.style.borderColor="#10b981"; el.style.background="#ecfdf5"; el.querySelector("div").style.color="#10b981";
+    document.querySelectorAll("#globalOrgDisplay").forEach(function(e){ e.innerText=name; });
+    setTimeout(function(){ closeOrgModal(); if(window.showToast) showToast("已切换至: "+name,"success"); if(window.doFilter) doFilter(); }, 250);
+  }
+  function filterOrgs(val) { document.querySelectorAll(".org-choice").forEach(function(c){ c.style.display=c.innerText.includes(val)?"":"none"; }); }
+  document.getElementById("globalOrgModal").addEventListener("click",function(e){ if(e.target===this) closeOrgModal(); });
+  window.openGlobalOrgModal = openOrgModal;
+  window.closeGlobalOrgModal = closeOrgModal;
+  // 事件代理，兼容动态渲染
+  document.addEventListener("click", function(e) { if(e.target.closest("#globalOrgBtn")) openOrgModal(); });
+}
+</script>
+
+<!-- 状态标记抽屉统一组件由 js/status-drawer.js 动态生成 --><script src="js/sidebar.js?v=3"></script>
+<script src="js/status-drawer.js"></script>
+<script>
+// ===== 初始化侧边栏 =====
+const role = sessionStorage.getItem('wb_role') || 'manager';
+renderSidebar({ currentPage: 'customers', role });
+
+// ===== 状态配置（与移动端完全对应） =====
+const RS_MAP = {
+  PENDING:             { l: '待触达',   c: 'var(--brand)',  bg: '#eff6ff',          dot: 'var(--brand)' },
+  FOLLOWING:           { l: '跟进中',   c: '#d97706',       bg: '#fffbeb',          dot: '#f59e0b' },
+  REACHED_INTERESTED:  { l: '有意向',   c: '#059669',       bg: '#ecfdf5',          dot: '#10b981' },
+  REACHED_NO_INTEREST: { l: '无意向',   c: '#6b7280',       bg: '#f3f4f6',          dot: '#9ca3af' },
+  UNREACHED_NO_ANSWER: { l: '触达失败', c: '#dc2626',       bg: '#fef2f2',          dot: '#ef4444' },
+  UNREACHED_REJECTED:  { l: '触达失败', c: '#dc2626',       bg: '#fef2f2',          dot: '#ef4444' },
+  UNREACHED_OTHER:     { l: '触达失败', c: '#dc2626',       bg: '#fef2f2',          dot: '#ef4444' },
+  UNREACHED_EMPTY:     { l: '触达失败', c: '#dc2626',       bg: '#fef2f2',          dot: '#ef4444' },
+};
+const BS_MAP = {
+  NONE:         { l: '',      c: '',         bg: '' },
+  APPLIED:      { l: '已申请', c: 'var(--brand)',  bg: '#eff6ff' },
+  REVIEWING:    { l: '审批中', c: '#d97706',  bg: '#fffbeb' },
+  APPROVED:     { l: '已授信', c: '#059669',  bg: '#ecfdf5' },
+  DISBURSED:    { l: '已放款', c: '#0891b2',  bg: '#ecfeff' },
+  SETTLED:      { l: '已结清', c: '#6b7280',  bg: '#f3f4f6' },
+  REJECTED_BIZ: { l: '已拒绝', c: '#dc2626',  bg: '#fef2f2' },
+};
+
+// 营销状态二级联动
+const L2_OPTIONS = {
+  '10': ['未接通', '拒绝沟通', '无效号码', '其他原因'],
+  '20': ['利率太高', '已在他行', '近期无需求', '其他原因'],
+  '30': ['意向沟通中', '材料准备中', '等待回复', '多次跟进中'],
+  '40': ['明确有意向', '已预约面谈', '引导申请中'],
+};
+
+// ===== Mock 数据 =====
+const ALL_DATA = [
+  { id:1, name:'苏州智云科技有限公司', uscc:'91320594MA1EXAMPLE1', region: '江苏省/苏州市/工业园区', addr:'苏州市工业园区星湖街5号', rs:'PENDING', bs:'NONE', product:'橙业贷, 厂房贷', nature:'民营企业', honor:'高新技术', intent:'高', risk:'低', batch:'橙业贷20160508', batchSource:'auto', lastContact: '3天前', ds:92, legalPerson: '张三', status: '存续', entityType: '有限责任公司', indCat: '信息传输、软件 and 信息技术服务业', indType: '软件开发', regCap: '1000万人民币', regDate: '2016-05-08', owner: '李明', org: '南京分行', coopOrg: '南京银行' },
+  { id:2, name:'苏州生物医药研究院有限公司', uscc:'91320594MA5EXAMPLE5', region: '江苏省/苏州市/工业园区', addr:'苏州市工业园区独墅湖大道88号', rs:'UNREACHED_NO_ANSWER', bs:'NONE', product:'橙业贷', nature:'外资企业', honor:'独角兽企业', intent:'中', risk:'高', batch:'橙业贷20160508', batchSource:'auto', lastContact: '2天前', ds:81, legalPerson: '李四', status: '存续', entityType: '外商独资', indCat: '科学研究 and 技术服务业', indType: '医学研究 and 试验发展', regCap: '5000万人民币', regDate: '2018-09-12', owner: '刘伟', org: '南京分行', coopOrg: '南京银行' },
+  { id:3, name:'常州新能源科技股份有限公司', uscc:'91320412MA4EXAMPLE4', region: '江苏省/常州市/武进区', addr:'常州市武进区高新区南区', rs:'REACHED_NO_INTEREST', bs:'NONE', product:'橙业贷, 税务贷', nature:'国有企业', honor:'专精特新', intent:'低', risk:'中', batch:'橙业贷20160509', batchSource:'auto', lastContact: '1天前', ds:72, legalPerson: '王五', status: '存续', entityType: '股份有限公司', indCat: '制造业', indType: '电气机械 and 器材制造业', regCap: '1亿人民币', regDate: '2015-03-20', owner: '李明', org: '无锡分行', coopOrg: '无锡银行' },
+  { id:4, name:'南京创新智造集团有限公司', uscc:'91320115MA2EXAMPLE2', region: '江苏省/南京市/江宁区', addr:'南京市江宁区将军大道100号', rs:'FOLLOWING', bs:'NONE', product:'厂房贷', nature:'民营企业', honor:'高新技术', intent:'高', risk:'低', batch:'厂房贷20160501', batchSource:'auto', lastContact: '今天', ds:88, legalPerson: '赵六', status: '存续', entityType: '集团公司', indCat: '制造业', indType: '专用设备制造业', regCap: '2亿人民币', regDate: '2010-11-11', owner: '刘伟', org: '无锡分行', coopOrg: '无锡银行' },
+  { id:5, name:'苏州纳米智能装备有限公司', uscc:'91320594MA7EXAMPLE7', region: '江苏省/苏州市/高新区', addr:'苏州市高新区科技城锦峰路10号', rs:'REACHED_INTERESTED', bs:'NONE', product:'厂房贷', nature:'合资企业', honor:'瞪羚企业', intent:'高', risk:'低', batch:'厂房贷20160501', batchSource:'auto', lastContact: '1天前', ds:78, legalPerson: '孙七', status: '存续', entityType: '中外合资', indCat: '制造业', indType: '通用设备制造业', regCap: '3000万美元', regDate: '2019-07-01', owner: '刘伟', org: '苏州分行', coopOrg: '平安银行' },
+  { id:6, name:'无锡光电半导体有限公司', uscc:'91320214MA3EXAMPLE3', region: '江苏省/无锡市/新吴区', addr:'无锡市新吴区太湖国际科技园', rs:'REACHED_INTERESTED', bs:'APPLIED', product:'厂房贷, 橙业贷', nature:'民营企业', honor:'高新技术', intent:'高', risk:'中', batch:'厂房贷20160502', batchSource:'auto', lastContact: '今天', ds:95, legalPerson: '周八', status: '存续', entityType: '有限责任公司', indCat: '制造业', indType: '计算机、通信 and 其他电子设备制造业', regCap: '5亿人民币', regDate: '2020-01-15', owner: '刘伟', org: '苏州分行', coopOrg: '平安银行' },
+  { id:7, name:'常州智能制造系统有限公司', uscc:'91320402MAAEXAMPLEC', region: '江苏省/常州市/新北区', addr:'常州市新北区通江南路88号', rs:'FOLLOWING', bs:'REVIEWING', product:'税务贷', nature:'民营企业', honor:'专精特新', intent:'中', risk:'低', batch:'税务贷20160501', batchSource:'auto', lastContact: '5天前', ds:76, legalPerson: '吴九', status: '存续', entityType: '有限责任公司', indCat: '信息传输、软件和信息技术服务业', indType: '软件开发', regCap: '2000万人民币', regDate: '2021-08-08', owner: '张强', org: '无锡分行', coopOrg: '无锡银行' },
+  { id:8, name:'南京云端数据技术有限公司', uscc:'91320114MA8EXAMPLE8', region: '江苏省/南京市/雨花台区', addr:'南京市雨花台区软件大道1号', rs:'REACHED_INTERESTED', bs:'APPROVED', product:'税务贷', nature:'民营企业', honor:'瞪羚企业', intent:'高', risk:'低', batch:'税务贷20160501', batchSource:'auto', lastContact: '3天前', ds:90, legalPerson: '郑十', status: '存续', entityType: '有限责任公司', indCat: '信息传输、软件和信息技术服务业', indType: '互联网和相关服务', regCap: '8000万人民币', regDate: '2017-05-25', owner: '王静', org: '常州分行', coopOrg: '平安银行' },
+  { id:9, name:'南通精密机械制造有限公司', uscc:'91320602MA6EXAMPLE6', region: '江苏省/南通市/崇川区', addr:'南通市崇川区工农路20号', rs:'FOLLOWING', bs:'DISBURSED', product:'税务贷', nature:'民营企业', honor:'高新技术', intent:'中', risk:'低', batch:'税务贷20160501', batchSource:'auto', lastContact: '2天前', ds:82, legalPerson: '刘一', status: '存续', entityType: '有限责任公司', indCat: '制造业', indType: '通用设备制造业', regCap: '1500万人民币', regDate: '2014-10-10', owner: '刘伟', org: '无锡分行', coopOrg: '无锡银行' },
+  { id:10, name:'泰州华科电子科技有限公司', uscc:'91321203MA3EXAMPLED', region: '江苏省/泰州市/高港区', addr:'泰州市高港区科技大道8号', rs:'REACHED_NO_INTEREST', bs:'NONE', product:'橙业贷', nature:'合资企业', honor:'瞪羚企业', intent:'低', risk:'高', batch:'橙业贷20160508', batchSource:'auto', lastContact: '10天前', ds:65, legalPerson: '陈二', status: '注销', entityType: '有限责任公司', indCat: '制造业', indType: '计算机、通信和其他电子设备制造业', regCap: '500万人民币', regDate: '2012-12-12', owner: '李明', org: '无锡分行', coopOrg: '无锡银行' },
+  { id:11, name:'无锡集成电路设计有限公司', uscc:'91320214MA9EXAMPLEB', region: '江苏省/无锡市/滨湖区', addr:'无锡市滨湖区建筑路300号', rs:'PENDING', bs:'NONE', product:'橙业贷', nature:'国有企业', honor:'高新技术', intent:'中', risk:'中', batch:'橙业贷20160510', batchSource:'auto', lastContact: '暂无跟进', ds:70, legalPerson: '王三', status: '存续', entityType: '国有独资', indCat: '科学研究和技术服务业', indType: '专业技术服务业', regCap: '3亿人民币', regDate: '2008-08-08', owner: '王静', org: '南京分行', coopOrg: '南京银行' },
+  { id:12, name:'扬州苏仪自控系统有限公司', uscc:'91321002MA4EXAMPLEE', region: '江苏省/扬州市/广陵区', addr:'扬州市广陵区新城路12号', rs:'FOLLOWING', bs:'SETTLED', product:'橙业贷', nature:'民营企业', honor:'专精特新', intent:'高', risk:'低', batch:'橙业贷20260615', batchSource:'manual', lastContact: '今天', ds:85, legalPerson: '李梅', status: '存续', entityType: '有限责任公司', indCat: '制造业', indType: '仪器仪表制造业', regCap: '2500万人民币', regDate: '2013-04-18', owner: '王静', org: '常州分行', coopOrg: '平安银行' },
+  { id:13, name:'苏州工业机器人研发有限公司', uscc:'91320594MA2EXAMPLEG', region: '江苏省/苏州市/工业园区', addr:'苏州市工业园区独墅湖大道90号', rs:'REACHED_INTERESTED', bs:'APPLIED', product:'橙业贷', nature:'外资企业', honor:'高新技术', intent:'高', risk:'中', batch:'橙业贷20260615', batchSource:'manual', lastContact: '1天前', ds:93, legalPerson: '张伟', status: '存续', entityType: '外商独资', indCat: '科学研究和技术服务业', indType: '科技推广和应用服务业', regCap: '1000万美元', regDate: '2022-02-22', owner: '李明', org: '南京分行', coopOrg: '南京银行' },
+  { id:14, name:'盐城风电装备制造有限公司', uscc:'91320902MA1EXAMPLEF', region: '江苏省/盐城市/亭湖区', addr:'盐城市亭湖区环保产业园', rs:'UNREACHED_OTHER', bs:'NONE', product:'厂房贷', nature:'国有企业', honor:'无', intent:'低', risk:'低', batch:'厂房贷20160502', batchSource:'auto', lastContact: '7天前', ds:68, legalPerson: '赵云', status: '存续', entityType: '国有控股', indCat: '制造业', indType: '专用设备制造业', regCap: '1.5亿人民币', regDate: '2011-05-15', owner: '王静', org: '无锡分行', coopOrg: '无锡银行' },
+  { id:15, name:'镇江新材料技术有限公司', uscc:'91321102MA3EXAMPLEH', region: '江苏省/镇江市/京口区', addr:'镇江市京口区学府路66号', rs:'PENDING', bs:'NONE', product:'税务贷', nature:'合资企业', honor:'高新技术', intent:'中', risk:'中', batch:'税务贷20160502', batchSource:'auto', lastContact: '暂无跟进', ds:75, legalPerson: '马超', status: '存续', entityType: '中外合资', indCat: '制造业', indType: '化学原料和化学制品制造业', regCap: '6000万人民币', regDate: '2016-09-09', owner: '刘伟', org: '常州分行', coopOrg: '平安银行' }
+];
+
+// ===== 筛选状态 =====
+let filterState = { rs: 'ALL', bs: 'ALL', product: 'ALL', batch: 'ALL', quick: '' };
+
+let currentMarkId = null;
+
+// ===== 辅助函数 =====
+function getRsBadge(rs, bs) {
+  // 业务状态优先显示
+  if (bs === 'DISBURSED') return { l: '已放款', c: '#0891b2', bg: '#ecfeff', dot: '#0891b2' };
+  if (bs === 'SETTLED')   return { l: '已结清', c: '#6b7280', bg: '#f3f4f6', dot: '#9ca3af' };
+  if (bs === 'REJECTED_BIZ') return { l: '审批拒绝', c: '#dc2626', bg: '#fef2f2', dot: '#ef4444' };
+  const r = RS_MAP[rs] || RS_MAP.PENDING;
+  const b = BS_MAP[bs];
+  if (bs && bs !== 'NONE' && b && b.l) {
+    return { l: `${r.l} · ${b.l}`, c: r.c, bg: r.bg, dot: r.dot };
+  }
+  return r;
+}
+
+function getBsOnlyBadge(bs) {
+  const b = BS_MAP[bs];
+  if (!b || !b.l) return `<span style="color:var(--gray-300);font-size:12px;">—</span>`;
+  return `<span class="status-badge" style="background:${b.bg};color:${b.c};">${b.l}</span>`;
+}
+
+function isUnreached(rs) { return rs && rs.startsWith('UNREACHED'); }
+
+// ===== 渲染 =====
+function doFilter() {
+  const search = document.getElementById('searchInput').value.toLowerCase().trim();
+  const fRegion = window.cascaderRegion ? Array.from(window.cascaderRegion.selectedMulti) : [];
+  const fContact = document.getElementById('filterContact').value;
+  const fProduct = document.getElementById('filterProduct').value;
+  const fNature = document.getElementById('filterNature').value;
+  const fHonor = document.getElementById('filterHonor').value;
+  const fIntent = document.getElementById('filterIntent').value;
+  const fRisk = document.getElementById('filterRisk').value;
+  
+  const fBatch = window.cascaderBatch && window.cascaderBatch.selectedSingle ? window.cascaderBatch.selectedSingle : 'ALL';
+  const fOrg = window.cascaderOrg && window.cascaderOrg.selectedSingle ? window.cascaderOrg.selectedSingle : 'ALL';
+  const fOwner = document.getElementById('filterOwner') ? document.getElementById('filterOwner').value : 'ALL';
+
+  let list = ALL_DATA.filter(c => {
+    if (search && !c.name.toLowerCase().includes(search) && !c.uscc.toLowerCase().includes(search)) return false;
+    
+    if (filterState.rs !== 'ALL') {
+      if (filterState.rs === 'unreached' && !isUnreached(c.rs)) return false;
+      if (filterState.rs !== 'unreached' && c.rs !== filterState.rs) {
+        if(!(filterState.rs === 'REACHED_INTERESTED' && c.rs === 'REACHED_INTERESTED')) return false;
+      }
+    }
+    if (filterState.bs !== 'ALL' && c.bs !== filterState.bs) return false;
+    
+    if (fBatch !== 'ALL' && c.batch !== fBatch) return false;
+    if (fRegion.length > 0) {
+      if (!c.addr || !fRegion.some(dist => c.addr.includes(dist))) return false;
+    }
+    if (fContact !== 'ALL') {
+      if (fContact === '有号码' && !c.hasPhone) return false;
+      if (fContact === '无号码' && c.hasPhone) return false;
+    }
+    if (fProduct !== 'ALL' && c.product !== fProduct) return false;
+    if (fNature !== 'ALL' && c.nature !== fNature) return false;
+    if (fHonor !== 'ALL' && c.honor !== fHonor) return false;
+    if (fIntent !== 'ALL' && c.intent !== fIntent) return false;
+    if (fRisk !== 'ALL' && c.risk !== fRisk) return false;
+    
+    if (filterState.quick === 'no_contact') {
+      if (!isUnreached(c.rs)) return false;
+    }
+    
+    if (fOrg !== 'ALL' && c.org !== fOrg) return false;
+    if (fOwner !== 'ALL' && c.owner !== fOwner) return false;
+    
+    return true;
+  });
+
+  list.sort((a,b) => {
+    const s = document.getElementById('sortSelect').value;
+    if(s==='score') return b.ds - a.ds;
+    if(s==='time') return b.id - a.id;
+    if(s==='reg') return b.id - a.id;
+    return 0;
+  });
+
+  renderTable(list);
+}
+
+function resetFilters() {
+  document.getElementById('searchInput').value = '';
+  document.getElementById('sortSelect').value = 'default';
+  document.getElementById('filterRegion').value = 'ALL';
+  document.getElementById('filterSource').value = 'ALL';
+  document.getElementById('filterContact').value = 'ALL';
+  document.getElementById('filterProduct').value = 'ALL';
+  document.getElementById('filterNature').value = 'ALL';
+  document.getElementById('filterHonor').value = 'ALL';
+  document.getElementById('filterIntent').value = 'ALL';
+  document.getElementById('filterRisk').value = 'ALL';
+  document.querySelectorAll('.filter-option').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.filter-option[data-val="ALL"]').forEach(el => el.classList.add('active'));
+  filterState = { rs: 'ALL', bs: 'ALL', product: 'ALL', batch: 'ALL', quick: '', owner: 'ALL', org: 'ALL' };
+  const batchSel = document.getElementById('filterBatch'); if (batchSel) batchSel.value = 'ALL';
+  doFilter();
+}
+
+
+
+function toggleAdvFilters() {
+  const panel = document.getElementById('advancedFilters');
+  const arrow = document.getElementById('advFilterArrow');
+  const text = document.getElementById('advFilterText');
+  if (panel.style.display === 'none') {
+    panel.style.display = 'block';
+    arrow.style.transform = 'rotate(180deg)';
+    if (text) text.innerText = '收起筛选';
+  } else {
+    panel.style.display = 'none';
+    arrow.style.transform = 'rotate(0deg)';
+    if (text) text.innerText = '展开筛选';
+  }
+}
+
+// ==================== 列配置逻辑 ====================
+const allColumns = [
+  { key: 'name', label: '企业名称', fixed: true, default: true },
+  { key: 'uscc', label: '统一社会信用代码', fixed: true, default: true },
+  { key: 'coopOrg', label: '所属机构', fixed: false, default: true },
+  { key: 'region', label: '区域', fixed: false, default: true },
+  { key: 'product', label: '适配产品', fixed: false, default: true },
+  { key: 'rs', label: '营销状态', fixed: true, default: true },
+  { key: 'bs', label: '业务状态', fixed: true, default: true },
+  { key: 'org', label: '对接机构', fixed: false, default: true },
+  { key: 'owner', label: '对接客户经理', fixed: false, default: true },
+  { key: 'lastContact', label: '最近跟进', fixed: true, default: true },
+  { key: 'legalPerson', label: '法定代表人', fixed: false, default: false },
+  { key: 'status', label: '企业状态', fixed: false, default: false },
+  { key: 'entityType', label: '实体类型', fixed: false, default: false },
+  { key: 'indCat', label: '行业门类', fixed: false, default: false },
+  { key: 'indType', label: '行业大类', fixed: false, default: false },
+  { key: 'regCap', label: '注册资本', fixed: false, default: false },
+  { key: 'regDate', label: '成立日期', fixed: false, default: false },
+  { key: 'addr', label: '企业住所', fixed: false, default: false },
+  { key: 'action', label: '操作', fixed: true, default: true }
+];
+
+let visibleCols = JSON.parse(localStorage.getItem('wb_list_cols_v4'));
+if (!visibleCols) {
+  visibleCols = allColumns.filter(c => c.fixed || c.default).map(c => c.key);
+} else {
+  // Ensure fixed columns are always included
+  allColumns.forEach(c => {
+    if (c.fixed && !visibleCols.includes(c.key)) {
+      visibleCols.push(c.key);
+    }
+  });
+}
+
+function toggleColPopover(e) {
+  e.stopPropagation();
+  const pop = document.getElementById('colPopover');
+  pop.classList.toggle('show');
+}
+document.addEventListener('click', e => {
+  const pop = document.getElementById('colPopover');
+  if (pop && pop.classList.contains('show') && !e.target.closest('.col-settings')) {
+    pop.classList.remove('show');
+  }
+});
+function initColPopover() {
+  const body = document.getElementById('colPopBody');
+  if(!body) return;
+  let html = '';
+  const popoverCols = [...allColumns].sort((a, b) => {
+    if (a.key === 'action') return 1; // action at the very end
+    if (b.key === 'action') return -1;
+    if (a.fixed === b.fixed) return 0;
+    return a.fixed ? -1 : 1;
+  });
+  popoverCols.forEach(c => {
+    const isChecked = visibleCols.includes(c.key) ? 'checked' : '';
+    const isFixed = c.fixed ? 'disabled' : '';
+    const fixedStyle = c.fixed ? 'opacity: 0.5; cursor: not-allowed;' : '';
+    html += `<label class="col-pop-item" style="${fixedStyle}">
+      <input type="checkbox" value="${c.key}" ${isChecked} ${isFixed} onchange="onColChange(this)">
+      <span>${c.label}</span>
+    </label>`;
+  });
+  body.innerHTML = html;
+}
+function onColChange(cb) {
+  if (cb.checked) {
+    if (!visibleCols.includes(cb.value)) visibleCols.push(cb.value);
+  } else {
+    visibleCols = visibleCols.filter(v => v !== cb.value);
+  }
+  localStorage.setItem('wb_list_cols_v4', JSON.stringify(visibleCols));
+  renderTable(window.filtered || ALL_DATA);
+}
+function resetColumns() {
+  visibleCols = allColumns.filter(c => c.fixed || c.default).map(c => c.key);
+  localStorage.setItem('wb_list_cols_v4', JSON.stringify(visibleCols));
+  initColPopover();
+  renderTable(window.filtered || ALL_DATA);
+}
+
+// 覆盖原本的 renderTable
+function renderTable(list) {
+  if(!list) list = [];
+  const thead = document.getElementById('tableHead');
+  const tbody = document.getElementById('tableBody');
+  if(!thead || !tbody) return;
+
+  // Render Head
+  let thHtml = '<tr>';
+  thHtml += `<th style="width:50px;text-align:center;">序号</th>`;
+  allColumns.forEach(c => {
+    if (visibleCols.includes(c.key)) {
+      if (c.key === 'action') thHtml += `<th class="col-fixed-action" style="text-align:center;">${c.label}</th>`;
+      else if (c.key === 'rs' || c.key === 'bs') thHtml += `<th style="text-align:center;">${c.label}</th>`;
+      else thHtml += `<th>${c.label}</th>`;
+    }
+  });
+  thHtml += '</tr>';
+  thead.innerHTML = thHtml;
+
+  // Render Body
+  if (list.length === 0) {
+    tbody.innerHTML = '';
+    document.getElementById('emptyState').style.display = 'flex';
+    document.getElementById('tableView').style.display = 'none';
+    return;
+  }
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('tableView').style.display = 'block';
+
+  let tbHtml = '';
+  list.forEach((item, index) => {
+    tbHtml += `<tr>`;
+    tbHtml += `<td style="text-align:center;color:var(--gray-500);">${index + 1}</td>`;
+    allColumns.forEach(c => {
+      if (visibleCols.includes(c.key)) {
+        if (c.key === 'name') tbHtml += `<td><a href="javascript:void(0)" class="table-link" onclick="goDetail(${item.id})">${item.name}</a></td>`;
+        else if (c.key === 'uscc') tbHtml += `<td style="color:var(--gray-500);">${item.uscc || '-'}</td>`;
+        else if (c.key === 'coopOrg') tbHtml += `<td>${item.coopOrg || '-'}</td>`;
+        else if (c.key === 'region') tbHtml += `<td>${item.region || '-'}</td>`;
+        else if (c.key === 'legalPerson') tbHtml += `<td style="color:var(--gray-800);">${item.legalPerson || '-'}</td>`;
+        else if (c.key === 'status') tbHtml += `<td>${item.status || '-'}</td>`;
+        else if (c.key === 'entityType') tbHtml += `<td>${item.entityType || '-'}</td>`;
+        else if (c.key === 'indCat') tbHtml += `<td style="max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${item.indCat || ''}">${item.indCat || '-'}</td>`;
+        else if (c.key === 'indType') tbHtml += `<td style="max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${item.indType || ''}">${item.indType || '-'}</td>`;
+        else if (c.key === 'regCap') tbHtml += `<td>${item.regCap || '-'}</td>`;
+        else if (c.key === 'regDate') tbHtml += `<td>${item.regDate || '-'}</td>`;
+        else if (c.key === 'addr') tbHtml += `<td style="max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${item.addr || ''}">${item.addr || '-'}</td>`;
+        else if (c.key === 'product') tbHtml += `<td>${item.product}</td>`;
+        else if (c.key === 'owner') tbHtml += `<td style="color:var(--gray-800);">${item.owner || '-'}</td>`;
+        else if (c.key === 'org') tbHtml += `<td style="color:var(--gray-800);">${item.org || '-'}</td>`;
+        else if (c.key === 'rs') {
+          const r = RS_MAP[item.rs] || { l: '-', c: 'var(--gray-500)', bg: 'var(--gray-100)' };
+          tbHtml += `<td style="text-align:center;"><span class="status-badge" style="background:${r.bg};color:${r.c};">${r.l}</span></td>`;
+        }
+        else if (c.key === 'bs') {
+          const b = BS_MAP[item.bs];
+          if (b && b.l) tbHtml += `<td style="text-align:center;"><span class="status-badge" style="background:${b.bg};color:${b.c};">${b.l}</span></td>`;
+          else tbHtml += `<td style="text-align:center;"><span style="color:var(--gray-300);">-</span></td>`;
+        }
+        else if (c.key === 'lastContact') tbHtml += `<td style="color:var(--gray-500);">${item.lastContact}</td>`;
+        else if (c.key === 'action') tbHtml += `<td class="col-fixed-action" style="text-align:center;">
+            <div class="action-btns">
+              <button class="action-btn primary" onclick="goDetail(${item.id})">详情</button>
+              <button class="action-btn" onclick="openMarkDrawer(${item.id})">状态</button>
+              <button class="action-btn" onclick="openContactModal(${item.id})">触达</button>
+            </div>
+          </td>`;
+      }
+    });
+    tbHtml += `</tr>`;
+  });
+  tbody.innerHTML = tbHtml;
+}
+
+function setView(v) {
+  // dummy to prevent errors from leftover calls
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  initColPopover();
+  doFilter();
+});
+
+
+// ===== 筛选 =====
+function setFilter(type, val, el) {
+  filterState[type] = val;
+  // 同组高亮
+  document.querySelectorAll(`[data-filter="${type}"]`).forEach(e => e.classList.remove('active'));
+  el.classList.add('active');
+  doFilter();
+}
+function resetAllFilters() {
+  filterState = { rs: 'ALL', bs: 'ALL', product: 'ALL', batch: 'ALL', quick: '', owner: 'ALL', org: 'ALL' };
+  
+  if (window.cascaderBatch) window.cascaderBatch.reset();
+  if (window.cascaderRegion) window.cascaderRegion.reset();
+  if (window.cascaderOrg) window.cascaderOrg.reset();
+  
+  document.querySelectorAll('.filter-option').forEach(e => {
+    e.classList.remove('active');
+    if (e.dataset.val === 'ALL') e.classList.add('active');
+  });
+  ['filterContact', 'filterProduct', 'filterNature', 'filterHonor', 'filterIntent', 'filterRisk', 'filterOwner'].forEach(id => {
+    const sel = document.getElementById(id);
+    if (sel) sel.value = 'ALL';
+  });
+  
+  doFilter();
+}
+
+// ===== 导航 =====
+function goDetail(id) { location.href = 'customer-detail.html?id=' + id; }
+function exportData() { document.getElementById('exportModal').style.display = 'flex'; }
+function closeExportModal() { document.getElementById('exportModal').style.display = 'none'; }
+function goToDownloadCenter() { location.href = 'downloads.html'; }
+
+// ===== 触达路径弹窗 =====
+function openContactModal(id) {
+  const c = ALL_DATA.find(x => x.id === id);
+  document.getElementById('contactModalTitle').textContent = '触达路径';
+  document.getElementById('contactModalSub').textContent = c ? c.name : '';
+  document.getElementById('contactModal').classList.add('show');
+}
+function closeContactModal() {
+  document.getElementById('contactModal').classList.remove('show');
+}
+function contactTab(el, idx) {
+  document.querySelectorAll('.contact-tab').forEach((t,i) => {
+    t.className = 'contact-tab' + (i === idx ? ' active' : '');
+    document.getElementById('cPane' + i).className = 'contact-pane' + (i === idx ? ' active' : '');
+  });
+}
+function makeCall(phone) {
+  document.getElementById('callModalPhone').innerText = phone;
+  document.getElementById('callModal').classList.add('show');
+}
+function closeCallModal() {
+  document.getElementById('callModal').classList.remove('show');
+}
+
+// ===== 状态标记抽屉 =====
+// 包装器，适配本地列表调用 window.openStatusDrawer (公共组件)
+function openMarkDrawer(id) {
+  const c = ALL_DATA.find(x => x.id === id);
+  const mktInit = '00'; // 可根据 c.rs 映射
+  const bizInit = c && c.bs && c.bs !== 'ALL' ? c.bs : 'NONE';
+  window.openStatusDrawer(id, c ? c.name : '未知企业', mktInit, bizInit);
+}
+
+// ===== ESC关闭 =====
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    closeContactModal();
+    if(window.closeStatusDrawer) window.closeStatusDrawer();
+  }
+});
+document.getElementById('contactModal').addEventListener('click', e => {
+  if (e.target === document.getElementById('contactModal')) closeContactModal();
+});
+
+// ===== 区域级联多选组件逻辑 =====
+const REGION_DATA = [
+  {
+    name: '江苏省',
+    children: [
+      { name: '苏州市', children: ['工业园区', '高新区', '吴中区', '相城区', '姑苏区'] },
+      { name: '南京市', children: ['玄武区', '秦淮区', '建邺区'] },
+      { name: '南通市', children: ['崇川区', '通州区'] }
+    ]
+  },
+  {
+    name: '浙江省',
+    children: [
+      { name: '杭州市', children: ['西湖区', '上城区', '余杭区'] },
+      { name: '宁波市', children: ['海曙区', '江北区'] }
+    ]
+  }
+];
+
+// ===== 通用级联组件逻辑 =====
+class GenericCascader {
+  constructor(config) {
+    this.id = config.id;
+    this.data = config.data;
+    this.levels = config.levels;
+    this.isMulti = config.isMulti || false;
+    this.defaultText = config.defaultText;
+    this.onSelect = config.onSelect;
+    
+    this.state = new Array(this.levels - 1).fill(0);
+    this.selectedMulti = new Set();
+    this.selectedSingle = null;
+    
+    this.container = document.getElementById(this.id);
+    this.dropdown = document.getElementById(this.id + 'Dropdown');
+    this.colsContainer = document.getElementById(this.id + 'Cols');
+    this.textEl = document.getElementById(this.id + 'Text');
+    this.displayEl = this.container.querySelector('.custom-singleselect-display');
+  }
+
+  toggle(e) {
+    if(e) e.stopPropagation();
+    const isShowing = this.dropdown.style.display === 'flex';
+    document.querySelectorAll('.cascader-dropdown').forEach(el => el.style.display = 'none');
+    document.querySelectorAll('.custom-singleselect-display.focus').forEach(el => el.classList.remove('focus'));
+    
+    if (isShowing) {
+      this.dropdown.style.display = 'none';
+      this.displayEl.classList.remove('focus');
+    } else {
+      this.dropdown.style.display = 'flex';
+      this.displayEl.classList.add('focus');
+      this.render();
+    }
+  }
+
+  getColData(level) {
+    let current = this.data;
+    for (let i = 0; i < level; i++) {
+      if (!current || !current[this.state[i]] || !current[this.state[i]].children) return [];
+      current = current[this.state[i]].children;
+    }
+    return current || [];
+  }
+
+  render() {
+    let html = '';
+    for (let i = 0; i < this.levels; i++) {
+      if (i > 0) html += '<div class="cascader-divider"></div>';
+      html += `<div class="cascader-col" id="${this.id}-col-${i}"></div>`;
+    }
+    this.colsContainer.innerHTML = html;
+    
+    for (let level = 0; level < this.levels; level++) {
+      const colEl = document.getElementById(`${this.id}-col-${level}`);
+      const list = this.getColData(level);
+      
+      let colHtml = '';
+      if (level === this.levels - 1) { // 最后一级
+        colHtml = list.map(item => {
+          let val = item.name || item;
+          if (this.isMulti) {
+            let isChecked = this.selectedMulti.has(val) ? 'checked' : '';
+            return `
+              <label class="cascader-checkbox-item" onclick="event.stopPropagation()">
+                <input type="checkbox" value="${val}" ${isChecked} onchange="window['${this.id}'].toggleMulti('${val}', this.checked)">
+                ${val}
+              </label>
+            `;
+          } else {
+            let isActive = this.selectedSingle === val ? 'active' : '';
+            return `
+              <div class="cascader-item ${isActive}" onclick="window['${this.id}'].selectSingle('${val}', event)">
+                ${val}
+              </div>
+            `;
+          }
+        }).join('');
+      } else {
+        colHtml = list.map((item, idx) => `
+          <div class="cascader-item ${idx === this.state[level] ? 'active' : ''}" onclick="window['${this.id}'].setIdx(${level}, ${idx}, event)">
+            ${item.name}
+            <div class="cascader-item-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+          </div>
+        `).join('');
+      }
+      colEl.innerHTML = colHtml;
+    }
+    
+    if (this.isMulti) {
+      let countEl = document.getElementById(this.id.replace('cascader', 'cascaderRegionCount'));
+      if(countEl) countEl.textContent = this.selectedMulti.size;
+    }
+  }
+
+  setIdx(level, idx, e) {
+    if(e) e.stopPropagation();
+    this.state[level] = idx;
+    for (let i = level + 1; i < this.state.length; i++) this.state[i] = 0;
+    this.render();
+  }
+
+  toggleMulti(val, checked) {
+    if(checked) this.selectedMulti.add(val);
+    else this.selectedMulti.delete(val);
+    this.render();
+  }
+
+  selectSingle(val, e) {
+    if(e) e.stopPropagation();
+    this.selectedSingle = val;
+    this.textEl.textContent = val;
+    this.textEl.style.color = 'var(--brand)';
+    this.textEl.style.fontWeight = '600';
+    this.dropdown.style.display = 'none';
+    this.displayEl.classList.remove('focus');
+    if(this.onSelect) this.onSelect();
+  }
+
+  confirm(e) {
+    if(e) e.stopPropagation();
+    this.dropdown.style.display = 'none';
+    this.displayEl.classList.remove('focus');
+    const count = this.selectedMulti.size;
+    if (count > 0) {
+      this.textEl.textContent = `已选${this.defaultText} (${count})`;
+      this.textEl.style.color = 'var(--brand)';
+      this.textEl.style.fontWeight = '600';
+    } else {
+      this.textEl.textContent = this.defaultText;
+      this.textEl.style.color = '';
+      this.textEl.style.fontWeight = '';
+    }
+    if(this.onSelect) this.onSelect();
+  }
+
+  reset(e) {
+    if(e) e.stopPropagation();
+    this.selectedMulti.clear();
+    this.selectedSingle = null;
+    this.state = new Array(this.levels - 1).fill(0);
+    this.textEl.textContent = this.defaultText;
+    this.textEl.style.color = '';
+    this.textEl.style.fontWeight = '';
+    this.render();
+    if(this.onSelect) this.onSelect();
+  }
+}
+
+const BATCH_DATA = [
+  { name: '橙业贷', children: ['橙业贷20160508', '橙业贷20160509', '橙业贷20160510', '橙业贷20260615'] },
+  { name: '厂房贷', children: ['厂房贷20160501', '厂房贷20160502'] },
+  { name: '税务贷', children: ['税务贷20160501', '税务贷20160502'] }
+];
+
+const ORG_DATA = [
+  {
+    name: '江苏省分行', children: [
+      { name: '南京市分行', children: ['鼓楼支行', '玄武支行'] },
+      { name: '苏州市分行', children: ['姑苏支行', '工业园区支行', '新吴支行'] },
+      { name: '无锡市分行', children: ['滨湖支行'] }
+    ]
+  }
+];
+
+window.initCascaders = function() {
+  window.cascaderBatch = new GenericCascader({ id: 'cascaderBatch', data: BATCH_DATA, levels: 2, defaultText: '名单批次', onSelect: doFilter });
+  window.cascaderRegion = new GenericCascader({ id: 'cascaderRegion', data: REGION_DATA, levels: 3, isMulti: true, defaultText: '区域', onSelect: doFilter });
+  window.cascaderOrg = new GenericCascader({ id: 'cascaderOrg', data: ORG_DATA, levels: 3, defaultText: '对接机构', onSelect: doFilter });
+};
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('.custom-cascader')) {
+    document.querySelectorAll('.cascader-dropdown').forEach(el => el.style.display = 'none');
+    document.querySelectorAll('.custom-singleselect-display.focus').forEach(el => el.classList.remove('focus'));
+  }
+});
+
+window.initCascaders();
+doFilter();
+</script>
+<!-- 导出弹窗 -->
+<div class="notify-backdrop" id="exportModal">
+  <div class="notify-box">
+    <div class="notify-icon success">
+      <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <div class="notify-title">导出任务已提交</div>
+    <div class="notify-desc">后台正在为您生成导出文件，请稍后前往「下载中心」查看和下载。</div>
+    <div class="notify-btns">
+      <button class="btn btn-default" onclick="location.href='downloads.html'">前往下载中心</button>
+      <button class="btn btn-primary" onclick="closeExportModal()">知道了</button>
+    </div>
+  </div>
+</div>
+<!-- 拨号弹窗 -->
+<div class="modal-overlay" id="callModal">
+  <div class="modal" style="max-width: 400px;">
+    <div class="modal-header">
+      <span class="modal-title">系统提示</span>
+      <button class="modal-close" onclick="closeCallModal()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+    <div class="modal-body" style="padding:40px 24px; text-align:center;">
+      <div style="width:64px;height:64px;border-radius:50%;background:#eff6ff;color:var(--brand);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+      </div>
+      <div style="font-size:16px;color:var(--gray-600);margin-bottom:8px;">即将拨打真实号码</div>
+      <div style="font-size:28px;font-weight:700;font-family:monospace;color:var(--gray-900);margin-bottom:12px;" id="callModalPhone"></div>
+      <div style="font-size:13px;color:var(--gray-400);">（演示模式，实际部署后将直接拉起外呼终端）</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-default" onclick="closeCallModal()">取消</button>
+      <button class="btn btn-primary" onclick="closeCallModal()">确认呼出</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>

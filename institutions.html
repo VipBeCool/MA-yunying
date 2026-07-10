@@ -2,256 +2,328 @@
 <html lang="zh-CN">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>机构管理 - 智能营销平台</title>
-    <link rel="stylesheet" href="css/style.css">
-    <style>
-        .sidebar {
-            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
-        }
-
-        .nav-item.active {
-            background: rgba(82, 196, 26, 0.2);
-            border-left-color: #52c41a;
-        }
-
-        .logo-icon {
-            background: #52c41a;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>机构管理 - 智能营销平台</title>
+  <meta name="description" content="管理合作金融机构，查看机构业务数据与组织架构">
+  <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
-    <div class="app-container">
-        <aside class="sidebar">
-            <div class="sidebar-logo">
-                <div class="logo-icon">⚙️</div>
-                <h1>运营管控台</h1>
-            </div>
-            
-            <nav class="nav-menu">
-                <a href="index.html" class="nav-item "><span class="nav-icon">📊</span><span class="nav-text">运营概览</span></a>
-                
-                <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 8px 16px;"></div>
-                <div style="font-size: 12px; color: rgba(255,255,255,0.45); padding: 8px 24px; margin-top: 4px;">数据交付</div>
-                <a href="smart-search.html" class="nav-item "><span class="nav-icon">🎯</span><span class="nav-text">智能探客</span></a>
-                <a href="batch-enrich.html" class="nav-item "><span class="nav-icon">📑</span><span class="nav-text">批量画像查询</span></a>
-                
-                <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 8px 16px;"></div>
-                <div style="font-size: 12px; color: rgba(255,255,255,0.45); padding: 8px 24px; margin-top: 4px;">业务管理</div>
-                <a href="institutions.html" class="nav-item active"><span class="nav-icon">🏛️</span><span class="nav-text">机构管理</span></a>
-                <a href="customer-pool.html" class="nav-item "><span class="nav-icon">🏊</span><span class="nav-text">客户池</span></a>
-                <a href="products.html" class="nav-item "><span class="nav-icon">📦</span><span class="nav-text">产品配置</span></a>
-                <a href="rules.html" class="nav-item "><span class="nav-icon">🎯</span><span class="nav-text">规则引擎</span></a>
-                <a href="distribution.html" class="nav-item "><span class="nav-icon">🔀</span><span class="nav-text">分发管理</span></a>
-                <a href="analytics.html" class="nav-item "><span class="nav-icon">📈</span><span class="nav-text">效果分析</span></a>
-                <a href="billing.html" class="nav-item "><span class="nav-icon">💰</span><span class="nav-text">收费结算</span></a>
-                <a href="reconciliation.html" class="nav-item "><span class="nav-icon">📑</span><span class="nav-text">对账管理</span></a>
-                <a href="risk-alert.html" class="nav-item "><span class="nav-icon">⚠️</span><span class="nav-text">风险预警</span></a>
-                
-                <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 8px 16px;"></div>
-                <div style="font-size: 12px; color: rgba(255,255,255,0.45); padding: 8px 24px; margin-top: 4px;">系统配置</div>
-                <a href="api-monitor.html" class="nav-item "><span class="nav-icon">🔌</span><span class="nav-text">API监控</span></a>
-                <a href="downloads.html" class="nav-item "><span class="nav-icon">📥</span><span class="nav-text">下载中心</span></a>
-            </nav>
-            <div class="sidebar-footer">
-                <div class="user-info">
-                    <div class="user-avatar" style="background: #52c41a;">管</div>
-                    <div>
-                        <div class="user-name">管理员</div>
-                        <div class="user-role">平台运营</div>
-                    </div>
-                </div>
-            </div>
-        </aside>
+  <div class="app-container">
+    <aside class="sidebar" id="sidebar"></aside>
 
-        <main class="main-content">
-            <div class="page-header" style="display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                    <h1 class="page-title">机构管理</h1>
-                    <p class="page-breadcrumb"><a href="index.html">运营概览</a> / 机构管理</p>
-                </div>
-                <button class="btn btn-primary" onclick="openModal('addModal')">+ 新增机构</button>
-            </div>
-
-            <div class="filter-bar">
-                <div class="filter-item">
-                    <label>机构类型</label>
-                    <select class="form-select">
-                        <option>全部类型</option>
-                        <option>商业银行</option>
-                        <option>农商银行</option>
-                        <option>小贷公司</option>
-                    </select>
-                </div>
-                <div class="filter-item">
-                    <label>合作等级</label>
-                    <select class="form-select">
-                        <option>全部等级</option>
-                        <option>战略合作</option>
-                        <option>重点合作</option>
-                        <option>普通合作</option>
-                    </select>
-                </div>
-                <div class="filter-item">
-                    <label>状态</label>
-                    <select class="form-select">
-                        <option>全部状态</option>
-                        <option>正常</option>
-                        <option>暂停</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">合作机构列表</h3>
-                    <span class="card-extra">共 15 家机构</span>
-                </div>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>机构名称</th>
-                            <th>类型</th>
-                            <th>合作等级</th>
-                            <th>产品数</th>
-                            <th>累计推送</th>
-                            <th>累计放款</th>
-                            <th>状态</th>
-                            <th>操作</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><span class="company-name">江苏银行</span></td>
-                            <td>商业银行</td>
-                            <td><span class="tag tag-purple">战略合作</span></td>
-                            <td>5</td>
-                            <td>12,000</td>
-                            <td style="font-weight: 600; color: #52c41a;">8,500万</td>
-                            <td><span class="status-badge status-success">正常</span></td>
-                            <td>
-                                <button class="btn btn-text btn-sm">编辑</button>
-                                <button class="btn btn-text btn-sm"
-                                    onclick="location.href='institution-detail.html?name=江苏银行'">组织架构</button>
-                                <button class="btn btn-text btn-sm" onclick="location.href='products.html'">产品</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><span class="company-name">南京银行</span></td>
-                            <td>商业银行</td>
-                            <td><span class="tag tag-purple">战略合作</span></td>
-                            <td>4</td>
-                            <td>10,000</td>
-                            <td style="font-weight: 600; color: #52c41a;">6,800万</td>
-                            <td><span class="status-badge status-success">正常</span></td>
-                            <td>
-                                <button class="btn btn-text btn-sm">编辑</button>
-                                <button class="btn btn-text btn-sm"
-                                    onclick="location.href='institution-detail.html?name=南京银行'">组织架构</button>
-                                <button class="btn btn-text btn-sm">产品</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><span class="company-name">苏州农商行</span></td>
-                            <td>农商银行</td>
-                            <td><span class="tag tag-blue">重点合作</span></td>
-                            <td>3</td>
-                            <td>8,000</td>
-                            <td style="font-weight: 600; color: #52c41a;">4,200万</td>
-                            <td><span class="status-badge status-success">正常</span></td>
-                            <td>
-                                <button class="btn btn-text btn-sm">编辑</button>
-                                <button class="btn btn-text btn-sm"
-                                    onclick="location.href='institution-detail.html?name=苏州农商行'">组织架构</button>
-                                <button class="btn btn-text btn-sm">产品</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><span class="company-name">某小贷公司A</span></td>
-                            <td>小贷公司</td>
-                            <td><span class="tag tag-orange">普通合作</span></td>
-                            <td>2</td>
-                            <td>5,000</td>
-                            <td style="font-weight: 600; color: #52c41a;">1,200万</td>
-                            <td><span class="status-badge status-success">正常</span></td>
-                            <td>
-                                <button class="btn btn-text btn-sm">编辑</button>
-                                <button class="btn btn-text btn-sm"
-                                    onclick="location.href='institution-detail.html?name=某小贷公司A'">组织架构</button>
-                                <button class="btn btn-text btn-sm">产品</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><span class="company-name">某小贷公司B</span></td>
-                            <td>小贷公司</td>
-                            <td><span class="tag tag-orange">普通合作</span></td>
-                            <td>1</td>
-                            <td>3,000</td>
-                            <td style="font-weight: 600;">800万</td>
-                            <td><span class="status-badge status-pending">暂停</span></td>
-                            <td>
-                                <button class="btn btn-text btn-sm">编辑</button>
-                                <button class="btn btn-text btn-sm"
-                                    onclick="location.href='institution-detail.html?name=某小贷公司B'">组织架构</button>
-                                <button class="btn btn-text btn-sm">启用</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </main>
-    </div>
-
-    <!-- 新增机构模态框 -->
-    <div class="modal-overlay" id="addModal">
-        <div class="modal">
-            <div class="modal-header">
-                <h3 class="modal-title">新增合作机构</h3>
-                <div class="modal-close" onclick="closeModal('addModal')">✕</div>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label class="form-label">机构名称 *</label>
-                    <input type="text" class="form-input" placeholder="请输入机构名称">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">机构类型 *</label>
-                    <select class="form-select">
-                        <option>商业银行</option>
-                        <option>农商银行</option>
-                        <option>小贷公司</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">合作等级</label>
-                    <select class="form-select">
-                        <option>普通合作</option>
-                        <option>重点合作</option>
-                        <option>战略合作</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">联系人</label>
-                    <input type="text" class="form-input" placeholder="请输入联系人姓名">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">联系电话</label>
-                    <input type="text" class="form-input" placeholder="请输入联系电话">
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-default" onclick="closeModal('addModal')">取消</button>
-                <button class="btn btn-primary" onclick="closeModal('addModal')">确认添加</button>
-            </div>
+    <main class="main-content anim-fade-in">
+      <div class="page-header">
+        <div class="page-header-left">
+          <h1 class="page-title">机构管理</h1>
+          <p class="page-breadcrumb"><a href="index.html">工作台</a><span class="sep">/</span>机构管理</p>
         </div>
-    </div>
+        <button class="btn btn-primary" onclick="openModal('addModal')">
+          <svg viewBox="0 0 24 24">
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
+          新增机构
+        </button>
+      </div>
 
-    <script>
-        function openModal(id) { document.getElementById(id).classList.add('active'); }
-        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
-    </script>
+
+      <div class="filter-bar" style="display: flex; align-items: center; gap: 16px;">
+        <div class="search-wrap" style="width: 280px; margin: 0;">
+          <span class="search-icon"><svg viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg></span>
+          <input class="form-control" placeholder="搜索机构名称…">
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <select class="form-control" style="width: 120px;">
+            <option>全部状态</option>
+            <option>正常</option>
+            <option>禁用</option>
+          </select>
+        </div>
+
+      </div>
+
+      <!-- 机构表格 -->
+      <div class="card">
+        <div class="card-header" style="padding-bottom: 16px;">
+          <h3 class="card-title">
+            <span class="card-title-icon"><svg viewBox="0 0 24 24">
+                <rect x="4" y="2" width="16" height="20" rx="2" />
+                <path d="M9 22V12h6v10" />
+              </svg></span>
+            合作机构列表
+          </h3>
+          <span class="card-extra">共 15 家机构</span>
+        </div>
+        <div class="table-wrapper">
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align:center; width: 60px;">序号</th>
+                <th style="width: 18%;">机构</th>
+                <th style="width: 12%;">机构简称</th>
+                <th style="width: 12%;">渠道码</th>
+                <th style="width: 280px;">组织层级</th>
+                <th style="text-align:center;">成员总数</th>
+                <th style="text-align:center;">客户经理数</th>
+                <th style="text-align:center;">智能体</th>
+                <th>状态</th>
+                <th style="text-align:center; width: 200px;">操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:center;">1</td>
+                <td><a href="org-config.html?name=江苏银行" class="company-name">江苏银行</a></td>
+                <td>苏行</td>
+                <td>JSYH</td>
+                <td>总行-省分行-市分行-支行-网点-团队（6级）</td>
+                <td style="text-align:center;">150</td>
+                <td style="text-align:center;">120</td>
+                <td style="text-align:center;">3</td>
+                <td><span class="status-badge tag tag-green">正常</span></td>
+                <td>
+                  <div class="action-btns" style="justify-content:center;">
+                    <a href="org-config.html?name=江苏银行" class="action-btn">组织成员</a>
+                    <button class="action-btn">编辑</button>
+                    <button class="action-btn" style="color: var(--danger);"
+                      onclick="showConfirmModal('禁用', '江苏银行')">禁用</button>
+                    <button class="action-btn" style="color: var(--danger);"
+                      onclick="showConfirmModal('删除', '江苏银行')">删除</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">2</td>
+                <td><a href="org-config.html?name=南京银行" class="company-name">南京银行</a></td>
+                <td>宁行</td>
+                <td>NJYH</td>
+                <td>总行-分行-支行-网点-团队（5级）</td>
+                <td style="text-align:center;">120</td>
+                <td style="text-align:center;">95</td>
+                <td style="text-align:center;">2</td>
+                <td><span class="status-badge tag tag-green">正常</span></td>
+                <td>
+                  <div class="action-btns" style="justify-content:center;">
+                    <a href="org-config.html?name=南京银行" class="action-btn">组织成员</a>
+                    <button class="action-btn">编辑</button>
+                    <button class="action-btn" style="color: var(--danger);"
+                      onclick="showConfirmModal('禁用', '南京银行')">禁用</button>
+                    <button class="action-btn" style="color: var(--danger);"
+                      onclick="showConfirmModal('删除', '南京银行')">删除</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">3</td>
+                <td><a href="org-config.html?name=苏州农商行" class="company-name">苏州农商行</a></td>
+                <td>苏农银行</td>
+                <td>SZNSH</td>
+                <td>总行-支行-网点-团队（4级）</td>
+                <td style="text-align:center;">80</td>
+                <td style="text-align:center;">65</td>
+                <td style="text-align:center;">1</td>
+                <td><span class="status-badge tag tag-green">正常</span></td>
+                <td>
+                  <div class="action-btns" style="justify-content:center;">
+                    <a href="org-config.html?name=苏州农商行" class="action-btn">组织成员</a>
+                    <button class="action-btn">编辑</button>
+                    <button class="action-btn" style="color: var(--danger);"
+                      onclick="showConfirmModal('禁用', '苏州农商行')">禁用</button>
+                    <button class="action-btn" style="color: var(--danger);"
+                      onclick="showConfirmModal('删除', '苏州农商行')">删除</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">4</td>
+                <td><a href="org-config.html" class="company-name">某小贷公司A</a></td>
+                <td>小贷A</td>
+                <td>XIAODAIA</td>
+                <td>总行（1级）</td>
+                <td style="text-align:center;">25</td>
+                <td style="text-align:center;">20</td>
+                <td style="text-align:center;">1</td>
+                <td><span class="status-badge tag tag-green">正常</span></td>
+                <td>
+                  <div class="action-btns" style="justify-content:center;">
+                    <a href="org-config.html" class="action-btn">组织成员</a>
+                    <button class="action-btn">编辑</button>
+                    <button class="action-btn" style="color: var(--danger);"
+                      onclick="showConfirmModal('禁用', '某小贷公司A')">禁用</button>
+                    <button class="action-btn" style="color: var(--danger);"
+                      onclick="showConfirmModal('删除', '某小贷公司A')">删除</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td style="text-align:center;">5</td>
+                <td><a href="org-config.html" class="company-name">某小贷公司B</a></td>
+                <td>小贷B</td>
+                <td>XIAODAIB</td>
+                <td>总行（1级）</td>
+                <td style="text-align:center;">15</td>
+                <td style="text-align:center;">12</td>
+                <td style="text-align:center;">1</td>
+                <td><span class="status-badge tag tag-gray">禁用</span></td>
+                <td>
+                  <div class="action-btns" style="justify-content:center;">
+                    <a href="org-config.html" class="action-btn">组织成员</a>
+                    <button class="action-btn">编辑</button>
+                    <button class="action-btn" style="color: var(--success);"
+                      onclick="showConfirmModal('启用', '某小贷公司B')">启用</button>
+                    <button class="action-btn" style="color: var(--danger);"
+                      onclick="showConfirmModal('删除', '某小贷公司B')">删除</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 分页控件 -->
+        <div class="pagination" id="pagination" style="padding: 16px 24px; border-top: 1px solid var(--gray-100);">
+          <div class="pagination-info" style="display:flex;align-items:center;gap:12px;">
+            <span>显示 1 到 10 条，共 15 条记录</span>
+            <select class="filter-input form-control"
+              style="width: 100px; height: 32px; min-width:unset; padding: 0 10px; font-size: 13px;">
+              <option>10 条/页</option>
+              <option>20 条/页</option>
+            </select>
+          </div>
+          <div class="pagination-controls">
+            <button class="btn btn-ghost btn-sm" disabled>上一页</button>
+            <button class="btn btn-primary btn-sm page-num">1</button>
+            <button class="btn btn-ghost btn-sm page-num">2</button>
+            <button class="btn btn-ghost btn-sm">下一页</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- 新增机构弹窗 -->
+  <div class="modal-overlay" id="addModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">新增合作机构</h3>
+        <button class="modal-close" onclick="closeModal('addModal')">
+          <svg viewBox="0 0 24 24">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">机构名称 <span class="req">*</span></label>
+          <input type="text" class="form-control" placeholder="请输入机构名称">
+        </div>
+        <div class="form-group">
+          <label class="form-label">机构类型 <span class="req">*</span></label>
+          <select class="form-control">
+            <option>商业银行</option>
+            <option>农商银行</option>
+            <option>小贷公司</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">合作等级</label>
+          <select class="form-control">
+            <option>普通合作</option>
+            <option>重点合作</option>
+            <option>战略合作</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">联系人</label>
+          <input type="text" class="form-control" placeholder="请输入联系人姓名">
+        </div>
+        <div class="form-group">
+          <label class="form-label">联系电话</label>
+          <input type="text" class="form-control" placeholder="请输入联系电话">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('addModal')">取消</button>
+        <button class="btn btn-primary" onclick="closeModal('addModal')">确认添加</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 通用确认弹窗 -->
+  <div class="modal-overlay" id="confirmModal">
+    <div class="modal" style="width: 400px;">
+      <div class="modal-header" style="justify-content: center; border-bottom: none; padding-top: 24px;">
+        <h3 class="modal-title" id="confirmModalTitle">确认操作</h3>
+      </div>
+      <div class="modal-body" style="text-align: center; padding: 10px 24px 24px;">
+        <p id="confirmModalText" style="color: var(--gray-600); margin: 0;">您确定要执行该操作吗？</p>
+      </div>
+      <div class="modal-footer" style="justify-content: center; border-top: none; padding-bottom: 24px;">
+        <button class="btn btn-default" onclick="closeModal('confirmModal')" style="width: 100px;">取消</button>
+        <button class="btn btn-primary" onclick="executeAction()" style="width: 100px;">确认</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/sidebar.js"></script>
+  <script>
+    renderSidebar({ currentPage: 'institutions' });
+
+    let currentAction = null;
+    let currentTargetBtn = null;
+
+    function showConfirmModal(action, name) {
+      currentAction = action;
+      currentTargetBtn = window.event ? (window.event.currentTarget || window.event.target) : null;
+      document.getElementById('confirmModalTitle').innerText = '确认' + action;
+      document.getElementById('confirmModalText').innerText = `您确定要对“${name || '该机构'}”执行${action}操作吗？`;
+      openModal('confirmModal');
+    }
+
+    function executeAction() {
+      if (!currentAction || !currentTargetBtn) {
+        closeModal('confirmModal');
+        return;
+      }
+      const tr = currentTargetBtn.closest('tr');
+      if (currentAction === '删除') {
+        if (tr) tr.remove();
+      } else if (currentAction === '禁用' || currentAction === '启用') {
+        const isEnable = currentAction === '启用';
+        
+        // 改变当前按钮文案、样式及事件
+        currentTargetBtn.innerText = isEnable ? '禁用' : '启用';
+        currentTargetBtn.style.color = isEnable ? 'var(--danger)' : 'var(--success)';
+        const oldClick = currentTargetBtn.getAttribute('onclick');
+        currentTargetBtn.setAttribute('onclick', oldClick.replace(`'${currentAction}'`, `'${isEnable ? '禁用' : '启用'}'`));
+        
+        // 改变行内的状态标识
+        if (tr) {
+          const statusBadge = tr.querySelector('.status-badge');
+          if (statusBadge) {
+            statusBadge.className = `status-badge tag ${isEnable ? 'tag-green' : 'tag-gray'}`;
+            statusBadge.innerText = isEnable ? '正常' : '禁用';
+          }
+        }
+      }
+      closeModal('confirmModal');
+    }
+
+    function openModal(id) {
+      document.getElementById(id).classList.add('show');
+      if (window.upgradeCustomSelects) window.upgradeCustomSelects();
+    }
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('show');
+    }
+  </script>
 </body>
 
 </html>

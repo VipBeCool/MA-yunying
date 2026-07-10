@@ -6,70 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>分发管理 - 智能营销平台</title>
     <link rel="stylesheet" href="css/style.css">
-    <style>
-        .sidebar {
-            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
-        }
-
-        .nav-item.active {
-            background: rgba(82, 196, 26, 0.2);
-            border-left-color: #52c41a;
-        }
-
-        .logo-icon {
-            background: #52c41a;
-        }
-    </style>
+    
 </head>
 
 <body>
     <div class="app-container">
-        <aside class="sidebar">
-            <div class="sidebar-logo">
-                <div class="logo-icon">⚙️</div>
-                <h1>运营管控台</h1>
-            </div>
-            
-            <nav class="nav-menu">
-                <a href="index.html" class="nav-item "><span class="nav-icon">📊</span><span class="nav-text">运营概览</span></a>
-                
-                <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 8px 16px;"></div>
-                <div style="font-size: 12px; color: rgba(255,255,255,0.45); padding: 8px 24px; margin-top: 4px;">数据交付</div>
-                <a href="smart-search.html" class="nav-item "><span class="nav-icon">🎯</span><span class="nav-text">智能探客</span></a>
-                <a href="batch-enrich.html" class="nav-item "><span class="nav-icon">📑</span><span class="nav-text">批量画像查询</span></a>
-                
-                <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 8px 16px;"></div>
-                <div style="font-size: 12px; color: rgba(255,255,255,0.45); padding: 8px 24px; margin-top: 4px;">业务管理</div>
-                <a href="institutions.html" class="nav-item "><span class="nav-icon">🏛️</span><span class="nav-text">机构管理</span></a>
-                <a href="customer-pool.html" class="nav-item "><span class="nav-icon">🏊</span><span class="nav-text">客户池</span></a>
-                <a href="products.html" class="nav-item "><span class="nav-icon">📦</span><span class="nav-text">产品配置</span></a>
-                <a href="rules.html" class="nav-item "><span class="nav-icon">🎯</span><span class="nav-text">规则引擎</span></a>
-                <a href="distribution.html" class="nav-item active"><span class="nav-icon">🔀</span><span class="nav-text">分发管理</span></a>
-                <a href="analytics.html" class="nav-item "><span class="nav-icon">📈</span><span class="nav-text">效果分析</span></a>
-                <a href="billing.html" class="nav-item "><span class="nav-icon">💰</span><span class="nav-text">收费结算</span></a>
-                <a href="reconciliation.html" class="nav-item "><span class="nav-icon">📑</span><span class="nav-text">对账管理</span></a>
-                <a href="risk-alert.html" class="nav-item "><span class="nav-icon">⚠️</span><span class="nav-text">风险预警</span></a>
-                
-                <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 8px 16px;"></div>
-                <div style="font-size: 12px; color: rgba(255,255,255,0.45); padding: 8px 24px; margin-top: 4px;">系统配置</div>
-                <a href="api-monitor.html" class="nav-item "><span class="nav-icon">🔌</span><span class="nav-text">API监控</span></a>
-                <a href="downloads.html" class="nav-item "><span class="nav-icon">📥</span><span class="nav-text">下载中心</span></a>
-            </nav>
-            <div class="sidebar-footer">
-                <div class="user-info">
-                    <div class="user-avatar" style="background: #52c41a;">管</div>
-                    <div>
-                        <div class="user-name">管理员</div>
-                        <div class="user-role">平台运营</div>
-                    </div>
-                </div>
-            </div>
-        </aside>
+        <aside class="sidebar" id="sidebar"></aside>
 
-        <main class="main-content">
+        <main class="main-content anim-fade-in">
             <div class="page-header">
                 <h1 class="page-title">分发管理</h1>
-                <p class="page-breadcrumb"><a href="index.html">运营概览</a> / 分发管理</p>
+                <p class="page-breadcrumb"><a href="index.html">工作台</a> / 分发管理</p>
             </div>
 
             <!-- Tab切换 -->
@@ -89,14 +36,14 @@
                         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
                             <div
                                 style="padding: 16px; background: white; border-radius: 8px; border: 1px solid #e8e8e8;">
-                                <div style="font-size: 24px; font-weight: 600; color: #1890ff;">90天</div>
+                                <div style="font-size: 24px; font-weight: 600; color: var(--brand);">90天</div>
                                 <div style="font-size: 13px; color: #8c8c8c;">同机构冷却期</div>
                                 <div style="font-size: 12px; color: #595959; margin-top: 8px;">同一客户推送给同一机构后，90天内不再推送
                                 </div>
                             </div>
                             <div
                                 style="padding: 16px; background: white; border-radius: 8px; border: 1px solid #e8e8e8;">
-                                <div style="font-size: 24px; font-weight: 600; color: #52c41a;">30天</div>
+                                <div style="font-size: 24px; font-weight: 600; color: var(--brand);">30天</div>
                                 <div style="font-size: 13px; color: #8c8c8c;">跨机构冷却期</div>
                                 <div style="font-size: 12px; color: #595959; margin-top: 8px;">客户被任一机构触达后，30天内不推给其他机构
                                 </div>
@@ -170,7 +117,7 @@
                                 <div
                                     style="flex: 1; height: 24px; background: #f0f0f0; border-radius: 4px; overflow: hidden;">
                                     <div
-                                        style="width: 20%; height: 100%; background: linear-gradient(90deg, #1890ff, #40a9ff); display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; color: white; font-size: 12px;">
+                                        style="width: 20%; height: 100%; background: linear-gradient(90deg, var(--brand), #40a9ff); display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; color: white; font-size: 12px;">
                                         246</div>
                                 </div>
                             </div>
@@ -179,7 +126,7 @@
                                 <div
                                     style="flex: 1; height: 24px; background: #f0f0f0; border-radius: 4px; overflow: hidden;">
                                     <div
-                                        style="width: 15%; height: 100%; background: linear-gradient(90deg, #52c41a, #73d13d); display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; color: white; font-size: 12px;">
+                                        style="width: 15%; height: 100%; background: linear-gradient(90deg, var(--brand), #73d13d); display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; color: white; font-size: 12px;">
                                         185</div>
                                 </div>
                             </div>
@@ -202,13 +149,13 @@
                         </div>
                         <div style="display: flex; flex-direction: column; gap: 12px;">
                             <div
-                                style="padding: 12px; background: #f6ffed; border-radius: 6px; border-left: 3px solid #52c41a;">
+                                style="padding: 12px; background: #f6ffed; border-radius: 6px; border-left: 3px solid var(--brand);">
                                 <div style="font-weight: 500;">「额度不足」类客户 → 小贷公司A/B</div>
                                 <div style="font-size: 12px; color: #595959; margin-top: 4px;">建议432家企业分配给接受小额贷款的机构
                                 </div>
                             </div>
                             <div
-                                style="padding: 12px; background: #e6f7ff; border-radius: 6px; border-left: 3px solid #1890ff;">
+                                style="padding: 12px; background: #e6f7ff; border-radius: 6px; border-left: 3px solid var(--brand);">
                                 <div style="font-weight: 500;">「行业限制」类客户 → 行业专项产品</div>
                                 <div style="font-size: 12px; color: #595959; margin-top: 4px;">建议246家企业匹配无行业限制的产品</div>
                             </div>
@@ -248,8 +195,8 @@
                                 <td><input type="checkbox"></td>
                                 <td><span class="company-name">徐州绿色建材集团有限公司</span></td>
                                 <td>江苏银行</td>
-                                <td><span class="tag tag-orange">资产负债率高</span></td>
-                                <td>已过 <span style="color: #52c41a;">✓</span></td>
+                                <td><span class="tag tag-amber">资产负债率高</span></td>
+                                <td>已过 <span style="color: var(--brand);">✓</span></td>
                                 <td>
                                     <span class="tag tag-blue">某小贷A</span>
                                     <span class="tag tag-blue">某小贷B</span>
@@ -260,8 +207,8 @@
                                 <td><input type="checkbox"></td>
                                 <td><span class="company-name">泰州健康食品有限公司</span></td>
                                 <td>南京银行</td>
-                                <td><span class="tag tag-orange">行业限制</span></td>
-                                <td>已过 <span style="color: #52c41a;">✓</span></td>
+                                <td><span class="tag tag-amber">行业限制</span></td>
+                                <td>已过 <span style="color: var(--brand);">✓</span></td>
                                 <td><span class="tag tag-blue">苏州农商行</span></td>
                                 <td><button class="btn btn-primary btn-sm">重新分配</button></td>
                             </tr>
@@ -302,7 +249,7 @@
                                 <td>江苏银行</td>
                                 <td>科技贷</td>
                                 <td>规则A-高新科技</td>
-                                <td><span class="status-badge status-success">已接收</span></td>
+                                <td><span class="status-dot dot-green">已接收</span></td>
                             </tr>
                             <tr>
                                 <td style="color: #8c8c8c;">2026-02-05 10:20:12</td>
@@ -310,7 +257,7 @@
                                 <td>南京银行</td>
                                 <td>专精特新贷</td>
                                 <td>规则B-专精特新</td>
-                                <td><span class="status-badge status-success">已接收</span></td>
+                                <td><span class="status-dot dot-green">已接收</span></td>
                             </tr>
                             <tr>
                                 <td style="color: #8c8c8c;">2026-02-05 10:15:30</td>
@@ -318,7 +265,7 @@
                                 <td>苏州农商行</td>
                                 <td>园区贷</td>
                                 <td>规则D-园区企业</td>
-                                <td><span class="status-badge status-pending">待处理</span></td>
+                                <td><span class="status-dot dot-amber">待处理</span></td>
                             </tr>
                         </tbody>
                     </table>
@@ -333,6 +280,11 @@
             document.querySelectorAll('.tab-content').forEach((c, i) => c.classList.toggle('active', i === index));
         }
     </script>
+
+  <script src="js/sidebar.js"></script>
+  <script>
+    renderSidebar({ currentPage: 'distribution' });
+  </script>
 </body>
 
 </html>
