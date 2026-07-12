@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
   <title>产品配置 - 运营管控台</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css?v=1783685212">
     <style>
         
 
@@ -900,13 +900,7 @@
         }
 
         // Toast
-        function showToast(msg) {
-            const t = document.createElement('div');
-            t.className = 'toast';
-            t.textContent = '✓ ' + msg;
-            document.body.appendChild(t);
-            setTimeout(() => t.remove(), 2500);
-        }
+
 
         // 初始化
         document.addEventListener('DOMContentLoaded', () => renderProducts(products));
@@ -916,6 +910,7 @@
   <script>
     renderSidebar({ currentPage: 'products' });
   </script>
+  <script src="js/toast.js"></script>
 </body>
 
 </html>

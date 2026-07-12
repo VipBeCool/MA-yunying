@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
   <title>客户池管理 - 运营管控台</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css?v=1783685212">
     <style>
         
 
@@ -966,13 +966,7 @@
         function showCoolingConfig() { document.getElementById('coolingModal').classList.add('active'); }
         function closeCoolingConfig() { document.getElementById('coolingModal').classList.remove('active'); }
 
-        function showToast(msg) {
-            const t = document.createElement('div');
-            t.style.cssText = 'position:fixed;top:20px;right:20px;background:var(--brand);color:#fff;padding:12px 24px;border-radius:8px;z-index:9999;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);animation:fadeIn 0.3s;';
-            t.textContent = '✓ ' + msg;
-            document.body.appendChild(t);
-            setTimeout(() => t.remove(), 2500);
-        }
+
 
         // 初始化
         document.addEventListener('DOMContentLoaded', () => renderTable(mockData));
@@ -982,6 +976,7 @@
   <script>
     renderSidebar({ currentPage: 'customer-pool' });
   </script>
+  <script src="js/toast.js"></script>
 </body>
 
 </html>

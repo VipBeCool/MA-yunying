@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
   <title>账号权限 - 智能营销平台</title>
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css?v=1783685212">
   <style>
     /* ===== 表格样式 ===== */
     .permission-table {
@@ -311,15 +311,11 @@
     });
   });
 
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = '✓ ' + msg;
-    t.style.opacity = 1;
-    setTimeout(() => { t.style.opacity = 0; }, 2500);
-  }
+
 
   renderSidebar({ currentPage: 'permissions', role: 'admin' });
   renderTable();
 </script>
+  <script src="js/toast.js"></script>
 </body>
 </html>
