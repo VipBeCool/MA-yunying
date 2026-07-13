@@ -4,12 +4,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+  <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
   <title>工作台 - 智能营销平台</title>
   <meta name="description" content="联合征信运营管控台 — 平台运营全局数据概览">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="css/style.css?v=1783685212">
+  <link rel="stylesheet" href="css/style.css?v=1783867207">
   <style>
     /* 核心指标卡片 (复用机构端样式) */
     .wb-metrics {
@@ -196,6 +196,30 @@
       background: linear-gradient(135deg, #fdba74, #ea580c);
       box-shadow: 0 4px 10px rgba(234, 88, 12, 0.3);
     }
+
+    .dim-item.active {
+      color: var(--brand);
+      font-weight: 700;
+    }
+
+    .dim-item:hover:not(.active) {
+      color: var(--gray-600);
+    }
+
+    .rank-tab {
+      color: var(--gray-500);
+      transition: all 0.2s;
+    }
+
+    .rank-tab:hover:not(.active) {
+      color: var(--gray-700);
+    }
+
+    .rank-tab.active {
+      background: white;
+      color: var(--gray-900);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
   </style>
 </head>
 
@@ -220,7 +244,7 @@
           <div class="wb-metric-hero-val">865,240</div>
           <div class="wb-metric-hero-foot">
             <div class="wb-metric-hero-trend" style="margin-top:0;">
-              未去重名单 <span style="font-family:'SF Mono',monospace;font-weight:700;">1,284,500</span>
+              未去重 <span style="font-family:'SF Mono',monospace;font-weight:700;">1,284,500</span>
             </div>
             <div style="color:rgba(255,255,255,0.9);font-size:13px;font-weight:500;">
               名单批次 <span style="font-size:13px;font-family:'SF Mono',monospace;font-weight:700;color:#fff;">1,245</span>
@@ -269,7 +293,8 @@
                 style="display:flex;flex-direction:row;align-items:center;gap:16px;padding:18px 20px;border-radius:14px;border:1px solid var(--gray-100);text-decoration:none;background:linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);color:var(--gray-800);">
                 <span class="shortcut-icon-box"
                   style="width:46px;height:46px;flex-shrink:0;background:var(--brand-light);border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--brand);">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:24px;height:24px;">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" style="width:24px;height:24px;">
                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                     <circle cx="9" cy="7" r="4"></circle>
                     <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
@@ -285,7 +310,8 @@
                 style="display:flex;flex-direction:row;align-items:center;gap:16px;padding:18px 20px;border-radius:14px;border:1px solid var(--gray-100);text-decoration:none;background:linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);color:var(--gray-800);">
                 <span class="shortcut-icon-box"
                   style="width:46px;height:46px;flex-shrink:0;background:var(--brand-light);border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--brand);">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:24px;height:24px;">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" style="width:24px;height:24px;">
                     <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
                     <rect x="9" y="9" width="6" height="6"></rect>
                     <line x1="9" y1="1" x2="9" y2="4"></line>
@@ -307,7 +333,8 @@
                 style="display:flex;flex-direction:row;align-items:center;gap:16px;padding:18px 20px;border-radius:14px;border:1px solid var(--gray-100);text-decoration:none;background:linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);color:var(--gray-800);">
                 <span class="shortcut-icon-box"
                   style="width:46px;height:46px;flex-shrink:0;background:var(--brand-light);border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--brand);">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:24px;height:24px;">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" style="width:24px;height:24px;">
                     <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
                     <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
                   </svg>
@@ -321,7 +348,8 @@
                 style="display:flex;flex-direction:row;align-items:center;gap:16px;padding:18px 20px;border-radius:14px;border:1px solid var(--gray-100);text-decoration:none;background:linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);color:var(--gray-800);">
                 <span class="shortcut-icon-box"
                   style="width:46px;height:46px;flex-shrink:0;background:var(--brand-light);border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--brand);">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:24px;height:24px;">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" style="width:24px;height:24px;">
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                     <polyline points="7 10 12 15 17 10"></polyline>
                     <line x1="12" y1="15" x2="12" y2="3"></line>
@@ -341,8 +369,8 @@
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;">
         <!-- 机构业绩排行 -->
         <div class="card" style="box-shadow:0 4px 20px rgba(0,0,0,0.03);border:none;">
-          <div class="card-header">
-            <h3 class="card-title">
+          <div class="card-header" style="display:flex; justify-content:space-between; align-items:center; gap:16px;">
+            <h3 class="card-title" style="margin:0; white-space:nowrap;">
               <span class="card-title-icon"><svg viewBox="0 0 24 24">
                   <circle cx="12" cy="12" r="10" />
                   <circle cx="12" cy="12" r="6" />
@@ -350,14 +378,26 @@
                 </svg></span>
               机构业绩排行
             </h3>
-            <div class="card-extra">
-              <select id="rank-metric-select" class="form-control" onchange="updateRankTable()" style="width: 110px;">
-                <option value="意向">意向</option>
-                <option value="申请" selected>申请</option>
-                <option value="授信">授信</option>
-                <option value="放款">放款</option>
-              </select>
+            <div class="rank-tabs"
+              style="display:flex; gap:2px; padding:2px; background:var(--gray-100); border-radius:6px; flex:1; max-width: 240px; margin-left: auto; height: 28px; box-sizing: border-box;">
+              <div class="rank-tab" onclick="switchAdminRankTab('意向', this)"
+                style="height: 24px; line-height: 24px; font-size:12px; border-radius:4px; flex:1; text-align:center; cursor:pointer;">意向
+              </div>
+              <div class="rank-tab active" onclick="switchAdminRankTab('申请', this)"
+                style="height: 24px; line-height: 24px; font-size:12px; border-radius:4px; flex:1; text-align:center; cursor:pointer;">申请
+              </div>
+              <div class="rank-tab" onclick="switchAdminRankTab('授信', this)"
+                style="height: 24px; line-height: 24px; font-size:12px; border-radius:4px; flex:1; text-align:center; cursor:pointer;">授信
+              </div>
+              <div class="rank-tab" onclick="switchAdminRankTab('放款', this)"
+                style="height: 24px; line-height: 24px; font-size:12px; border-radius:4px; flex:1; text-align:center; cursor:pointer;">放款
+              </div>
             </div>
+            <select id="rank-dim-select" class="form-control" onchange="updateRankTable()"
+              style="height:28px; line-height:26px; padding: 0 24px 0 8px; font-size:12px; border-radius:6px; width:auto; min-width: 70px; background-color:var(--gray-50); border: 1px solid var(--gray-200); outline:none; flex-shrink:0; cursor: pointer; color: var(--gray-700); -webkit-appearance: none; appearance: none; background-image: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"12\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"%2364748b\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"6 9 12 15 18 9\"></polyline></svg>'); background-repeat: no-repeat; background-position: right 8px center; background-size: 12px; box-sizing: border-box;">
+              <option value="count">数量</option>
+              <option value="amount" selected>金额</option>
+            </select>
           </div>
           <div class="card-body" style="padding-top: 12px;">
             <table class="table">
@@ -523,10 +563,10 @@
 
     function updateRankTable() {
       const select = document.getElementById("rank-metric-select");
-      if(!select) return;
+      if (!select) return;
       const metric = select.value;
       const data = rankData[metric];
-      
+
       const th = document.getElementById("rank-table-metric-th");
       if (th) {
         if (metric === "意向" || metric === "申请") {
@@ -545,7 +585,7 @@
           if (index === 0) { medalColor = "#fef3c7"; medalTextColor = "#d97706"; }
           else if (index === 1) { medalColor = "#f1f5f9"; medalTextColor = "#64748b"; }
           else if (index === 2) { medalColor = "#fff7ed"; medalTextColor = "#ea580c"; }
-          
+
           html += `
             <tr>
               <td><span class="medal" style="background: ${medalColor}; color: ${medalTextColor}; box-shadow: none;">${index + 1}</span></td>
@@ -561,7 +601,7 @@
       }
     }
 
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
       updateRankTable();
     });
   </script>

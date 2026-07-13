@@ -113,8 +113,9 @@ input, select, textarea { font: inherit; }
 /* =====================================================
    通用表单元素
    ===================================================== */
-input[type="checkbox"] {
-  accent-color: var(--brand);
+input[type="checkbox"],
+input[type="radio"] {
+  accent-color: var(--brand-hover); /* 使用更深的颜色，避免Chrome因对比度不足强行加黑色边框 */
 }
 
 /* =====================================================
@@ -1954,4 +1955,225 @@ select.form-control {
 .dropzone:hover {
   border-color: var(--brand);
   background: #f0fbf6; /* 轻微品牌色背景 */
+}
+
+/* =====================================================
+   嵌套条件组 (Nested Rule Builder)
+   ===================================================== */
+.condition-group {
+  position: relative;
+  margin-left: 12px;
+  padding-left: 24px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  border-left: 2px solid var(--brand);
+  margin-bottom: 12px;
+  background: #fff;
+  border-radius: 0 8px 8px 0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+}
+
+/* 根节点不需要左边距和过深的阴影 */
+#ruleEngineRoot > .condition-group {
+  margin-left: 0;
+  box-shadow: none;
+  background: transparent;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.group-logic-toggle {
+  position: absolute;
+  left: -14px; /* 定位在边框上 */
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border: 1px solid var(--gray-200);
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  z-index: 2;
+}
+
+.group-logic-toggle button {
+  border: none;
+  background: none;
+  padding: 4px 6px;
+  font-size: 11px;
+  color: var(--gray-500);
+  cursor: pointer;
+  line-height: 1;
+}
+
+.group-logic-toggle button.active {
+  background: var(--brand);
+  color: #fff;
+  font-weight: 600;
+}
+
+.group-children {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.group-actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+}
+
+.group-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 10px;
+  border: 1px dashed var(--gray-300);
+  border-radius: 6px;
+  color: var(--gray-600);
+  font-size: 12px;
+  background: #fafafa;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.group-actions button:hover {
+  border-color: var(--brand);
+  color: var(--brand);
+  background: #f0fbf6;
+}
+
+/* 覆盖旧的 rule-row，在嵌套中更清爽 */
+.condition-group .rule-row {
+  margin-bottom: 0;
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  position: relative;
+}
+/* 给具体条件加上一根小横线连接到左边框 */
+.condition-group .rule-row::before {
+  content: '';
+  position: absolute;
+  left: -24px;
+  top: 50%;
+  width: 24px;
+  height: 2px;
+  background: var(--brand);
+  opacity: 0.2;
+}
+
+/* ══════════════════════════════════════
+   通用右侧抽屉（详情 & 向导共用）
+   ══════════════════════════════════════ */
+.side-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.28);
+  z-index: 900;
+}
+.side-overlay.show {
+  display: block;
+}
+.side-drawer {
+  position: fixed;
+  top: 0;
+  right: -880px;
+  width: 860px;
+  height: 100vh;
+  background: var(--bg-card);
+  z-index: 901;
+  box-shadow: -4px 0 32px rgba(0, 0, 0, 0.14);
+  display: flex;
+  flex-direction: column;
+  transition: right 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.side-drawer.show {
+  right: 0;
+}
+.drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.drawer-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--gray-900);
+}
+.drawer-subtitle {
+  font-size: 12.5px;
+  color: var(--gray-400);
+  margin-top: 2px;
+}
+.drawer-close-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gray-400);
+  transition: background 0.15s, color 0.15s;
+}
+.drawer-close-btn:hover {
+  background: var(--gray-100);
+  color: var(--gray-700);
+}
+.drawer-close-btn svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.drawer-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  flex-shrink: 0;
+}
+.drawer-tab {
+  padding: 12px 16px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--gray-500);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+  margin-bottom: -1px;
+}
+.drawer-tab.active {
+  color: var(--brand);
+  border-bottom-color: var(--brand);
+  font-weight: 600;
+}
+.drawer-tab:hover:not(.active) {
+  color: var(--gray-700);
+}
+.drawer-body {
+  flex: 1;
+  overflow-y: auto;
+}
+.drawer-pane {
+  display: none;
+  padding: 22px 24px;
+}
+.drawer-pane.active {
+  display: block;
+}
+/* 中小型抽屉（例如新增表单等） */
+.side-drawer-sm {
+  right: -480px;
+  width: 460px;
 }

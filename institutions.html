@@ -7,7 +7,7 @@
     <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
   <title>机构管理 - 智能营销平台</title>
   <meta name="description" content="管理合作金融机构，查看机构业务数据与组织架构">
-  <link rel="stylesheet" href="css/style.css?v=1783685212">
+  <link rel="stylesheet" href="css/style.css?v=1783867207">
 </head>
 
 <body>
@@ -20,7 +20,7 @@
           <h1 class="page-title">机构管理</h1>
           <p class="page-breadcrumb"><a href="index.html">工作台</a><span class="sep">/</span>机构管理</p>
         </div>
-        <button class="btn btn-primary" onclick="openModal('addModal')">
+        <button class="btn btn-primary" onclick="openDrawer('addDrawer')">
           <svg viewBox="0 0 24 24">
             <line x1="12" y1="5" x2="12" y2="19" />
             <line x1="5" y1="12" x2="19" y2="12" />
@@ -91,7 +91,7 @@
                 <td>
                   <div class="action-btns" style="justify-content:center;">
                     <a href="org-config.html?name=江苏银行" class="action-btn">组织成员</a>
-                    <button class="action-btn">编辑</button>
+                    <button class="action-btn" onclick="openDrawer('editDrawer')">编辑</button>
                     <button class="action-btn" style="color: var(--danger);"
                       onclick="showConfirmModal('禁用', '江苏银行')">禁用</button>
                     <button class="action-btn" style="color: var(--danger);"
@@ -112,7 +112,7 @@
                 <td>
                   <div class="action-btns" style="justify-content:center;">
                     <a href="org-config.html?name=南京银行" class="action-btn">组织成员</a>
-                    <button class="action-btn">编辑</button>
+                    <button class="action-btn" onclick="openDrawer('editDrawer')">编辑</button>
                     <button class="action-btn" style="color: var(--danger);"
                       onclick="showConfirmModal('禁用', '南京银行')">禁用</button>
                     <button class="action-btn" style="color: var(--danger);"
@@ -133,7 +133,7 @@
                 <td>
                   <div class="action-btns" style="justify-content:center;">
                     <a href="org-config.html?name=苏州农商行" class="action-btn">组织成员</a>
-                    <button class="action-btn">编辑</button>
+                    <button class="action-btn" onclick="openDrawer('editDrawer')">编辑</button>
                     <button class="action-btn" style="color: var(--danger);"
                       onclick="showConfirmModal('禁用', '苏州农商行')">禁用</button>
                     <button class="action-btn" style="color: var(--danger);"
@@ -154,7 +154,7 @@
                 <td>
                   <div class="action-btns" style="justify-content:center;">
                     <a href="org-config.html" class="action-btn">组织成员</a>
-                    <button class="action-btn">编辑</button>
+                    <button class="action-btn" onclick="openDrawer('editDrawer')">编辑</button>
                     <button class="action-btn" style="color: var(--danger);"
                       onclick="showConfirmModal('禁用', '某小贷公司A')">禁用</button>
                     <button class="action-btn" style="color: var(--danger);"
@@ -175,7 +175,7 @@
                 <td>
                   <div class="action-btns" style="justify-content:center;">
                     <a href="org-config.html" class="action-btn">组织成员</a>
-                    <button class="action-btn">编辑</button>
+                    <button class="action-btn" onclick="openDrawer('editDrawer')">编辑</button>
                     <button class="action-btn" style="color: var(--success);"
                       onclick="showConfirmModal('启用', '某小贷公司B')">启用</button>
                     <button class="action-btn" style="color: var(--danger);"
@@ -208,53 +208,70 @@
     </main>
   </div>
 
-  <!-- 新增机构弹窗 -->
-  <div class="modal-overlay" id="addModal">
-    <div class="modal">
-      <div class="modal-header">
-        <h3 class="modal-title">新增合作机构</h3>
-        <button class="modal-close" onclick="closeModal('addModal')">
-          <svg viewBox="0 0 24 24">
-            <line x1="18" y1="6" x2="6" y2="18" />
-            <line x1="6" y1="6" x2="18" y2="18" />
-          </svg>
-        </button>
+  <!-- 新增机构抽屉 -->
+  <div class="side-overlay" id="addDrawerOverlay" onclick="closeDrawer('addDrawer')"></div>
+  <div class="side-drawer side-drawer-sm" id="addDrawer">
+    <div class="drawer-header">
+      <div class="drawer-title">新增合作机构</div>
+      <button class="drawer-close-btn" onclick="closeDrawer('addDrawer')">
+        <svg viewBox="0 0 24 24">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+    </div>
+    <div class="drawer-body" style="padding: 24px;">
+      <div class="form-group">
+        <label class="form-label">机构全称 <span class="req">*</span></label>
+        <input type="text" class="form-control" placeholder="请输入机构全称">
       </div>
-      <div class="modal-body">
-        <div class="form-group">
-          <label class="form-label">机构名称 <span class="req">*</span></label>
-          <input type="text" class="form-control" placeholder="请输入机构名称">
-        </div>
-        <div class="form-group">
-          <label class="form-label">机构类型 <span class="req">*</span></label>
-          <select class="form-control">
-            <option>商业银行</option>
-            <option>农商银行</option>
-            <option>小贷公司</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">合作等级</label>
-          <select class="form-control">
-            <option>普通合作</option>
-            <option>重点合作</option>
-            <option>战略合作</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">联系人</label>
-          <input type="text" class="form-control" placeholder="请输入联系人姓名">
-        </div>
-        <div class="form-group">
-          <label class="form-label">联系电话</label>
-          <input type="text" class="form-control" placeholder="请输入联系电话">
-        </div>
+      <div class="form-group">
+        <label class="form-label">机构简称 <span class="req">*</span></label>
+        <input type="text" class="form-control" placeholder="请输入机构简称">
       </div>
-      <div class="modal-footer">
-        <button class="btn btn-default" onclick="closeModal('addModal')">取消</button>
-        <button class="btn btn-primary" onclick="closeModal('addModal')">确认添加</button>
+      <div class="form-group">
+        <label class="form-label">渠道码 <span class="req">*</span></label>
+        <input type="text" class="form-control" placeholder="请输入渠道码">
+      </div>
+      
+      <div style="margin-top: 32px; display: flex; justify-content: flex-end; gap: 12px;">
+        <button class="btn btn-default" onclick="closeDrawer('addDrawer')">取消</button>
+        <button class="btn btn-primary" onclick="closeDrawer('addDrawer')">确认添加</button>
       </div>
     </div>
+
+  <!-- 编辑机构抽屉 -->
+  <div class="side-overlay" id="editDrawerOverlay" onclick="closeDrawer('editDrawer')"></div>
+  <div class="side-drawer side-drawer-sm" id="editDrawer">
+    <div class="drawer-header">
+      <div class="drawer-title">编辑机构</div>
+      <button class="drawer-close-btn" onclick="closeDrawer('editDrawer')">
+        <svg viewBox="0 0 24 24">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+    </div>
+    <div class="drawer-body" style="padding: 24px;">
+      <div class="form-group">
+        <label class="form-label">机构全称 <span class="req">*</span></label>
+        <input type="text" class="form-control" value="江苏银行股份有限公司" placeholder="请输入机构全称">
+      </div>
+      <div class="form-group">
+        <label class="form-label">机构简称 <span class="req">*</span></label>
+        <input type="text" class="form-control" value="苏行" placeholder="请输入机构简称">
+      </div>
+      <div class="form-group">
+        <label class="form-label">渠道码 <span class="req">*</span></label>
+        <input type="text" class="form-control" value="JSYH" placeholder="请输入渠道码">
+      </div>
+      
+      <div style="margin-top: 32px; display: flex; justify-content: flex-end; gap: 12px;">
+        <button class="btn btn-default" onclick="closeDrawer('editDrawer')">取消</button>
+        <button class="btn btn-primary" onclick="closeDrawer('editDrawer')">保存修改</button>
+      </div>
+    </div>
+  </div>
   </div>
 
   <!-- 通用确认弹窗 -->
@@ -323,6 +340,20 @@
     }
     function closeModal(id) {
       document.getElementById(id).classList.remove('show');
+    }
+
+    function openDrawer(id) {
+      document.getElementById(id + 'Overlay').classList.add('show');
+      setTimeout(function() {
+        document.getElementById(id).classList.add('show');
+      }, 10);
+    }
+    function closeDrawer(id) {
+      if (!id) id = 'addDrawer';
+      document.getElementById(id).classList.remove('show');
+      setTimeout(function() {
+        document.getElementById(id + 'Overlay').classList.remove('show');
+      }, 300);
     }
   </script>
   <script src="js/toast.js"></script>
