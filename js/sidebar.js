@@ -80,6 +80,7 @@ function getNavConfig() {
     items: [
       { id: 'customers', label: '客户名单', icon: 'users', href: 'customers.html' },
       { id: 'allocation', label: '名单分配', icon: 'shuffle', href: 'allocation.html' },
+      { id: 'report', label: '营销跟踪', icon: 'chart', href: 'report.html' },
       { id: 'team', label: '机构业绩', icon: 'team', href: 'team.html' },
     ],
   });

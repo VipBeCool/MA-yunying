@@ -162,31 +162,7 @@
 
     
 
-    /* 模型评分 Tab */
-    .model-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
-    }
-    .model-card {
-      background: white; border: 1px solid var(--border); border-radius: 16px;
-      padding: 24px 16px; display: flex; flex-direction: column; align-items: center;
-      transition: box-shadow 0.2s;
-    }
-    .model-card:hover { box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
-    .mc-name { font-size: 14px; font-weight: 700; color: var(--gray-900); margin-bottom: 16px; }
-    .mc-ring-wrap { position: relative; width: 100px; height: 100px; margin-bottom: 16px; }
-    .mc-ring { width: 100%; height: 100%; transform: rotate(-90deg); }
-    .mc-ring .bg { fill: none; stroke: var(--gray-100); stroke-width: 2.5; }
-    .mc-ring .fg { fill: none; stroke-width: 2.5; stroke-linecap: round; }
-    .mc-score {
-      position: absolute; inset: 0; display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-    }
-    .mc-score-val { font-size: 24px; font-weight: 800; color: var(--gray-900); line-height: 1; }
-    .mc-score-divider { width: 20px; height: 2px; background: var(--gray-300); margin: 4px 0; }
-    .mc-score-total { font-size: 11px; color: var(--gray-400); font-weight: 600; }
-    .mc-level { font-size: 12px; font-weight: 700; padding: 4px 16px; border-radius: 100px; }
-    .mc-level.success { background: var(--success-bg); color: var(--success); }
-    .mc-level.warning { background: var(--warning-bg); color: var(--warning); }
+    /* 模型评分 Tab 样式已废弃，相关 CSS 已移除 */
 
     /* 营销轨迹 Tab */
     .history-list { padding-left: 10px; }
