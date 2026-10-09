@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+  <title>名单交付 - 智能营销平台</title>
+  <meta name="description" content="管理线下名单交付记录，规范人工名单交付流程">
+  <link rel="stylesheet" href="css/style.css?v=1783867207">
+  <style>
+    /* ====================================================
+       名单交付 — 专属样式
+       ==================================================== */
+
+    /* 工具栏 */
+    .delivery-toolbar {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 20px;
+    }
+    .delivery-search-box {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 14px; border: 1.5px solid var(--border);
+      border-radius: 9px; background: var(--bg-card);
+      transition: border-color 0.2s; min-width: 240px;
+    }
+    .delivery-search-box:focus-within { border-color: var(--brand); }
+    .delivery-search-box input {
+      border: none; background: transparent; outline: none;
+      font-size: 13px; color: var(--gray-900); flex: 1;
+    }
+    .delivery-search-box svg {
+      width: 14px; height: 14px; stroke: var(--gray-400); fill: none;
+      stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0;
+    }
+    .filter-select {
+      padding: 8px 28px 8px 12px; border: 1.5px solid var(--border);
+      border-radius: 9px; background: var(--bg-card); color: var(--gray-700);
+      font-size: 13px; cursor: pointer; outline: none; font-family: inherit;
+      -webkit-appearance: none; appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 10px center;
+    }
+    .filter-select:focus { border-color: var(--brand); }
+    .delivery-count { margin-left: auto; font-size: 13px; color: var(--gray-400); white-space: nowrap; }
+
+    /* 列表名称列 */
+    .delivery-name { font-size: 13.5px; font-weight: 700; color: var(--brand); cursor: pointer; display: block; }
+    .delivery-name:hover { text-decoration: underline; }
+    .delivery-remark { font-size: 12px; color: var(--gray-400); max-width: 240px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; margin-top: 2px; }
+
+    /* col-badge */
+    .col-badge { display: inline-block; padding: 1px 6px; border-radius: 4px; font-size: 11px; font-weight: 500; background: #fef3c7; color: #92400e; margin-right: 3px; margin-bottom: 2px; }
+
+    /* ══════════════════ 向导抽屉 ══════════════════ */
+    .side-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.28); z-index: 900;
+    }
+    .side-overlay.show { display: block; }
+
+    /* 向导抽屉 860px */
+    .wizard-drawer {
+      position: fixed; top: 0; right: -900px;
+      width: 880px; height: 100vh;
+      background: var(--bg-card); z-index: 901;
+      box-shadow: -4px 0 32px rgba(0,0,0,0.14);
+      display: flex; flex-direction: column;
+      transition: right 0.32s cubic-bezier(0.4,0,0.2,1);
+    }
+    .wizard-drawer.show { right: 0; }
+
+    /* 详情抽屉 560px */
+    .detail-drawer {
+      position: fixed; top: 0; right: -600px;
+      width: 560px; height: 100vh;
+      background: var(--bg-card); z-index: 901;
+      box-shadow: -4px 0 32px rgba(0,0,0,0.14);
+      display: flex; flex-direction: column;
+      transition: right 0.32s cubic-bezier(0.4,0,0.2,1);
+    }
+    .detail-drawer.show { right: 0; }
+
+    .drawer-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 24px; border-bottom: 1px solid var(--border); flex-shrink: 0;
+    }
+    .drawer-title { font-size: 17px; font-weight: 700; color: var(--gray-900); }
+    .drawer-subtitle { font-size: 12.5px; color: var(--gray-400); margin-top: 2px; }
+    .drawer-close-btn {
+      width: 32px; height: 32px; border-radius: 8px; border: none;
+      background: transparent; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--gray-400); transition: background 0.15s, color 0.15s;
+    }
+    .drawer-close-btn:hover { background: var(--gray-100); color: var(--gray-700); }
+    .drawer-close-btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* 步骤条 */
+    .wiz-steps {
+      display: flex; align-items: center;
+      padding: 16px 24px; border-bottom: 1px solid var(--border); flex-shrink: 0;
+    }
+    .wiz-step { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+    .wiz-step-num {
+      width: 22px; height: 22px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; flex-shrink: 0;
+      background: var(--gray-200); color: var(--gray-500); transition: all 0.2s;
+    }
+    .wiz-step.active .wiz-step-num { background: var(--brand); color: #fff; }
+    .wiz-step.done .wiz-step-num { background: #10b981; color: #fff; }
+    .wiz-step-label { font-size: 12px; color: var(--gray-400); font-weight: 500; }
+    .wiz-step.active .wiz-step-label { color: var(--brand); font-weight: 600; }
+    .wiz-step.done .wiz-step-label { color: #10b981; }
+    .wiz-line { flex: 1; height: 2px; background: var(--gray-200); margin: 0 8px; min-width: 24px; }
+    .wiz-line.done { background: #10b981; }
+
+    /* 向导内容 */
+    .wizard-body { flex: 1; overflow-y: auto; padding: 28px 32px; }
+    .wiz-page { display: none; }
+    .wiz-page.active { display: block; }
+
+    /* 表单 */
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .form-group { margin-bottom: 18px; }
+    .form-label { display: block; font-size: 13px; font-weight: 600; color: var(--gray-700); margin-bottom: 6px; }
+    .form-req { color: #dc2626; margin-left: 2px; }
+    .form-input { width: 100%; padding: 9px 12px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 13.5px; color: var(--gray-800); background: #fff; transition: border-color 0.15s; box-sizing: border-box; outline: none; font-family: inherit; }
+    .form-input:focus { border-color: var(--brand); }
+    .form-textarea { resize: vertical; min-height: 72px; line-height: 1.6; }
+    .form-hint { font-size: 12px; color: var(--gray-400); margin-top: 4px; }
+    .form-select-input { width: 100%; padding: 9px 32px 9px 12px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 13.5px; color: var(--gray-800); background: #fff; outline: none; cursor: pointer; -webkit-appearance: none; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; box-sizing: border-box; font-family: inherit; }
+    .form-select-input:focus { border-color: var(--brand); }
+
+    /* section heading */
+    .section-heading {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13.5px; font-weight: 700; color: var(--gray-800);
+      margin: 24px 0 12px; padding-bottom: 8px; border-bottom: 1px solid var(--gray-100);
+    }
+    .section-heading::before { content: ''; display: block; width: 4px; height: 14px; background: var(--brand); border-radius: 2px; }
+    .section-heading:first-child { margin-top: 0; }
+
+    /* 上传区 */
+    .dropzone {
+      border: 2px dashed var(--gray-300); border-radius: 10px;
+      padding: 28px 16px; text-align: center; cursor: pointer;
+      transition: border-color 0.2s, background 0.2s; background: #fafafa;
+    }
+    .dropzone:hover { border-color: var(--brand); background: var(--brand-light); }
+
+    /* toggle */
+    .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: var(--gray-50); border: 1px solid var(--border); border-radius: 9px; }
+    .toggle-label-group { display: flex; flex-direction: column; gap: 2px; }
+    .toggle-label-title { font-size: 13.5px; font-weight: 600; color: var(--gray-800); }
+    .toggle-label-desc { font-size: 12px; color: var(--gray-400); }
+    .toggle-switch { position: relative; width: 40px; height: 22px; background: var(--gray-300); border-radius: 11px; transition: background 0.2s; flex-shrink: 0; cursor: pointer; }
+    .toggle-switch::after { content: ''; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: transform 0.2s; }
+    .toggle-switch.on { background: var(--brand); }
+    .toggle-switch.on::after { transform: translateX(18px); }
+
+    /* 字段映射 */
+    .mapping-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .mapping-table th { padding: 9px 12px; text-align: left; font-size: 12px; font-weight: 600; color: var(--gray-500); background: var(--gray-50); border-bottom: 1px solid var(--border); }
+    .mapping-table td { padding: 8px 12px; border-bottom: 1px solid var(--gray-100); color: var(--gray-700); vertical-align: middle; }
+    .mapping-table tr:last-child td { border-bottom: none; }
+    .mapping-select { padding: 5px 26px 5px 8px; border: 1px solid var(--border); border-radius: 6px; font-size: 12.5px; color: var(--gray-700); background: #fff; cursor: pointer; font-family: inherit; -webkit-appearance: none; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 8px center; width: 100%; outline: none; }
+    .mapping-select:focus { border-color: var(--brand); }
+
+    /* 自定义列勾选 */
+    .col-check-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-top: 10px; }
+    .col-check-item { display: flex; align-items: center; gap: 8px; padding: 9px 12px; border: 1.5px solid var(--border); border-radius: 8px; cursor: pointer; background: #fff; transition: all 0.15s; user-select: none; font-size: 13px; color: var(--gray-700); }
+    .col-check-item.checked { border-color: var(--brand); background: var(--brand-light); color: var(--brand); font-weight: 600; }
+    .col-check-item input[type="checkbox"] { display: none; }
+
+    /* 状态 badge */
+    .status-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 99px; font-size: 12px; font-weight: 500; white-space: nowrap; }
+    .status-in-pool { background: var(--brand-light); color: var(--brand); }
+    .status-archived { background: var(--gray-100); color: var(--gray-600); }
+
+    /* 详情抽屉 info row */
+    .info-row { display: flex; padding: 10px 0; border-bottom: 1px solid var(--gray-100); font-size: 13.5px; }
+    .info-row:last-child { border-bottom: none; }
+    .info-label { width: 110px; color: var(--gray-400); flex-shrink: 0; }
+    .info-value { color: var(--gray-800); flex: 1; line-height: 1.6; }
+
+    /* 向导 footer */
+    .wizard-footer {
+      padding: 14px 24px; border-top: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+      flex-shrink: 0; background: var(--bg-card);
+    }
+
+    /* 确认步骤摘要 */
+    .confirm-summary-box { background: var(--gray-50); border-radius: 10px; padding: 16px 20px; margin-bottom: 16px; }
+
+    /* Modal */
+    .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 2000; align-items: center; justify-content: center; }
+    .modal-backdrop.show { display: flex; }
+    .modal-box { background: #fff; border-radius: 16px; width: 420px; max-width: 95vw; padding: 32px 28px; box-shadow: 0 12px 48px rgba(0,0,0,0.18); animation: fadeInUp 0.22s ease; text-align: center; }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    .modal-icon { width: 52px; height: 52px; border-radius: 50%; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; }
+    .modal-icon.danger { background: #fee2e2; }
+    .modal-icon svg { width: 26px; height: 26px; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .modal-icon.danger svg { stroke: #dc2626; }
+    .modal-title { font-size: 17px; font-weight: 700; color: var(--gray-900); margin-bottom: 8px; }
+    .modal-desc { font-size: 13.5px; color: var(--gray-500); line-height: 1.7; margin-bottom: 22px; }
+    .modal-btns { display: flex; gap: 10px; justify-content: center; }
+
+    /* Toast */
+    .toast-wrap { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); z-index: 9999; pointer-events: none; }
+    .toast { padding: 12px 22px; border-radius: 10px; font-size: 14px; font-weight: 500; background: var(--gray-900); color: #fff; box-shadow: 0 4px 20px rgba(0,0,0,0.18); animation: toastIn 0.3s ease; }
+    .toast.success { background: #059669; }
+    @keyframes toastIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+
+<body>
+<div class="app-container">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main-content anim-fade-in" id="main">
+
+    <!-- 页面标题 -->
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1 class="page-title">名单交付</h1>
+        <p class="page-breadcrumb">
+          <a href="index.html">工作台</a><span class="sep">/</span>运营工具<span class="sep">/</span>名单交付
+        </p>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <a href="credit-monitoring.html" class="btn btn-secondary" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;font-size:13px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;color:var(--brand);">
+            <line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line>
+          </svg>
+          余额监控
+        </a>
+        <button class="btn btn-primary" onclick="openWizard()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;flex-shrink:0;">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          新建交付名单
+        </button>
+      </div>
+    </div>
+
+
+
+    <!-- 工具栏 -->
+    <div class="delivery-toolbar">
+      <div class="delivery-search-box">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input id="searchInput" type="text" placeholder="搜索名单名称..." oninput="doFilter()">
+      </div>
+      <select class="filter-select" id="orgFilter" onchange="doFilter()">
+        <option value="">全部机构</option>
+        <option value="平安银行">平安银行</option>
+        <option value="招商银行">招商银行</option>
+        <option value="农业银行">农业银行</option>
+        <option value="江苏银行">江苏银行</option>
+        <option value="南京银行">南京银行</option>
+      </select>
+      <select class="filter-select" id="poolFilter" onchange="doFilter()">
+        <option value="">全部状态</option>
+        <option value="true">已入客户池</option>
+        <option value="false">仅存档</option>
+      </select>
+    </div>
+
+    <!-- 交付名单列表 -->
+    <div class="card">
+      <div class="table-wrapper">
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="width:50px;">序号</th>
+              <th>名单名称</th>
+              <th>接收机构</th>
+              <th>企业数</th>
+              <th>关键数据字段</th>
+              <th>客户池</th>
+              <th>交付时间</th>
+              <th>操作人</th>
+              <th style="text-align:right;">操作</th>
+            </tr>
+          </thead>
+          <tbody id="deliveryTbody"></tbody>
+        </table>
+      </div>
+      <!-- 分页控件 -->
+      <div class="pagination" id="pagination" style="padding: 16px 24px; border-top: 1px solid var(--gray-100);">
+        <div class="pagination-info" style="display:flex;align-items:center;gap:12px;">
+          <span id="paginationInfo">显示 1 到 9 条，共 9 条记录</span>
+          <select class="filter-input form-control" style="width: 100px; height: 32px; min-width:unset; padding: 0 10px; font-size: 13px;">
+            <option>10 条/页</option>
+            <option>20 条/页</option>
+          </select>
+        </div>
+        <div class="pagination-controls">
+          <button class="btn btn-ghost btn-sm" disabled>上一页</button>
+          <button class="btn btn-primary btn-sm page-num">1</button>
+          <button class="btn btn-ghost btn-sm">下一页</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ══════════════════════════════════════
+     新建交付名单向导（右侧宽抽屉）
+     ══════════════════════════════════════ -->
+<div class="side-overlay" id="wizardOverlay" onclick="closeWizard()"></div>
+<div class="wizard-drawer" id="wizardDrawer">
+  <!-- 头部 -->
+  <div class="drawer-header">
+    <div>
+      <div class="drawer-title">新建交付名单</div>
+      <div class="drawer-subtitle">填写基本信息并上传 Excel 名单文件，完成后自动进入营销名单池</div>
+    </div>
+    <button class="drawer-close-btn" onclick="closeWizard()">
+      <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+
+  <!-- 步骤条 -->
+  <div class="wiz-steps">
+    <div class="wiz-step active" id="wizStep1">
+      <div class="wiz-step-num">1</div>
+      <div class="wiz-step-label">基本信息 &amp; 上传文件</div>
+    </div>
+    <div class="wiz-line" id="wizLine1"></div>
+    <div class="wiz-step" id="wizStep2">
+      <div class="wiz-step-num">2</div>
+      <div class="wiz-step-label">字段映射 &amp; 展示设置</div>
+    </div>
+    <div class="wiz-line" id="wizLine2"></div>
+    <div class="wiz-step" id="wizStep3">
+      <div class="wiz-step-num">3</div>
+      <div class="wiz-step-label">确认提交</div>
+    </div>
+  </div>
+
+  <!-- 内容 -->
+  <div class="wizard-body">
+
+    <!-- 步骤1 -->
+    <div class="wiz-page active" id="wizPage1">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">名单名称 <span class="form-req">*</span></label>
+          <input type="text" class="form-input" id="wName" placeholder="如：平安银行-小微普惠2026Q2">
+          <div class="form-hint">建议格式：机构名 - 产品/项目 - 时间</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">接收机构 <span class="form-req">*</span></label>
+          <select class="form-select-input" id="wOrg">
+            <option value="">请选择合作机构</option>
+            <option value="平安银行股份有限公司|平安银行">平安银行</option>
+            <option value="招商银行股份有限公司|招商银行">招商银行</option>
+            <option value="中国农业银行股份有限公司|农业银行">农业银行</option>
+            <option value="江苏银行股份有限公司|江苏银行">江苏银行</option>
+            <option value="南京银行股份有限公司|南京银行">南京银行</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">备注（选填）</label>
+        <textarea class="form-input form-textarea" id="wRemark" placeholder="可记录获客口径说明、沟通背景等..."></textarea>
+      </div>
+
+      <div class="section-heading">上传名单文件</div>
+      <div class="form-group">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <span style="font-size:12.5px;color:var(--gray-500);">支持 .xlsx / .xls / .csv，单文件不超过 10MB</span>
+        </div>
+        <div class="dropzone" id="wDropZone" style="position: relative; overflow: hidden;"
+          ondragover="event.preventDefault();this.style.borderColor='var(--brand)';this.style.background='var(--brand-light)';"
+          ondragleave="this.style.borderColor='var(--gray-300)';this.style.background='#fafafa';"
+          ondrop="event.preventDefault();this.style.borderColor='var(--gray-300)';this.style.background='#fafafa';handleFile({files:event.dataTransfer.files})">
+          
+          <!-- 全透明覆盖整个区域的原生 input，点击任意位置都会直接触发选择器 -->
+          <input type="file" id="wFileInput" accept=".xlsx,.xls,.csv" 
+            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 10;" 
+            onchange="handleFile(this)">
+            
+          <svg style="width:38px;height:38px;color:var(--gray-400);margin-bottom:10px; position: relative; z-index: 1;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+          <div style="font-size:14px;font-weight:600;color:var(--gray-700);margin-bottom:4px; position: relative; z-index: 1;">点击或将文件拖拽到这里上传</div>
+          <div style="font-size:12px;color:var(--gray-500); position: relative; z-index: 1;">上传后系统将自动读取列名，供下一步字段映射</div>
+        </div>
+        <div id="wFileInfo" style="display:none;margin-top:10px;padding:10px 14px;background:var(--gray-50);border-radius:8px;font-size:13px;border:1px solid #e2e8f0;align-items:center;justify-content:space-between;">
+          <span id="wFileName" style="display:flex;align-items:center;gap:8px;color:var(--gray-700);font-weight:600;"></span>
+          <button class="btn btn-ghost btn-sm" onclick="clearFile()" style="padding:4px 8px;color:#dc2626;font-size:13px;white-space:nowrap;">删除</button>
+        </div>
+      </div>
+
+      <div class="toggle-row">
+        <div class="toggle-label-group">
+          <div class="toggle-label-title">导入至营销名单池</div>
+          <div class="toggle-label-desc">开启后名单数据进入营销池，支持后续分配与营销跟进</div>
+        </div>
+        <div class="toggle-switch on" id="poolToggle" onclick="this.classList.toggle('on')"></div>
+      </div>
+    </div>
+
+    <!-- 步骤2 -->
+    <div class="wiz-page" id="wizPage2">
+      <p style="font-size:13px;color:var(--gray-500);line-height:1.7;margin-bottom:20px;">
+        系统已自动识别 Excel 列名与平台标准字段的对应关系，请确认或调整。<br>
+        <strong style="color:var(--gray-700);">「企业名称」</strong>为必填，其余可按需映射。未映射的列可设为「关键数据」展示给机构端（无需电子授权）。
+      </p>
+
+      <div class="section-heading">标准字段映射</div>
+      <table class="mapping-table">
+        <thead>
+          <tr>
+            <th style="width:34%;">Excel 列名</th>
+            <th style="width:6%;text-align:center;">→</th>
+            <th>映射到平台字段</th>
+            <th style="width:90px;text-align:center;">状态</th>
+          </tr>
+        </thead>
+        <tbody id="mappingBody"></tbody>
+      </table>
+
+      <div class="section-heading" style="margin-top:24px;">关键数据字段配置</div>
+      <p style="font-size:12.5px;color:var(--gray-400);margin-bottom:10px;line-height:1.6;">
+        以下列未映射到标准字段，勾选后将在机构端客户详情页「关键数据」中展示（不受电子授权限制）。
+      </p>
+      <div class="col-check-grid" id="customColGrid"></div>
+    </div>
+
+    <!-- 步骤3 -->
+    <div class="wiz-page" id="wizPage3">
+      <div style="text-align:center;padding:24px 0 32px;">
+        <div style="width:64px;height:64px;border-radius:50%;background:#dcfce7;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;">
+          <svg viewBox="0 0 24 24" style="width:30px;height:30px;" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+        <div style="font-size:17px;font-weight:700;color:var(--gray-900);margin-bottom:8px;">即将完成</div>
+        <div style="font-size:13.5px;color:var(--gray-500);">请确认以下信息无误，然后点击「确认交付」</div>
+      </div>
+
+      <div class="confirm-summary-box">
+        <div id="confirmSummary"></div>
+      </div>
+
+      <div style="background:var(--brand-light);border:1px solid var(--brand-border);border-radius:10px;padding:14px 16px;">
+        <div style="font-size:13px;font-weight:600;color:var(--brand);margin-bottom:4px;">提交后</div>
+        <div style="font-size:12.5px;color:var(--gray-600);line-height:1.7;">名单数据将写入营销名单池，机构端可在「营销名单」中查看。文件将同步给机构，机构端可随时下载原始 Excel。</div>
+      </div>
+    </div>
+
+  </div><!-- /wizard-body -->
+
+  <!-- 底部按钮 -->
+  <div class="wizard-footer">
+    <button class="btn btn-default" id="wizPrevBtn" onclick="wizPrev()" style="display:none;">上一步</button>
+    <div style="flex:1;"></div>
+    <button class="btn btn-default" onclick="closeWizard()" style="margin-right:8px;">取消</button>
+    <button class="btn btn-primary" id="wizNextBtn" onclick="wizNext()">下一步</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     详情抽屉（查看交付记录）
+     ══════════════════════════════════════ -->
+<div class="side-overlay" id="detailOverlay" onclick="closeDetail()"></div>
+<div class="detail-drawer" id="detailDrawer">
+  <div class="drawer-header">
+    <div>
+      <div class="drawer-title" id="detailTitle">—</div>
+      <div class="drawer-subtitle" id="detailSubtitle"></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <button class="btn btn-sm" id="detailDeleteBtn"
+        style="font-size:12px;color:#dc2626;border:1px solid #fecaca;background:#fff;padding:0 12px;height:30px;">
+        <svg style="width:13px;height:13px;flex-shrink:0;margin-right:4px;vertical-align:-2px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+        </svg>
+        删除
+      </button>
+      <button class="drawer-close-btn" onclick="closeDetail()">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
+  <div style="flex:1;overflow-y:auto;padding:22px 24px;" id="detailBody"></div>
+</div>
+
+<!-- 确认删除 Modal -->
+<div class="modal-backdrop" id="confirmModal">
+  <div class="modal-box">
+    <div class="modal-icon danger">
+      <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+    </div>
+    <div class="modal-title" id="confirmTitle">确认删除？</div>
+    <div class="modal-desc" id="confirmDesc">此操作不可恢复。</div>
+    <div class="modal-btns">
+      <button class="btn btn-default" style="min-width:90px;" onclick="closeConfirm()">取消</button>
+      <button class="btn btn-primary" id="confirmOkBtn" style="min-width:90px;background:#dc2626;border-color:#dc2626;">确认删除</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast-wrap" id="toastWrap" style="display:none;"></div>
+
+<script src="js/sidebar.js"></script>
+<script>
+  /* ════════ 数据 ════════ */
+  let RECORDS = [
+    { id:'r1', name:'平安银行-小微普惠2026Q2', org:'平安银行股份有限公司', orgShort:'平安银行', remark:'苏州地区、注册资本500万以上、制造业、近3年无不良', count:380, customCols:['近一年营收'], inPool:true, createdBy:'张敏', createdAt:'2026-06-01 14:30', fileName:'小微名单_20260601.xlsx' },
+    { id:'r2', name:'平安银行-小微普惠2026Q2（追加）', org:'平安银行股份有限公司', orgShort:'平安银行', remark:'追加苏州工业园区客群', count:120, customCols:['近一年营收'], inPool:true, createdBy:'张敏', createdAt:'2026-06-15 10:20', fileName:'小微追加_20260615.xlsx' },
+    { id:'r3', name:'招商银行-科创企业名单', org:'招商银行股份有限公司', orgShort:'招商银行', remark:'高新技术企业+专精特新，南京江北新区', count:230, customCols:['专利数','近期中标'], inPool:true, createdBy:'李华', createdAt:'2026-06-10 09:15', fileName:'科创企业_20260610.xlsx' },
+    { id:'r4', name:'农业银行-惠农贷客群', org:'中国农业银行股份有限公司', orgShort:'农业银行', remark:'农林牧渔行业、2年以上经营年限', count:560, customCols:['行业类型','经营年限'], inPool:true, createdBy:'王芳', createdAt:'2026-05-20 15:45', fileName:'农业企业_20260520.xlsx' },
+    { id:'r5', name:'农业银行-惠农贷（追加批）', org:'中国农业银行股份有限公司', orgShort:'农业银行', remark:'苏北追加名单', count:180, customCols:['行业类型'], inPool:true, createdBy:'王芳', createdAt:'2026-06-01 11:30', fileName:'农业追加_20260601.xlsx' },
+    { id:'r6', name:'农业银行-惠农贷（第三批）', org:'中国农业银行股份有限公司', orgShort:'农业银行', remark:'', count:90, customCols:[], inPool:false, createdBy:'王芳', createdAt:'2026-06-15 16:00', fileName:'农业第三批_20260615.xlsx' },
+    { id:'r7', name:'江苏银行-厂房贷企业', org:'江苏银行股份有限公司', orgShort:'江苏银行', remark:'自有厂房、中型以上规模，苏州、无锡', count:145, customCols:['厂房面积','经营年限'], inPool:true, createdBy:'陈峰', createdAt:'2026-04-15 10:00', fileName:'厂房名单_20260415.xlsx' },
+    { id:'r8', name:'南京银行-外贸企业名单', org:'南京银行股份有限公司', orgShort:'南京银行', remark:'有出口业务、近2年海关记录', count:210, customCols:['出口额','海关评级'], inPool:true, createdBy:'刘洋', createdAt:'2026-03-28 14:00', fileName:'外贸名单_20260328.xlsx' },
+    { id:'r9', name:'平安银行-税务贷企业', org:'平安银行股份有限公司', orgShort:'平安银行', remark:'纳税评级A级及以上，苏州地区', count:320, customCols:['纳税评级','开票金额'], inPool:true, createdBy:'张敏', createdAt:'2026-02-10 11:00', fileName:'税务名单_20260210.xlsx' },
+  ];
+
+  let wizStep = 1;
+  let uploadedFile = null;
+  let currentDetailId = null;
+  let confirmCallback = null;
+
+  const MOCK_EXCEL_COLS = ['企业名称','信用代码','注册地区','注册资本(万)','成立年份','近一年营收','厂房面积','专利数量'];
+  const STD_FIELDS = ['企业名称','统一社会信用代码','区域','注册资本','成立日期','—（不映射）'];
+  const AUTO_MAP = {'企业名称':'企业名称','信用代码':'统一社会信用代码','注册地区':'区域','注册资本(万)':'注册资本','成立年份':'成立日期'};
+
+  /* ════════ 渲染列表 ════════ */
+  function renderTable(data) {
+    var tbody = document.getElementById('deliveryTbody');
+    document.getElementById('paginationInfo').textContent = `显示 1 到 ${data.length} 条，共 ${data.length} 条记录`;
+    if (!data.length) {
+      tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:48px;color:var(--gray-400);">暂无交付记录</td></tr>';
+      return;
+    }
+    tbody.innerHTML = data.map(function(r, idx) {
+      var colBadges = r.customCols.length
+        ? r.customCols.map(function(c){return '<span class="col-badge">'+c+'</span>';}).join('')
+        : '<span style="color:var(--gray-300);font-size:12px;">—</span>';
+      return '<tr>' +
+        '<td style="color:var(--gray-400);font-size:12.5px;">' + (idx + 1) + '</td>' +
+        '<td>' +
+          '<span class="delivery-name" onclick="openDetail(\''+r.id+'\')">'+r.name+'</span>' +
+          (r.remark ? '<span class="delivery-remark" title="'+r.remark+'">'+r.remark+'</span>' : '') +
+        '</td>' +
+        '<td><span class="tag tag-gray">'+r.orgShort+'</span></td>' +
+        '<td><strong>'+r.count.toLocaleString()+'</strong> 家</td>' +
+        '<td>'+colBadges+'</td>' +
+        '<td><span class="status-badge '+(r.inPool?'status-in-pool':'status-archived')+'">'+(r.inPool?'已入池':'仅存档')+'</span></td>' +
+        '<td style="color:var(--gray-500);font-size:12.5px;">'+r.createdAt+'</td>' +
+        '<td style="color:var(--gray-600);">'+r.createdBy+'</td>' +
+        '<td style="text-align:right;white-space:nowrap;">' +
+          '<a href="credit-monitoring.html" class="btn btn-sm" style="font-size:12px;color:#0284c7;border:1px solid #bae6fd;background:#f0f9ff;margin-right:6px;text-decoration:none;display:inline-flex;align-items:center;gap:3px;"><svg style="width:12px;height:12px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>余额监控</a>' +
+          '<button class="btn btn-default btn-sm" onclick="openDetail(\''+r.id+'\')" style="font-size:12px;margin-right:6px;">查看</button>' +
+          '<button class="btn btn-sm" onclick="showToast(\'开始下载...\')" style="font-size:12px;color:var(--brand);border:1px solid var(--brand-border);background:var(--brand-light);margin-right:6px;">下载</button>' +
+          '<button class="btn btn-sm" onclick="prepareDelete(\''+r.id+'\',\''+r.name+'\')" style="font-size:12px;color:#dc2626;border:1px solid #fecaca;background:#fff;">删除</button>' +
+        '</td></tr>';
+    }).join('');
+  }
+
+  function doFilter() {
+    var kw = document.getElementById('searchInput').value.toLowerCase();
+    var org = document.getElementById('orgFilter').value;
+    var pool = document.getElementById('poolFilter').value;
+    var filtered = RECORDS.filter(function(r) {
+      return r.name.toLowerCase().indexOf(kw) !== -1 &&
+        (!org || r.orgShort === org) &&
+        (pool === '' || String(r.inPool) === pool);
+    });
+    renderTable(filtered);
+  }
+
+  /* ════════ 向导 ════════ */
+  function openWizard() {
+    wizStep = 1;
+    uploadedFile = null;
+    ['wName','wRemark'].forEach(function(id){document.getElementById(id).value='';});
+    document.getElementById('wOrg').value = '';
+    document.getElementById('wFileInfo').style.display = 'none';
+    document.getElementById('wFileInput').value = '';
+    document.getElementById('poolToggle').classList.add('on');
+    goWizPage(1);
+    document.getElementById('wizardOverlay').classList.add('show');
+    document.getElementById('wizardDrawer').classList.add('show');
+  }
+
+  function closeWizard() {
+    document.getElementById('wizardOverlay').classList.remove('show');
+    document.getElementById('wizardDrawer').classList.remove('show');
+  }
+
+  function goWizPage(n) {
+    wizStep = n;
+    ['wizPage1','wizPage2','wizPage3'].forEach(function(id,i){
+      document.getElementById(id).classList.toggle('active', i+1===n);
+    });
+    ['wizStep1','wizStep2','wizStep3'].forEach(function(id,i){
+      var el = document.getElementById(id);
+      el.classList.remove('active','done');
+      if (i+1 < n) el.classList.add('done');
+      else if (i+1 === n) el.classList.add('active');
+    });
+    document.getElementById('wizLine1').classList.toggle('done', n>1);
+    document.getElementById('wizLine2').classList.toggle('done', n>2);
+    document.getElementById('wizPrevBtn').style.display = n>1 ? 'inline-flex' : 'none';
+    document.getElementById('wizNextBtn').textContent = n===3 ? '确认交付' : '下一步';
+  }
+
+  function wizPrev() { if (wizStep > 1) goWizPage(wizStep-1); }
+
+  function wizNext() {
+    if (wizStep === 1) {
+      var name = document.getElementById('wName').value.trim();
+      var org = document.getElementById('wOrg').value;
+      if (!name) { showToast('请填写名单名称'); return; }
+      if (!org) { showToast('请选择接收机构'); return; }
+      if (!uploadedFile) { showToast('请上传名单文件'); return; }
+      renderStep2();
+      goWizPage(2);
+    } else if (wizStep === 2) {
+      renderStep3();
+      goWizPage(3);
+    } else {
+      doSubmit();
+    }
+  }
+
+  function handleFile(input) {
+    var file = input.files ? input.files[0] : null;
+    if (!file) return;
+    uploadedFile = file;
+    var info = document.getElementById('wFileInfo');
+    info.style.display = 'flex';
+    document.getElementById('wFileName').innerHTML =
+      '<svg viewBox="0 0 24 24" style="width:16px;height:16px;flex-shrink:0;" fill="none" stroke="var(--brand)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>' + file.name;
+  }
+
+  function triggerFileUpload() {
+    // 延迟一帧再触发，避免抽屉内事件冒泡问题
+    setTimeout(function() {
+      document.getElementById('wFileInput').click();
+    }, 0);
+  }
+
+  function clearFile() {
+    uploadedFile = null;
+    document.getElementById('wFileInfo').style.display = 'none';
+    document.getElementById('wFileInput').value = '';
+  }
+
+  function renderStep2() {
+    // 标准字段映射表
+    document.getElementById('mappingBody').innerHTML = MOCK_EXCEL_COLS.map(function(col) {
+      var mapped = AUTO_MAP[col] || '';
+      var opts = STD_FIELDS.map(function(f){return '<option value="'+f+'"'+(f===mapped?' selected':'')+'>'+f+'</option>';}).join('');
+      var badge = mapped
+        ? '<span style="display:inline-block;padding:1px 6px;border-radius:4px;font-size:11px;font-weight:500;background:var(--brand-light);color:var(--brand);">已识别</span>'
+        : '<span style="display:inline-block;padding:1px 6px;border-radius:4px;font-size:11px;font-weight:500;background:#fef3c7;color:#92400e;">未映射</span>';
+      return '<tr><td style="font-weight:600;">'+col+'</td><td style="text-align:center;color:var(--gray-400);">→</td><td><select class="mapping-select" data-col="'+col+'">'+opts+'</select></td><td style="text-align:center;">'+badge+'</td></tr>';
+    }).join('');
+
+    // 自定义列
+    var custom = MOCK_EXCEL_COLS.filter(function(c){return !AUTO_MAP[c];});
+    var grid = document.getElementById('customColGrid');
+    if (!custom.length) {
+      grid.innerHTML = '<div style="color:var(--gray-400);font-size:13px;grid-column:1/-1;">所有列均已映射到标准字段，无自定义列。</div>';
+      return;
+    }
+    grid.innerHTML = custom.map(function(col) {
+      return '<label class="col-check-item checked" onclick="toggleCol(this)"><input type="checkbox" checked>'+col+'</label>';
+    }).join('');
+  }
+
+  function toggleCol(el) {
+    el.classList.toggle('checked');
+    el.querySelector('input').checked = el.classList.contains('checked');
+  }
+
+  function renderStep3() {
+    var orgEl = document.getElementById('wOrg');
+    var orgText = orgEl.options[orgEl.selectedIndex] ? orgEl.options[orgEl.selectedIndex].text : '—';
+    var name = document.getElementById('wName').value.trim();
+    var remark = document.getElementById('wRemark').value.trim();
+    var inPool = document.getElementById('poolToggle').classList.contains('on');
+    var checked = Array.from(document.querySelectorAll('#customColGrid .col-check-item.checked')).map(function(el){return el.textContent.trim();});
+    var count = Math.floor(Math.random()*300+80);
+
+    document.getElementById('confirmSummary').innerHTML =
+      '<div class="info-row"><span class="info-label">名单名称</span><span class="info-value" style="font-weight:600;">'+name+'</span></div>' +
+      '<div class="info-row"><span class="info-label">接收机构</span><span class="info-value">'+orgText+'</span></div>' +
+      '<div class="info-row"><span class="info-label">备注</span><span class="info-value">'+(remark||'<span style="color:var(--gray-300);">—</span>')+'</span></div>' +
+      '<div class="info-row"><span class="info-label">上传文件</span><span class="info-value">'+(uploadedFile?uploadedFile.name:'—')+'</span></div>' +
+      '<div class="info-row"><span class="info-label">识别企业数</span><span class="info-value" style="color:var(--brand);font-weight:700;">'+count+' 家</span></div>' +
+      '<div class="info-row"><span class="info-label">导入客户池</span><span class="info-value">'+(inPool?'<span class="tag tag-blue">开启</span>':'<span class="tag tag-gray">关闭（仅存档）</span>')+'</span></div>' +
+      '<div class="info-row"><span class="info-label">关键数据字段</span><span class="info-value">'+(checked.length?checked.map(function(c){return '<span class="col-badge">'+c+'</span>';}).join(''):'<span style="color:var(--gray-300);">—</span>')+'</span></div>';
+
+    // 暂存 count 供 doSubmit 用
+    document.getElementById('confirmSummary').dataset.count = count;
+    document.getElementById('confirmSummary').dataset.checked = JSON.stringify(checked);
+    document.getElementById('confirmSummary').dataset.inPool = inPool;
+  }
+
+  function doSubmit() {
+    var orgEl = document.getElementById('wOrg');
+    var orgVal = orgEl.value;
+    var parts = orgVal.split('|');
+    var name = document.getElementById('wName').value.trim();
+    var remark = document.getElementById('wRemark').value.trim();
+    var ds = document.getElementById('confirmSummary').dataset;
+    var count = parseInt(ds.count) || 0;
+    var checked = JSON.parse(ds.checked || '[]');
+    var inPool = ds.inPool === 'true';
+    var now = new Date();
+    var timeStr = now.toLocaleDateString('zh-CN').replace(/\//g,'-') + ' ' + now.toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});
+
+    RECORDS.unshift({
+      id: 'r'+Date.now(), name: name,
+      org: parts[0]||'', orgShort: parts[1]||'',
+      remark: remark, count: count, customCols: checked,
+      inPool: inPool, createdBy: '当前用户', createdAt: timeStr,
+      fileName: uploadedFile ? uploadedFile.name : 'unknown.xlsx'
+    });
+    doFilter();
+    closeWizard();
+    showToast('名单交付成功，' + count + ' 家企业' + (inPool ? '已入客户池' : '已存档'), 'success');
+  }
+
+  /* ════════ 详情抽屉 ════════ */
+  function openDetail(id) {
+    var r = RECORDS.find(function(x){return x.id===id;});
+    if (!r) return;
+    currentDetailId = id;
+    document.getElementById('detailTitle').textContent = r.name;
+    document.getElementById('detailSubtitle').textContent = r.orgShort + ' · ' + r.createdAt;
+    document.getElementById('detailDeleteBtn').onclick = function(){prepareDelete(r.id, r.name);};
+
+    var colBadges = r.customCols.length
+      ? r.customCols.map(function(c){return '<span class="col-badge">'+c+'</span>';}).join('')
+      : '<span style="color:var(--gray-300);">—</span>';
+
+    document.getElementById('detailBody').innerHTML =
+      '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px;">' +
+        '<div style="background:var(--gray-50);border-radius:10px;padding:14px 16px;text-align:center;">' +
+          '<div style="font-size:12px;color:var(--gray-400);margin-bottom:5px;">企业总数</div>' +
+          '<div style="font-size:24px;font-weight:700;color:var(--brand);">'+r.count.toLocaleString()+'</div>' +
+        '</div>' +
+        '<div style="background:var(--gray-50);border-radius:10px;padding:14px 16px;text-align:center;">' +
+          '<div style="font-size:12px;color:var(--gray-400);margin-bottom:5px;">客户池状态</div>' +
+          '<div style="font-size:14px;font-weight:700;padding-top:4px;">'+(r.inPool?'<span class="status-badge status-in-pool">已入池</span>':'<span class="status-badge status-archived">仅存档</span>')+'</div>' +
+        '</div>' +
+        '<div style="background:var(--gray-50);border-radius:10px;padding:14px 16px;text-align:center;">' +
+          '<div style="font-size:12px;color:var(--gray-400);margin-bottom:5px;">关键数据字段</div>' +
+          '<div style="font-size:18px;font-weight:700;color:var(--gray-900);">'+r.customCols.length+'</div>' +
+        '</div>' +
+      '</div>' +
+      '<div style="margin-bottom:22px;">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">' +
+          '<span style="font-size:13px;font-weight:600;color:var(--gray-700);">原始文件</span>' +
+          '<button class="btn btn-default btn-sm" onclick="showToast(\'开始下载...\')" style="font-size:12px;display:flex;align-items:center;gap:4px;">' +
+            '<svg viewBox="0 0 24 24" style="width:13px;height:13px;" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>' +
+            '下载文件' +
+          '</button>' +
+        '</div>' +
+        '<div style="padding:12px 14px;background:var(--gray-50);border-radius:8px;border:1px solid var(--border);display:flex;align-items:center;gap:10px;">' +
+          '<svg viewBox="0 0 24 24" style="width:18px;height:18px;flex-shrink:0;" fill="none" stroke="var(--brand)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>' +
+          '<span style="font-size:13px;color:var(--gray-700);font-weight:500;">'+r.fileName+'</span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="section-heading" style="margin-top:0;">交付详情</div>' +
+      '<div class="info-row"><span class="info-label">名单名称</span><span class="info-value" style="font-weight:600;">'+r.name+'</span></div>' +
+      '<div class="info-row"><span class="info-label">接收机构</span><span class="info-value">'+r.org+'</span></div>' +
+      '<div class="info-row"><span class="info-label">操作人</span><span class="info-value">'+r.createdBy+'</span></div>' +
+      '<div class="info-row"><span class="info-label">交付时间</span><span class="info-value">'+r.createdAt+'</span></div>' +
+      '<div class="info-row"><span class="info-label">备注</span><span class="info-value" style="white-space:pre-wrap;">'+(r.remark||'<span style="color:var(--gray-300);">暂无备注</span>')+'</span></div>' +
+      '<div class="info-row"><span class="info-label">关键数据字段</span><span class="info-value">'+colBadges+'</span></div>';
+
+    document.getElementById('detailOverlay').classList.add('show');
+    document.getElementById('detailDrawer').classList.add('show');
+  }
+
+  function closeDetail() {
+    document.getElementById('detailOverlay').classList.remove('show');
+    document.getElementById('detailDrawer').classList.remove('show');
+  }
+
+  /* ════════ 删除 ════════ */
+  function prepareDelete(id, name) {
+    openConfirm(
+      '确认删除？',
+      '将删除交付名单「'+name+'」，此操作不可恢复。',
+      function() {
+        RECORDS = RECORDS.filter(function(r){return r.id!==id;});
+        doFilter();
+        if (currentDetailId === id) closeDetail();
+        showToast('已删除');
+      }
+    );
+  }
+
+  function openConfirm(title, desc, cb) {
+    document.getElementById('confirmTitle').textContent = title;
+    document.getElementById('confirmDesc').textContent = desc;
+    confirmCallback = cb;
+    document.getElementById('confirmModal').classList.add('show');
+    document.getElementById('confirmOkBtn').onclick = function(){closeConfirm(); if(confirmCallback) confirmCallback();};
+  }
+
+  function closeConfirm() { document.getElementById('confirmModal').classList.remove('show'); }
+
+  /* ════════ Toast ════════ */
+  function showToast(msg, type) {
+    var wrap = document.getElementById('toastWrap');
+    wrap.style.display = 'block';
+    wrap.innerHTML = '<div class="toast '+(type==='success'?'success':'')+'">' + msg + '</div>';
+    clearTimeout(wrap._t);
+    wrap._t = setTimeout(function(){wrap.style.display='none'; wrap.innerHTML='';}, 2800);
+  }
+
+  /* ════════ 初始化 ════════ */
+  document.addEventListener('DOMContentLoaded', function() {
+    if (typeof renderSidebar === 'function') renderSidebar({ currentPage: 'deliveries' });
+    renderTable(RECORDS);
+  });
+  document.getElementById('confirmModal').addEventListener('click', function(e){ if(e.target===this) closeConfirm(); });
+</script>
+</body>
+</html>

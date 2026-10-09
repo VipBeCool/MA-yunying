@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
-  <title>客户名单 - 智能营销平台</title>
-  <meta name="description" content="客户经理全量客户名单，支持多维筛选、状态标记与触达路径">
+  <title>营销名单 - 智能营销平台</title>
+  <meta name="description" content="全量营销名单，支持多维筛选、状态标记与触达路径">
   <link rel="stylesheet" href="css/style.css?v=1783867207">
   <style>
     /* ===== 页面布局 ===== */
@@ -691,7 +691,7 @@
       box-shadow: 0 1px 3px rgba(0,0,0,0.08);
     }
   
-    /* ===== 客户名单表格增强 & 列设置面板 ===== */
+    /* ===== 营销名单表格增强 & 列设置面板 ===== */
     .cust-table-wrapper {
       overflow-x: auto;
       max-width: 100%;
@@ -805,7 +805,214 @@
     .cust-table tbody tr:hover .col-fixed-action {
       background: var(--gray-50);
     }
-    /* ================================= */
+    /* ===== 右侧信贷余额监控抽屉样式 ===== */
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.45);
+      backdrop-filter: blur(2px);
+      z-index: 10000;
+      display: none;
+      overscroll-behavior: contain;
+      touch-action: none;
+    }
+    .drawer-overlay.show {
+      display: block;
+    }
+    .credit-drawer {
+      position: fixed;
+      top: 0;
+      right: -820px;
+      width: 780px;
+      max-width: 95vw;
+      height: 100vh;
+      background: var(--bg-card);
+      z-index: 10001;
+      box-shadow: -6px 0 36px rgba(0,0,0,0.18);
+      display: flex;
+      flex-direction: column;
+      transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      overscroll-behavior: contain;
+    }
+    .credit-drawer.show {
+      right: 0;
+    }
+    .drawer-header {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f8fafc;
+      flex-shrink: 0;
+    }
+    .drawer-title-area h3 {
+      font-size: 16.5px;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin: 0;
+    }
+    .drawer-title-area p {
+      font-size: 12px;
+      color: var(--gray-500);
+      margin: 3px 0 0 0;
+    }
+    .drawer-close-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--gray-500);
+      transition: all 0.15s;
+    }
+    .drawer-close-btn:hover {
+      background: var(--gray-100);
+      color: var(--gray-900);
+    }
+    .drawer-body {
+      flex: 1;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .drawer-footer {
+      padding: 14px 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: #f8fafc;
+      flex-shrink: 0;
+    }
+    .drawer-section-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+    }
+    .drawer-section-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .loan-type-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+    .loan-type-item {
+      padding: 12px;
+      border-radius: 8px;
+      background: var(--gray-50);
+      border: 1px solid var(--gray-200);
+    }
+    .loan-type-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--gray-800);
+      margin-bottom: 6px;
+    }
+    .loan-type-data-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--gray-600);
+      margin-top: 4px;
+    }
+    .insight-box {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 8px;
+      padding: 14px;
+      font-size: 13px;
+      line-height: 1.6;
+      color: #1e3a8a;
+    }
+    .advice-box {
+      background: #fefce8;
+      border: 1px solid #fef08a;
+      border-radius: 8px;
+      padding: 14px;
+      font-size: 13px;
+      line-height: 1.6;
+      color: #854d0e;
+    }
+    .new-flag-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 11.5px;
+      font-weight: 700;
+    }
+    .new-flag-yes {
+      background: #fef2f2;
+      color: #dc2626;
+      border: 1px solid #fecaca;
+    }
+    .new-flag-no {
+      background: #f3f4f6;
+      color: #9ca3af;
+    }
+    .diff-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+    .diff-up {
+      background: #dcfce7;
+      color: #15803d;
+    }
+    .diff-down {
+      background: #f1f5f9;
+      color: #64748b;
+    }
+    .diff-zero {
+      background: #f3f4f6;
+      color: #9ca3af;
+      font-weight: 400;
+    }
+    .diff-badge svg, .diff-badge i {
+      font-size: 11px;
+      width: 11px;
+      height: 11px;
+    }
+    .tag-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 2px 7px;
+      border-radius: 12px;
+      margin-right: 3px;
+    }
+    .tag-pill svg {
+      width: 12px;
+      height: 12px;
+    }
 
   </style>
 </head>
@@ -828,14 +1035,18 @@
         </div>
       </div>
       <div class="page-header-left">
-        <h1 class="page-title">客户名单</h1>
+        <h1 class="page-title">营销名单</h1>
         <p class="page-breadcrumb">
-          <a href="index.html">工作台</a><span class="sep">/</span>机构营销<span class="sep">/</span>客户名单
+          <a href="index.html">工作台</a><span class="sep">/</span>机构营销<span class="sep">/</span>营销名单
         </p>
       </div>
       <div style="display:flex;gap:12px;align-items:center;">
-                
-        
+        <a href="credit-monitoring.html" class="btn btn-secondary" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;font-size:13px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;color:var(--brand);">
+            <line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line>
+          </svg>
+          余额监控
+        </a>
         <button class="btn btn-primary" onclick="exportData()">
           <span style="width:15px;height:15px;display:flex;"><svg viewBox="0 0 24 24" style="width:100%;height:100%;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>
           下载名单
@@ -1251,6 +1462,7 @@ if(!window._orgModalInited) {
 </script>
 
 <!-- 状态标记抽屉统一组件由 js/status-drawer.js 动态生成 --><script src="js/sidebar.js?v=3"></script>
+<script src="js/credit-monitoring-data.js"></script>
 <script src="js/status-drawer.js"></script>
 <script>
 // ===== 初始化侧边栏 =====
@@ -1288,21 +1500,26 @@ const L2_OPTIONS = {
 
 // ===== Mock 数据 =====
 const ALL_DATA = [
+  { id:101, name:'南京格拉琪全钢防火科技（江苏）有限公司', uscc:'91320115MA1MB8X970', region: '江苏省/南京市/江宁区', addr:'南京市江宁区谷里街道安康路11号', rs:'FOLLOWING', bs:'REVIEWING', product:'橙业贷', nature:'民营企业', honor:'高新技术', intent:'高', risk:'低', batch:'企业导入-平安银行V3(厂房、税)', batchSource:'auto', lastContact: '2026-07-14 10:30', ds:96, legalPerson: '陈总', status: '存续', entityType: '有限责任公司', indCat: '制造业', indType: '金属制品业', regCap: '1200万人民币', regDate: '2016-03-12', owner: '张敏', org: '南京分行', coopOrg: '平安银行' },
+  { id:102, name:'南京金牛机械制造有限公司', uscc:'91320116754124619X', region: '江苏省/南京市/六合区', addr:'南京市六合区雄州街道雄州东路288号', rs:'REACHED_INTERESTED', bs:'APPLIED', product:'厂房贷, 橙业贷', nature:'民营企业', honor:'专精特新', intent:'高', risk:'低', batch:'企业导入-V1商机（税）进系统', batchSource:'auto', lastContact: '2026-07-13 14:20', ds:92, legalPerson: '金总', status: '存续', entityType: '有限责任公司', indCat: '制造业', indType: '通用设备制造业', regCap: '3500万人民币', regDate: '2003-11-20', owner: '李华', org: '南京分行', coopOrg: '平安银行' },
+  { id:103, name:'江苏新宁现代物流股份有限公司', uscc:'913205007205739766', region: '江苏省/苏州市/昆山市', addr:'昆山市张浦镇阳光西路760号', rs:'FOLLOWING', bs:'DISBURSED', product:'橙业贷', nature:'上市公司', honor:'重点龙头企业', intent:'高', risk:'低', batch:'企业导入-平安银行V3(厂房、税)', batchSource:'auto', lastContact: '2026-07-12 11:15', ds:94, legalPerson: '王总', status: '存续', entityType: '股份有限公司', indCat: '交通运输、仓储和邮政业', indType: '仓储业', regCap: '4.46亿人民币', regDate: '2000-02-18', owner: '张敏', org: '苏州分行', coopOrg: '平安银行' },
+  { id:104, name:'南京特检科技有限公司', uscc:'91320115MA1W9D2789', region: '江苏省/南京市/江宁区', addr:'南京市江宁区秣陵街道双龙大道', rs:'PENDING', bs:'NONE', product:'税务贷', nature:'民营企业', honor:'高新技术', intent:'中', risk:'低', batch:'企业导入-V1商机（税）进系统', batchSource:'auto', lastContact: '2026-07-10 16:40', ds:88, legalPerson: '赵总', status: '存续', entityType: '有限责任公司', indCat: '科学研究和技术服务业', indType: '专业技术服务业', regCap: '1000万人民币', regDate: '2018-05-10', owner: '王静', org: '南京分行', coopOrg: '平安银行' },
+  { id:105, name:'江苏三木集团有限公司', uscc:'91320282136005886X', region: '江苏省/无锡市/宜兴市', addr:'宜兴市官林镇化工集中区', rs:'FOLLOWING', bs:'APPROVED', product:'厂房贷, 橙业贷', nature:'民营企业', honor:'民营500强', intent:'高', risk:'低', batch:'企业导入-平安银行0601外贸商机', batchSource:'auto', lastContact: '2026-07-14 09:30', ds:98, legalPerson: '刘总', status: '存续', entityType: '集团公司', indCat: '制造业', indType: '化学原料和化学制品制造业', regCap: '8.8亿人民币', regDate: '1993-06-28', owner: '张敏', org: '无锡分行', coopOrg: '平安银行' },
   { id:1, name:'苏州智云科技有限公司', uscc:'91320594MA1EXAMPLE1', region: '江苏省/苏州市/工业园区', addr:'苏州市工业园区星湖街5号', rs:'PENDING', bs:'NONE', product:'橙业贷, 厂房贷', nature:'民营企业', honor:'高新技术', intent:'高', risk:'低', batch:'橙业贷20160508', batchSource:'auto', lastContact: '2026-07-11 10:30', ds:92, legalPerson: '张三', status: '存续', entityType: '有限责任公司', indCat: '信息传输、软件 and 信息技术服务业', indType: '软件开发', regCap: '1000万人民币', regDate: '2016-05-08', owner: '李明, 王强', org: '南京分行, 苏州分行', coopOrg: '南京银行' },
   { id:2, name:'苏州生物医药研究院有限公司', uscc:'91320594MA5EXAMPLE5', region: '江苏省/苏州市/工业园区', addr:'苏州市工业园区独墅湖大道88号', rs:'UNREACHED_NO_ANSWER', bs:'NONE', product:'橙业贷', nature:'外资企业', honor:'独角兽企业', intent:'中', risk:'高', batch:'橙业贷20160508', batchSource:'auto', lastContact: '2026-07-12 14:15', ds:81, legalPerson: '李四', status: '存续', entityType: '外商独资', indCat: '科学研究 and 技术服务业', indType: '医学研究 and 试验发展', regCap: '5000万人民币', regDate: '2018-09-12', owner: '刘伟, 陈明, 赵雷', org: '南京分行, 无锡分行, 常州分行', coopOrg: '南京银行' },
   { id:3, name:'常州新能源科技股份有限公司', uscc:'91320412MA4EXAMPLE4', region: '江苏省/常州市/武进区', addr:'常州市武进区高新区南区', rs:'REACHED_NO_INTEREST', bs:'NONE', product:'橙业贷, 税务贷', nature:'国有企业', honor:'专精特新', intent:'低', risk:'中', batch:'橙业贷20160509', batchSource:'auto', lastContact: '2026-07-13 09:45', ds:72, legalPerson: '王五', status: '存续', entityType: '股份有限公司', indCat: '制造业', indType: '电气机械 and 器材制造业', regCap: '1亿人民币', regDate: '2015-03-20', owner: '李明', org: '无锡分行', coopOrg: '无锡银行' },
   { id:4, name:'南京创新智造集团有限公司', uscc:'91320115MA2EXAMPLE2', region: '江苏省/南京市/江宁区', addr:'南京市江宁区将军大道100号', rs:'FOLLOWING', bs:'NONE', product:'厂房贷', nature:'民营企业', honor:'高新技术', intent:'高', risk:'低', batch:'厂房贷20160501', batchSource:'auto', lastContact: '2026-07-14 11:20', ds:88, legalPerson: '赵六', status: '存续', entityType: '集团公司', indCat: '制造业', indType: '专用设备制造业', regCap: '2亿人民币', regDate: '2010-11-11', owner: '刘伟', org: '无锡分行', coopOrg: '无锡银行' },
-  { id:5, name:'苏州纳米智能装备有限公司', uscc:'91320594MA7EXAMPLE7', region: '江苏省/苏州市/高新区', addr:'苏州市高新区科技城锦峰路10号', rs:'REACHED_INTERESTED', bs:'NONE', product:'厂房贷', nature:'合资企业', honor:'瞪羚企业', intent:'高', risk:'低', batch:'厂房贷20160501', batchSource:'auto', lastContact: '2026-07-13 15:30', ds:78, legalPerson: '孙七', status: '存续', entityType: '中外合资', indCat: '制造业', indType: '通用设备制造业', regCap: '3000万美元', regDate: '2019-07-01', owner: '刘伟', org: '苏州分行', coopOrg: '平安银行' },
-  { id:6, name:'无锡光电半导体有限公司', uscc:'91320214MA3EXAMPLE3', region: '江苏省/无锡市/新吴区', addr:'无锡市新吴区太湖国际科技园', rs:'REACHED_INTERESTED', bs:'APPLIED', product:'厂房贷, 橙业贷', nature:'民营企业', honor:'高新技术', intent:'高', risk:'中', batch:'厂房贷20160502', batchSource:'auto', lastContact: '2026-07-14 09:15', ds:95, legalPerson: '周八', status: '存续', entityType: '有限责任公司', indCat: '制造业', indType: '计算机、通信 and 其他电子设备制造业', regCap: '5亿人民币', regDate: '2020-01-15', owner: '刘伟', org: '苏州分行', coopOrg: '平安银行' },
+  { id:5, name:'苏州纳米智能装备有限公司', uscc:'91320594MA7EXAMPLE7', region: '江苏省/苏州市/高新区', addr:'苏州市高新区科技城锦峰路10号', rs:'REACHED_INTERESTED', bs:'NONE', product:'厂房贷', nature:'合资企业', honor:'瞪羚企业', intent:'高', risk:'低', batch:'企业导入-平安银行0601外贸商机', batchSource:'auto', lastContact: '2026-07-13 15:30', ds:78, legalPerson: '孙七', status: '存续', entityType: '中外合资', indCat: '制造业', indType: '通用设备制造业', regCap: '3000万美元', regDate: '2019-07-01', owner: '刘伟', org: '苏州分行', coopOrg: '平安银行' },
+  { id:6, name:'无锡光电半导体有限公司', uscc:'91320214MA3EXAMPLE3', region: '江苏省/无锡市/新吴区', addr:'无锡市新吴区太湖国际科技园', rs:'REACHED_INTERESTED', bs:'APPLIED', product:'厂房贷, 橙业贷', nature:'民营企业', honor:'高新技术', intent:'高', risk:'中', batch:'企业导入-平安银行V6脱核', batchSource:'auto', lastContact: '2026-07-14 09:15', ds:95, legalPerson: '周八', status: '存续', entityType: '有限责任公司', indCat: '制造业', indType: '计算机、通信 and 其他电子设备制造业', regCap: '5亿人民币', regDate: '2020-01-15', owner: '刘伟', org: '苏州分行', coopOrg: '平安银行' },
   { id:7, name:'常州智能制造系统有限公司', uscc:'91320402MAAEXAMPLEC', region: '江苏省/常州市/新北区', addr:'常州市新北区通江南路88号', rs:'FOLLOWING', bs:'REVIEWING', product:'税务贷', nature:'民营企业', honor:'专精特新', intent:'中', risk:'低', batch:'税务贷20160501', batchSource:'auto', lastContact: '2026-07-09 16:00', ds:76, legalPerson: '吴九', status: '存续', entityType: '有限责任公司', indCat: '信息传输、软件和信息技术服务业', indType: '软件开发', regCap: '2000万人民币', regDate: '2021-08-08', owner: '张强', org: '无锡分行', coopOrg: '无锡银行' },
-  { id:8, name:'南京云端数据技术有限公司', uscc:'91320114MA8EXAMPLE8', region: '江苏省/南京市/雨花台区', addr:'南京市雨花台区软件大道1号', rs:'REACHED_INTERESTED', bs:'APPROVED', product:'税务贷', nature:'民营企业', honor:'瞪羚企业', intent:'高', risk:'低', batch:'税务贷20160501', batchSource:'auto', lastContact: '2026-07-11 14:45', ds:90, legalPerson: '郑十', status: '存续', entityType: '有限责任公司', indCat: '信息传输、软件和信息技术服务业', indType: '互联网和相关服务', regCap: '8000万人民币', regDate: '2017-05-25', owner: '王静', org: '常州分行', coopOrg: '平安银行' },
+  { id:8, name:'南京云端数据技术有限公司', uscc:'91320114MA8EXAMPLE8', region: '江苏省/南京市/雨花台区', addr:'南京市雨花台区软件大道1号', rs:'REACHED_INTERESTED', bs:'APPROVED', product:'税务贷', nature:'民营企业', honor:'瞪羚企业', intent:'高', risk:'低', batch:'企业导入-平安银行V6脱核', batchSource:'auto', lastContact: '2026-07-11 14:45', ds:90, legalPerson: '郑十', status: '存续', entityType: '有限责任公司', indCat: '信息传输、软件和信息技术服务业', indType: '互联网和相关服务', regCap: '8000万人民币', regDate: '2017-05-25', owner: '王静', org: '常州分行', coopOrg: '平安银行' },
   { id:9, name:'南通精密机械制造有限公司', uscc:'91320602MA6EXAMPLE6', region: '江苏省/南通市/崇川区', addr:'南通市崇川区工农路20号', rs:'FOLLOWING', bs:'DISBURSED', product:'税务贷', nature:'民营企业', honor:'高新技术', intent:'中', risk:'低', batch:'税务贷20160501', batchSource:'auto', lastContact: '2026-07-12 11:20', ds:82, legalPerson: '刘一', status: '存续', entityType: '有限责任公司', indCat: '制造业', indType: '通用设备制造业', regCap: '1500万人民币', regDate: '2014-10-10', owner: '刘伟', org: '无锡分行', coopOrg: '无锡银行' },
   { id:10, name:'泰州华科电子科技有限公司', uscc:'91321203MA3EXAMPLED', region: '江苏省/泰州市/高港区', addr:'泰州市高港区科技大道8号', rs:'REACHED_NO_INTEREST', bs:'NONE', product:'橙业贷', nature:'合资企业', honor:'瞪羚企业', intent:'低', risk:'高', batch:'橙业贷20160508', batchSource:'auto', lastContact: '2026-07-04 08:30', ds:65, legalPerson: '陈二', status: '注销', entityType: '有限责任公司', indCat: '制造业', indType: '计算机、通信和其他电子设备制造业', regCap: '500万人民币', regDate: '2012-12-12', owner: '李明', org: '无锡分行', coopOrg: '无锡银行' },
   { id:11, name:'无锡集成电路设计有限公司', uscc:'91320214MA9EXAMPLEB', region: '江苏省/无锡市/滨湖区', addr:'无锡市滨湖区建筑路300号', rs:'PENDING', bs:'NONE', product:'橙业贷', nature:'国有企业', honor:'高新技术', intent:'中', risk:'中', batch:'橙业贷20160510', batchSource:'auto', lastContact: '-', ds:70, legalPerson: '王三', status: '存续', entityType: '国有独资', indCat: '科学研究和技术服务业', indType: '专业技术服务业', regCap: '3亿人民币', regDate: '2008-08-08', owner: '王静', org: '南京分行', coopOrg: '南京银行' },
-  { id:12, name:'扬州苏仪自控系统有限公司', uscc:'91321002MA4EXAMPLEE', region: '江苏省/扬州市/广陵区', addr:'扬州市广陵区新城路12号', rs:'FOLLOWING', bs:'SETTLED', product:'橙业贷', nature:'民营企业', honor:'专精特新', intent:'高', risk:'低', batch:'橙业贷20260615', batchSource:'manual', lastContact: '2026-07-14 10:00', ds:85, legalPerson: '李梅', status: '存续', entityType: '有限责任公司', indCat: '制造业', indType: '仪器仪表制造业', regCap: '2500万人民币', regDate: '2013-04-18', owner: '王静', org: '常州分行', coopOrg: '平安银行' },
+  { id:12, name:'扬州苏仪自控系统有限公司', uscc:'91321002MA4EXAMPLEE', region: '江苏省/扬州市/广陵区', addr:'扬州市广陵区新城路12号', rs:'FOLLOWING', bs:'SETTLED', product:'橙业贷', nature:'民营企业', honor:'专精特新', intent:'高', risk:'低', batch:'企业导入-平安银行V6脱核', batchSource:'manual', lastContact: '2026-07-14 10:00', ds:85, legalPerson: '李梅', status: '存续', entityType: '有限责任公司', indCat: '制造业', indType: '仪器仪表制造业', regCap: '2500万人民币', regDate: '2013-04-18', owner: '王静', org: '常州分行', coopOrg: '平安银行' },
   { id:13, name:'苏州工业机器人研发有限公司', uscc:'91320594MA2EXAMPLEG', region: '江苏省/苏州市/工业园区', addr:'苏州市工业园区独墅湖大道90号', rs:'REACHED_INTERESTED', bs:'APPLIED', product:'橙业贷', nature:'外资企业', honor:'高新技术', intent:'高', risk:'中', batch:'橙业贷20260615', batchSource:'manual', lastContact: '2026-07-13 16:45', ds:93, legalPerson: '张伟', status: '存续', entityType: '外商独资', indCat: '科学研究和技术服务业', indType: '科技推广和应用服务业', regCap: '1000万美元', regDate: '2022-02-22', owner: '李明', org: '南京分行', coopOrg: '南京银行' },
   { id:14, name:'盐城风电装备制造有限公司', uscc:'91320902MA1EXAMPLEF', region: '江苏省/盐城市/亭湖区', addr:'盐城市亭湖区环保产业园', rs:'UNREACHED_OTHER', bs:'NONE', product:'厂房贷', nature:'国有企业', honor:'无', intent:'低', risk:'低', batch:'厂房贷20160502', batchSource:'auto', lastContact: '2026-07-07 15:45', ds:68, legalPerson: '赵云', status: '存续', entityType: '国有控股', indCat: '制造业', indType: '专用设备制造业', regCap: '1.5亿人民币', regDate: '2011-05-15', owner: '王静', org: '无锡分行', coopOrg: '无锡银行' },
-  { id:15, name:'镇江新材料技术有限公司', uscc:'91321102MA3EXAMPLEH', region: '江苏省/镇江市/京口区', addr:'镇江市京口区学府路66号', rs:'PENDING', bs:'NONE', product:'税务贷', nature:'合资企业', honor:'高新技术', intent:'中', risk:'中', batch:'税务贷20160502', batchSource:'auto', lastContact: '-', ds:75, legalPerson: '马超', status: '存续', entityType: '中外合资', indCat: '制造业', indType: '化学原料和化学制品制造业', regCap: '6000万人民币', regDate: '2016-09-09', owner: '刘伟', org: '常州分行', coopOrg: '平安银行' }
+  { id:15, name:'镇江新材料技术有限公司', uscc:'91321102MA3EXAMPLEH', region: '江苏省/镇江市/京口区', addr:'镇江市京口区学府路66号', rs:'PENDING', bs:'NONE', product:'税务贷', nature:'合资企业', honor:'高新技术', intent:'中', risk:'中', batch:'企业导入-平安银行V6脱核', batchSource:'auto', lastContact: '-', ds:75, legalPerson: '马超', status: '存续', entityType: '中外合资', indCat: '制造业', indType: '化学原料和化学制品制造业', regCap: '6000万人民币', regDate: '2016-09-09', owner: '刘伟', org: '常州分行', coopOrg: '平安银行' }
 ];
 
 // ===== 筛选状态 =====
@@ -1358,7 +1575,22 @@ function doFilter() {
     }
     if (filterState.bs !== 'ALL' && c.bs !== filterState.bs) return false;
     
-    if (fBatch !== 'ALL' && c.batch !== fBatch) return false;
+    if (fBatch !== 'ALL') {
+      const normF = (fBatch || '').replace(/[\uff08\uff09]/g, s => s === '\uff08' ? '(' : ')').trim();
+      const normC = (c.batch || '').replace(/[\uff08\uff09]/g, s => s === '\uff08' ? '(' : ')').trim();
+      const matchExact = (normC === normF || c.batch === fBatch);
+      const matchSub = normC && normF && (normF.includes(normC) || normC.includes(normF));
+      const matchAlias = (
+        (fBatch.includes('第一批') || fBatch === 'batch_1') && (c.batch && (c.batch.includes('第一批') || c.batch.includes('202603')))
+      ) || (
+        (fBatch.includes('第二批') || fBatch === 'batch_2') && (c.batch && (c.batch.includes('第二批') || c.batch.includes('202604')))
+      ) || (
+        (fBatch.includes('厂房') || fBatch === 'batch_3_cf') && (c.batch && (c.batch.includes('厂房') || (c.product && c.product.includes('厂房'))))
+      ) || (
+        (fBatch.includes('南京') || fBatch === 'batch_3_nj') && ((c.region && c.region.includes('南京')) || (c.addr && c.addr.includes('南京')))
+      );
+      if (!matchExact && !matchSub && !matchAlias) return false;
+    }
     if (fRegion.length > 0) {
       if (!c.addr || !fRegion.some(dist => c.addr.includes(dist))) return false;
     }
@@ -1408,6 +1640,9 @@ function resetFilters() {
   document.querySelectorAll('.filter-option[data-val="ALL"]').forEach(el => el.classList.add('active'));
   filterState = { rs: 'ALL', bs: 'ALL', product: 'ALL', batch: 'ALL', quick: '', owner: 'ALL', org: 'ALL' };
   const batchSel = document.getElementById('filterBatch'); if (batchSel) batchSel.value = 'ALL';
+  if (window.cascaderBatch) window.cascaderBatch.reset();
+  if (window.cascaderRegion) window.cascaderRegion.reset();
+  if (window.cascaderOrg) window.cascaderOrg.reset();
   doFilter();
 }
 
@@ -1592,6 +1827,7 @@ function renderTable(list) {
         else if (c.key === 'action') tbHtml += `<td class="col-fixed-action" style="text-align:center;">
             <div class="action-btns">
               <button class="action-btn primary" onclick="goDetail(${item.id})">详情</button>
+              <button class="action-btn" onclick="openCreditDrawerByCustomer(${item.id})">余额</button>
               <button class="action-btn" onclick="openMarkDrawer(${item.id})">状态</button>
               <button class="action-btn" onclick="openContactModal(${item.id})">触达</button>
             </div>
@@ -1826,6 +2062,25 @@ class GenericCascader {
     this.textEl.style.fontWeight = '600';
     this.dropdown.style.display = 'none';
     this.displayEl.classList.remove('focus');
+
+    // 自动寻址所属父层级，确保展开下拉时高亮对应分类
+    if (this.data && this.levels >= 2) {
+      const cleanVal = (val || '').replace(/[\uff08\uff09]/g, s => s === '\uff08' ? '(' : ')').trim();
+      for (let pIdx = 0; pIdx < this.data.length; pIdx++) {
+        const item = this.data[pIdx];
+        if (item.children) {
+          const found = item.children.some(c => {
+            const cName = (typeof c === 'string' ? c : c.name || '').replace(/[\uff08\uff09]/g, s => s === '\uff08' ? '(' : ')').trim();
+            return cName === cleanVal || cName.includes(cleanVal) || cleanVal.includes(cName);
+          });
+          if (found) {
+            this.state[0] = pIdx;
+            break;
+          }
+        }
+      }
+    }
+
     if(this.onSelect) this.onSelect();
   }
 
@@ -1860,6 +2115,15 @@ class GenericCascader {
 }
 
 const BATCH_DATA = [
+  {
+    name: '平安银行商机批次',
+    children: [
+      '企业导入-平安银行V3(厂房、税)',
+      '企业导入-V1商机（税）进系统',
+      '企业导入-平安银行0601外贸商机',
+      '企业导入-平安银行V6脱核'
+    ]
+  },
   { name: '橙业贷', children: ['橙业贷20160508', '橙业贷20160509', '橙业贷20160510', '橙业贷20260615'] },
   { name: '厂房贷', children: ['厂房贷20160501', '厂房贷20160502'] },
   { name: '税务贷', children: ['税务贷20160501', '税务贷20160502'] }
@@ -1891,9 +2155,225 @@ document.addEventListener('click', e => {
 window.initCascaders();
 const params = new URLSearchParams(window.location.search);
 if (params.get('batch')) {
-  window.cascaderBatch.selectSingle(params.get('batch'));
+  const batchName = decodeURIComponent(params.get('batch'));
+  window.cascaderBatch.selectSingle(batchName);
+  setTimeout(() => {
+    if (window.showToast) {
+      showToast(`已为您筛选批次：${batchName}`, 'success');
+    }
+  }, 250);
 } else {
   doFilter();
+}
+
+// ===== 单企信贷余额监控右侧滑出抽屉 (Credit Monitoring Right Drawer) =====
+function openCreditDrawerByCustomer(id) {
+  const c = ALL_DATA.find(x => x.id === id);
+  if (!c) return;
+
+  const allCredits = window.CREDIT_MONITORING_DATA || [];
+  let creditRec = allCredits.find(r => (r.name && r.name.trim() === c.name.trim()) || (r.uscc && c.uscc && r.uscc === c.uscc));
+  
+  if (!creditRec) {
+    // 模糊匹配企业名称关键词
+    const coreName = (c.name || '').replace(/（.*?）|\(.*?\)|有限公司|股份有限公司|科技|发展|工程|服务/g, '').trim();
+    if (coreName.length >= 2) {
+      creditRec = allCredits.find(r => r.name && r.name.includes(coreName));
+    }
+  }
+
+  if (!creditRec) {
+    // 根据客户 ID 与名称特征哈希分流，确保不同企业展示丰富多样的人行两期监控数据
+    const hash = (c.name || '').split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) + (c.id || 0);
+    const sample = allCredits[hash % allCredits.length] || allCredits[0];
+    if (sample) {
+      creditRec = { 
+        ...sample, 
+        name: c.name, 
+        uscc: c.uscc || sample.uscc, 
+        city: c.region ? c.region.split('/')[1] : sample.city,
+        legalPerson: c.legalPerson || sample.legalPerson
+      };
+    }
+  }
+
+  if (!creditRec) {
+    if (typeof showToast === 'function') showToast('该企业暂无人行信贷监控数据');
+    return;
+  }
+
+  const helper = window.CreditMonitorHelper;
+  const insight = helper ? helper.generateInsight(creditRec) : { changesSummary: [], marketingAdvice: '' };
+
+  document.getElementById('drawerCompName').textContent = creditRec.name;
+  document.getElementById('drawerCompSubtitle').textContent = `统一社会信用代码：${creditRec.uscc || '-'} · 交付批次：${c.batch || creditRec.batchName || '橙业贷20160508'} · 接收机构：${c.coopOrg || creditRec.org || '平安银行'}`;
+  
+  // 构造直达所属批次全量对比的链接
+  const batchId = creditRec.batchId || 'batch_1';
+  document.getElementById('drawerBatchCenterLink').href = `credit-monitoring.html?batch=${encodeURIComponent(batchId)}&search=${encodeURIComponent(creditRec.name)}`;
+
+  const newTagBadge = creditRec.isNew 
+    ? `<span class="new-flag-badge new-flag-yes" style="font-size:12px;padding:3px 10px;"><svg style="width:12px;height:12px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>确认有新增信贷</span>`
+    : `<span class="new-flag-badge new-flag-no" style="font-size:12px;padding:3px 10px;">未发现新增</span>`;
+
+  const tagsHtml = (creditRec.tags || []).map(t => helper ? helper.getTagBadge(t) : `<span class="tag tag-blue">${t}</span>`).join('');
+
+  const bodyHtml = `
+    <!-- 顶部摘要卡 -->
+    <div class="drawer-section-card" style="background:#f8fafc;border-color:#e2e8f0;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          ${newTagBadge}
+          ${tagsHtml}
+        </div>
+        <span style="font-size:12px;color:var(--gray-500);">
+          对比跨度：${creditRec.baseMonth || '2026-03'} ➔ ${creditRec.targetMonth || '2026-05'}
+        </span>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(4, 1fr);gap:10px;">
+        <div style="background:#fff;border-radius:8px;padding:10px;border:1px solid #e2e8f0;">
+          <div style="font-size:11.5px;color:var(--gray-500);">在贷贷款总余额</div>
+          <div style="font-size:15px;font-weight:700;color:#1e40af;margin-top:4px;">${helper ? helper.formatInterval(creditRec.totalBal_T1) : creditRec.totalBal_T1}</div>
+          <div style="margin-top:4px;">${helper ? helper.formatDiffBadge(creditRec.totalBal_diff, true) : ''}</div>
+        </div>
+        <div style="background:#fff;border-radius:8px;padding:10px;border:1px solid #e2e8f0;">
+          <div style="font-size:11.5px;color:var(--gray-500);">在贷合作机构数</div>
+          <div style="font-size:15px;font-weight:700;color:var(--gray-900);margin-top:4px;">${creditRec.instCount_T1} 家</div>
+          <div style="margin-top:4px;">${helper ? helper.formatDiffBadge(creditRec.instCount_diff) : ''}</div>
+        </div>
+        <div style="background:#fff;border-radius:8px;padding:10px;border:1px solid #e2e8f0;">
+          <div style="font-size:11.5px;color:var(--gray-500);">在贷总笔数</div>
+          <div style="font-size:15px;font-weight:700;color:var(--gray-900);margin-top:4px;">${creditRec.loanCount_T1} 笔</div>
+          <div style="margin-top:4px;">${helper ? helper.formatDiffBadge(creditRec.loanCount_diff) : ''}</div>
+        </div>
+        <div style="background:#fff;border-radius:8px;padding:10px;border:1px solid #e2e8f0;">
+          <div style="font-size:11.5px;color:var(--gray-500);">意向需求分</div>
+          <div style="font-size:15px;font-weight:700;color:#4338ca;margin-top:4px;">${creditRec.demandScore || 85} 分</div>
+          <div style="font-size:11px;color:#16a34a;margin-top:4px;">${creditRec.demandLevel || '高需求'}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4 大担保贷款结构两期明细 -->
+    <div class="drawer-section-card">
+      <div class="drawer-section-title">
+        <span>4 大担保方式信贷资产两期变动对比</span>
+        <span style="font-size:11.5px;font-weight:400;color:var(--gray-400);">单位：笔数 / 金额区间</span>
+      </div>
+
+      <div class="loan-type-grid">
+        <!-- 信用类 -->
+        <div class="loan-type-item" style="border-left:3px solid #10b981;">
+          <div class="loan-type-header">
+            <span>纯信用类贷款</span>
+            ${helper ? helper.formatDiffBadge(creditRec.creditBal_diff, true) : ''}
+          </div>
+          <div class="loan-type-data-row">
+            <span>基准期 (${creditRec.baseMonth || '2026-03'})：</span>
+            <span>${creditRec.creditCount_T0} 笔 · ${helper ? helper.formatInterval(creditRec.creditBal_T0) : creditRec.creditBal_T0}</span>
+          </div>
+          <div class="loan-type-data-row" style="font-weight:600;color:var(--gray-900);">
+            <span>最新期 (${creditRec.targetMonth || '2026-05'})：</span>
+            <span>${creditRec.creditCount_T1} 笔 · ${helper ? helper.formatInterval(creditRec.creditBal_T1) : creditRec.creditBal_T1}</span>
+          </div>
+        </div>
+
+        <!-- 保证类 -->
+        <div class="loan-type-item" style="border-left:3px solid #f59e0b;">
+          <div class="loan-type-header">
+            <span>保证类贷款</span>
+            ${helper ? helper.formatDiffBadge(creditRec.guaranteeBal_diff, true) : ''}
+          </div>
+          <div class="loan-type-data-row">
+            <span>基准期 (${creditRec.baseMonth || '2026-03'})：</span>
+            <span>${creditRec.guaranteeCount_T0} 笔 · ${helper ? helper.formatInterval(creditRec.guaranteeBal_T0) : creditRec.guaranteeBal_T0}</span>
+          </div>
+          <div class="loan-type-data-row" style="font-weight:600;color:var(--gray-900);">
+            <span>最新期 (${creditRec.targetMonth || '2026-05'})：</span>
+            <span>${creditRec.guaranteeCount_T1} 笔 · ${helper ? helper.formatInterval(creditRec.guaranteeBal_T1) : creditRec.guaranteeBal_T1}</span>
+          </div>
+        </div>
+
+        <!-- 抵押类 -->
+        <div class="loan-type-item" style="border-left:3px solid #8b5cf6;">
+          <div class="loan-type-header">
+            <span>抵押类贷款</span>
+            ${helper ? helper.formatDiffBadge(creditRec.mortgageBal_diff, true) : ''}
+          </div>
+          <div class="loan-type-data-row">
+            <span>基准期 (${creditRec.baseMonth || '2026-03'})：</span>
+            <span>${creditRec.mortgageCount_T0} 笔 · ${helper ? helper.formatInterval(creditRec.mortgageBal_T0) : creditRec.mortgageBal_T0}</span>
+          </div>
+          <div class="loan-type-data-row" style="font-weight:600;color:var(--gray-900);">
+            <span>最新期 (${creditRec.targetMonth || '2026-05'})：</span>
+            <span>${creditRec.mortgageCount_T1} 笔 · ${helper ? helper.formatInterval(creditRec.mortgageBal_T1) : creditRec.mortgageBal_T1}</span>
+          </div>
+        </div>
+
+        <!-- 质押类 -->
+        <div class="loan-type-item" style="border-left:3px solid #ec4899;">
+          <div class="loan-type-header">
+            <span>质押类贷款</span>
+            ${helper ? helper.formatDiffBadge(creditRec.pledgeBal_diff, true) : ''}
+          </div>
+          <div class="loan-type-data-row">
+            <span>基准期 (${creditRec.baseMonth || '2026-03'})：</span>
+            <span>${creditRec.pledgeCount_T0} 笔 · ${helper ? helper.formatInterval(creditRec.pledgeBal_T0) : creditRec.pledgeBal_T0}</span>
+          </div>
+          <div class="loan-type-data-row" style="font-weight:600;color:var(--gray-900);">
+            <span>最新期 (${creditRec.targetMonth || '2026-05'})：</span>
+            <span>${creditRec.pledgeCount_T1} 笔 · ${helper ? helper.formatInterval(creditRec.pledgeBal_T1) : creditRec.pledgeBal_T1}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 变动动向智能解读 -->
+    <div class="drawer-section-card">
+      <div class="drawer-section-title">
+        <span>信贷变动特征与资金动向研判</span>
+      </div>
+      <div class="insight-box">
+        <ul style="padding-left:18px;margin:0;">
+          ${insight.changesSummary.map(c => `<li style="margin-bottom:6px;">${c}</li>`).join('')}
+        </ul>
+      </div>
+    </div>
+
+    <!-- 营销策略与客户经理建议 -->
+    <div class="drawer-section-card">
+      <div class="drawer-section-title">
+        <span>营销跟进策略与建议（供客户经理参考）</span>
+      </div>
+      <div class="advice-box">
+        ${insight.marketingAdvice}
+      </div>
+    </div>
+
+    <!-- 基本信息与联系方式 -->
+    <div class="drawer-section-card">
+      <div class="drawer-section-title">
+        <span>企业工商与联系方式清单</span>
+      </div>
+      <div style="font-size:12.5px;color:var(--gray-700);line-height:1.8;">
+        <div><strong>所属地区：</strong>${c.region || '江苏省/南京市'}</div>
+        <div><strong>法定代表人：</strong>${c.legalPerson || creditRec.legalPerson || '—'}</div>
+        <div><strong>联系方式清单：</strong>${c.phone ? `<span class="col-badge" style="background:#e0f2fe;color:#0369a1;margin-right:6px;font-family:monospace;font-size:12px;padding:3px 8px;border-radius:4px;">${c.phone}</span>` : '<span style="color:var(--gray-300);">暂无电话</span>'}</div>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('drawerBodyContent').innerHTML = bodyHtml;
+  document.getElementById('creditDrawerOverlay').classList.add('show');
+  document.getElementById('creditDrawer').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeCreditDrawer() {
+  document.getElementById('creditDrawerOverlay').classList.remove('show');
+  document.getElementById('creditDrawer').classList.remove('show');
+  document.body.style.overflow = '';
 }
 </script>
 <!-- 导出弹窗 -->
@@ -1933,6 +2413,40 @@ if (params.get('batch')) {
     </div>
   </div>
 </div>
-  <script src="js/toast.js"></script>
+
+<!-- ════════ 单企信贷余额监控右侧滑出抽屉 (Credit Monitoring Right Drawer) ════════ -->
+<div class="drawer-overlay" id="creditDrawerOverlay" onclick="closeCreditDrawer()"></div>
+
+<div class="credit-drawer" id="creditDrawer">
+  <!-- 抽屉头部 -->
+  <div class="drawer-header">
+    <div class="drawer-title-area">
+      <h3 id="drawerCompName">企业信贷余额监控透视</h3>
+      <p id="drawerCompSubtitle">统一社会信用代码：— · 交付批次：— · 接收机构：—</p>
+    </div>
+    <button class="drawer-close-btn" onclick="closeCreditDrawer()" title="关闭">
+      <svg style="width:16px;height:16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+    </button>
+  </div>
+
+  <!-- 抽屉内容主体（独立滚动） -->
+  <div class="drawer-body" id="drawerBodyContent">
+    <!-- 动态渲染 -->
+  </div>
+
+  <!-- 抽屉底部操作栏 -->
+  <div class="drawer-footer">
+    <a id="drawerBatchCenterLink" href="credit-monitoring.html" target="_blank" class="btn btn-secondary" style="font-size:13px;display:inline-flex;align-items:center;gap:5px;text-decoration:none;color:var(--brand);border-color:#bfdbfe;background:#eff6ff;margin-right:auto;">
+      <span>查看所属批次全量企业对比 ↗</span>
+    </a>
+    <button class="btn btn-secondary" onclick="closeCreditDrawer()">关闭</button>
+    <button class="btn btn-primary" onclick="showToast('已加入重点监控与营销跟进清单！');closeCreditDrawer();">
+      <svg style="width:14px;height:14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+      加入重点跟进
+    </button>
+  </div>
+</div>
+
+<script src="js/toast.js"></script>
 </body>
 </html>

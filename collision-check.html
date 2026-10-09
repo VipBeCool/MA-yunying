@@ -1,0 +1,1666 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+  <title>存量撞库排查 - 智能营销平台</title>
+  <meta name="description" content="存量有贷户与白名单及交付名单关联关系排查体系">
+  <link rel="stylesheet" href="css/style.css?v=1783867207">
+  <style>
+    /* ====================================================
+       存量撞库排查 — 专属精美布局与容器样式
+       ==================================================== */
+    .collision-layout {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      padding-bottom: 40px;
+    }
+
+    /* 顶部导航与面包屑栏 */
+    .page-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 4px;
+    }
+
+    .page-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin: 0 0 6px 0;
+      letter-spacing: -0.02em;
+    }
+
+    .page-breadcrumb {
+      font-size: 13px;
+      color: var(--gray-500);
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .page-breadcrumb a {
+      color: var(--gray-500);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .page-breadcrumb a:hover {
+      color: var(--brand);
+    }
+
+    .page-breadcrumb .sep {
+      color: var(--gray-300);
+    }
+
+    /* 任务状态与控制中心看板 (全新设计，历史任务一键直达) */
+    .task-hero-card {
+      background: white;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .task-hero-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .task-hero-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: var(--brand-50);
+      color: var(--brand);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .task-hero-info {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .task-hero-title-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .task-hero-name {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--gray-900);
+    }
+
+    .task-bank-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 14px;
+      font-size: 12px;
+      font-weight: 600;
+      background: var(--gray-100);
+      color: var(--gray-700);
+      border: 1px solid var(--border);
+    }
+
+    /* 英雄卡片统计小标签，精简全量总数与完成状态，去除重复看板块 */
+    .hero-stat-pill-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .hero-stat-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 13px;
+      color: var(--gray-700);
+      background: var(--gray-50);
+      border: 1px solid var(--border);
+    }
+
+    .hero-stat-pill b {
+      color: var(--gray-900);
+      font-weight: 700;
+    }
+
+    .task-hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-action-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      height: 38px;
+      padding: 0 18px;
+      border-radius: 10px;
+      background: var(--brand);
+      color: white;
+      font-size: 13px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(16, 185, 129, 0.25);
+      transition: all 0.2s;
+    }
+
+    .btn-action-primary:hover {
+      background: #059669;
+      transform: translateY(-1px);
+    }
+
+    .btn-action-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      height: 38px;
+      padding: 0 16px;
+      border-radius: 10px;
+      background: white;
+      color: var(--gray-800);
+      font-size: 13px;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-action-secondary:hover {
+      background: var(--gray-50);
+      border-color: var(--gray-300);
+    }
+
+    .btn-action-history {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      height: 38px;
+      padding: 0 16px;
+      border-radius: 10px;
+      background: var(--gray-100);
+      color: var(--gray-800);
+      font-size: 13px;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-action-history:hover {
+      background: var(--gray-200);
+      border-color: var(--gray-400);
+    }
+
+    /* ====================================================
+       精美指标卡片式页签 (Metric-Card Tabs) — 高度精炼紧凑版
+       ==================================================== */
+    .metric-tab-header {
+      background: #f8fafc;
+      border-bottom: 1px solid var(--border);
+      padding: 14px 24px;
+    }
+
+    .metric-tab-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .metric-tab-card {
+      background: white;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      padding: 12px 18px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      position: relative;
+      user-select: none;
+      overflow: hidden;
+    }
+
+    .metric-tab-card:hover {
+      transform: translateY(-2px);
+      border-color: #a7f3d0;
+      box-shadow: 0 6px 16px -4px rgba(0, 0, 0, 0.05);
+    }
+
+    .metric-tab-card.active {
+      border: 1px solid #6ee7b7;
+      background: #f0fdf4;
+      box-shadow: 0 4px 12px -2px rgba(16, 185, 129, 0.08);
+    }
+
+    .metric-tab-card.active::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: 3px;
+      background: var(--brand);
+      border-radius: 3px 0 0 3px;
+    }
+
+    .metric-tab-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .metric-tab-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--gray-800);
+    }
+
+    .metric-tab-card.active .metric-tab-name {
+      color: #065f46;
+    }
+
+    .metric-dir-badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 10px;
+      background: var(--gray-100);
+      color: var(--gray-600);
+    }
+
+    .metric-tab-card.active .metric-dir-badge {
+      background: var(--brand);
+      color: white;
+    }
+
+    .metric-tab-value-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+    }
+
+    .metric-val-wrap {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    .metric-num {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--gray-900);
+      letter-spacing: -0.02em;
+    }
+
+    .metric-unit {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--gray-500);
+    }
+
+    .metric-sub-tag {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 2px 10px;
+      border-radius: 12px;
+      background: #ecfdf5;
+      color: #047857;
+      border: 1px solid #a7f3d0;
+    }
+
+    .metric-sub-tag.blue {
+      background: #eff6ff;
+      color: #2563eb;
+      border-color: #bfdbfe;
+    }
+
+    .metric-sub-tag.amber {
+      background: #fef3c7;
+      color: #d97706;
+      border-color: #fde68a;
+    }
+
+    /* 主工作区外框 */
+    .workspace-card {
+      background: white;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* 筛选与搜索工具条 */
+    .filter-bar {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      background: white;
+    }
+
+    .filter-group-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .filter-select {
+      height: 36px;
+      padding: 0 28px 0 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      font-size: 13px;
+      color: var(--gray-800);
+      background: white;
+      outline: none;
+    }
+
+    .search-input-wrap {
+      position: relative;
+      width: 300px;
+    }
+
+    .search-input-wrap input {
+      width: 100%;
+      height: 36px;
+      padding: 0 12px 0 36px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      font-size: 13px;
+      color: var(--gray-900);
+      outline: none;
+    }
+
+    .search-input-wrap input:focus {
+      border-color: var(--brand);
+    }
+
+    .search-input-wrap svg {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      color: var(--gray-400);
+    }
+
+    /* 表格结构与列样式 */
+    .table-container {
+      overflow-x: auto;
+      max-height: 600px;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      text-align: left;
+    }
+
+    .data-table th {
+      position: sticky;
+      top: 0;
+      background: var(--gray-50);
+      color: var(--gray-600);
+      font-weight: 600;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+      z-index: 10;
+    }
+
+    .data-table td {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--gray-100);
+      color: var(--gray-800);
+      vertical-align: middle;
+    }
+
+    .data-table tr:hover {
+      background: var(--gray-50);
+    }
+
+    /* 样式徽章与标签 */
+    .ent-name-main {
+      font-weight: 600;
+      color: var(--gray-900);
+      margin-bottom: 3px;
+    }
+
+    .ent-code-sub {
+      font-size: 12px;
+      color: var(--gray-400);
+      font-family: monospace;
+    }
+
+    .badge-source {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 500;
+      background: var(--gray-100);
+      color: var(--gray-600);
+    }
+
+    .badge-batch-hit {
+      display: inline-block;
+      padding: 3px 12px;
+      border-radius: 14px;
+      font-size: 12px;
+      font-weight: 600;
+      background: #ecfdf5;
+      color: #047857;
+      border: 1px solid #a7f3d0;
+    }
+
+    .badge-batch-none {
+      color: var(--gray-400);
+    }
+
+    .tag-rel-type {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .tag-rel-type.equity {
+      background: #eff6ff;
+      color: #2563eb;
+      border: 1px solid #bfdbfe;
+    }
+
+    .tag-rel-type.trade {
+      background: #ecfdf5;
+      color: #047857;
+      border: 1px solid #a7f3d0;
+    }
+
+    .tag-rel-type.person {
+      background: #fef3c7;
+      color: #d97706;
+      border: 1px solid #fde68a;
+    }
+
+    .pill-desc {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      background: var(--gray-100);
+      border: 1px solid var(--border);
+      color: var(--gray-700);
+    }
+
+    .rel-sentence-text {
+      color: var(--gray-700);
+      line-height: 1.5;
+    }
+
+    .rel-sentence-text .highlight-b {
+      color: #047857;
+      font-weight: 600;
+    }
+
+    /* 弹窗与历史台账列表样式 */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.45);
+      backdrop-filter: blur(2px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    .modal-overlay.open {
+      display: flex !important;
+    }
+
+    .modal-box {
+      background: white;
+      border-radius: 20px;
+      width: 680px;
+      max-width: 90vw;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      animation: modalFadeIn 0.2s ease-out;
+    }
+
+    .modal-box.large {
+      width: 1000px;
+      max-width: 95vw;
+    }
+
+    @keyframes modalFadeIn {
+      from {
+        transform: scale(0.96);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .modal-header {
+      padding: 20px 28px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--gray-900);
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--gray-500);
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 6px;
+      font-size: 20px;
+    }
+
+    .modal-close:hover {
+      background: var(--gray-100);
+    }
+
+    .modal-body {
+      padding: 24px 28px;
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+
+    .modal-footer {
+      padding: 16px 28px;
+      border-top: 1px solid var(--border);
+      background: var(--gray-50);
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+
+    /* 模拟上传样式 */
+    .upload-drop-zone {
+      border: 2px dashed var(--border);
+      border-radius: 14px;
+      padding: 32px;
+      text-align: center;
+      background: var(--gray-50);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .upload-drop-zone:hover {
+      border-color: var(--brand);
+      background: #f0fdf4;
+    }
+
+    .form-group-item {
+      margin-bottom: 18px;
+    }
+
+    .form-group-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--gray-700);
+      margin-bottom: 8px;
+    }
+
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-top: 8px;
+    }
+
+    .checkbox-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--gray-700);
+      cursor: pointer;
+    }
+
+    /* 进度条 */
+    .progress-bar-wrap {
+      display: none;
+      margin-top: 18px;
+    }
+
+    .progress-bar-bg {
+      height: 8px;
+      background: var(--gray-200);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--brand);
+      width: 0%;
+      transition: width 0.3s;
+    }
+
+    .progress-status-text {
+      font-size: 12px;
+      color: var(--gray-500);
+      margin-top: 8px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* Toast 提示 */
+    .toast-msg {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      padding: 14px 24px;
+      background: var(--gray-900);
+      color: white;
+      border-radius: 10px;
+      font-size: 14px;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.25);
+      display: none;
+      z-index: 10000;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- 标准全局双栏容器：左边侧边栏，右边主内容区 -->
+  <div class="app-container">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="main-content anim-fade-in" id="main">
+
+      <div class="collision-layout">
+        <!-- 面包屑导航栏 -->
+        <div class="page-header-row">
+          <div>
+            <h1 class="page-title">存量撞库排查</h1>
+            <p class="page-breadcrumb">
+              <a href="index.html">工作台</a><span class="sep">/</span>运营工具<span
+                class="sep">/</span>存量撞库排查
+            </p>
+          </div>
+          <div>
+            <!-- 历史任务一键台账管理按钮 -->
+            <button class="btn-action-history" onclick="openTaskHistoryModal()">
+              <svg style="width:16px;height:16px;color:var(--brand);" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+                <line x1="16" y1="13" x2="8" y2="13" />
+                <line x1="16" y1="17" x2="8" y2="17" />
+                <polyline points="10 9 9 9 8 9" />
+              </svg>
+              历史排查任务台账 (共 6 批次)
+            </button>
+          </div>
+        </div>
+
+        <!-- 任务中控英雄卡片 (包含当前批次名称、所属银行及全量导入与完成状态，无冗余重复) -->
+        <div class="task-hero-card">
+          <div class="task-hero-left">
+            <div class="task-hero-icon">
+              <svg style="width:24px;height:24px;" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2">
+                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+              </svg>
+            </div>
+            <div class="task-hero-info">
+              <div class="task-hero-title-row">
+                <span class="task-hero-name" id="currentTaskNameDisplay">平安银行南京分行 - 存量有贷户撞库白名单&amp;交付名单排查</span>
+                <span class="task-bank-badge" id="currentTaskBankDisplay">
+                  <svg style="width:13px;height:13px;color:var(--brand);" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2">
+                    <rect x="4" y="2" width="16" height="20" rx="2" />
+                    <path d="M9 22V12h6v10" />
+                    <path d="M8 6h.01M16 6h.01M12 6h.01M8 10h.01M16 10h.01M12 10h.01" />
+                  </svg>
+                  平安银行 - 南京分行
+                </span>
+              </div>
+              <div class="hero-stat-pill-row" id="currentTaskMetaText">
+                <span class="hero-stat-pill">
+                  <svg style="width:14px;height:14px;color:var(--brand);" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                  </svg>
+                  全量导入存量有贷户：<b id="kpiTotalCount">7,094</b> 家
+                </span>
+                <span class="hero-stat-pill">
+                  <svg style="width:14px;height:14px;color:var(--gray-500);" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <polyline points="12 6 12 12 16 14" />
+                  </svg>
+                  任务完成时间：2026-03-03 11:30
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="task-hero-actions">
+            <button class="btn-action-primary" onclick="openNewTaskModal()">
+              <svg style="width:16px;height:16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              新建排查任务
+            </button>
+            <button class="btn-action-secondary" onclick="exportExcelReport()">
+              <svg style="width:16px;height:16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              导出排查报表 (Excel)
+            </button>
+          </div>
+        </div>
+
+        <!-- 核心工作区：三大方向指标卡片式页签与表格工作台 (看板与 Tab 完美二合一) -->
+        <div class="workspace-card">
+          <!-- 顶部精美指标式选项卡 (Metric-Card Tabs) -->
+          <div class="metric-tab-header">
+            <div class="metric-tab-grid">
+
+              <!-- Tab 0: 本行营销名单重叠核查 -->
+              <div class="metric-tab-card active" id="tabBtn0" onclick="switchTab(0)">
+                <div class="metric-tab-top">
+                  <span class="metric-tab-name">本行营销名单重叠核查</span>
+                </div>
+                <div class="metric-tab-value-row">
+                  <div class="metric-val-wrap">
+                    <span class="metric-num" id="kpiDirectMatchCount">312</span>
+                    <span class="metric-unit">家</span>
+                  </div>
+                  <span class="metric-sub-tag">占存量 4.40%</span>
+                </div>
+              </div>
+
+              <!-- Tab 1: 关联关系深度排查 -->
+              <div class="metric-tab-card" id="tabBtn1" onclick="switchTab(1)">
+                <div class="metric-tab-top">
+                  <span class="metric-tab-name">关联关系深度排查</span>
+                </div>
+                <div class="metric-tab-value-row">
+                  <div class="metric-val-wrap">
+                    <span class="metric-num" id="kpiRelationMatchCount">1,571</span>
+                    <span class="metric-unit">条</span>
+                  </div>
+                  <span class="metric-sub-tag blue">共 1,571 对关联</span>
+                </div>
+              </div>
+
+              <!-- Tab 2: 跨行已营销客户重叠核查 -->
+              <div class="metric-tab-card" id="tabBtn2" onclick="switchTab(2)">
+                <div class="metric-tab-top">
+                  <span class="metric-tab-name">跨行已营销客户重叠核查</span>
+                </div>
+                <div class="metric-tab-value-row">
+                  <div class="metric-val-wrap">
+                    <span class="metric-num" id="kpiCrossBankCount">189</span>
+                    <span class="metric-unit">家</span>
+                  </div>
+                  <span class="metric-sub-tag amber">占存量 2.66%</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- 动态筛选工具条 -->
+          <div class="filter-bar" id="filterBarContainer">
+            <!-- 默认根据 Tab 0 显示筛选项，JS 中根据选项卡自动更替 -->
+          </div>
+
+          <!-- 数据表格展示 -->
+          <div class="table-container">
+            <table class="data-table">
+              <thead id="tableHead">
+                <!-- 表头由 JS 自动生成 -->
+              </thead>
+              <tbody id="tableBody">
+                <!-- 数据表行由 JS 自动生成 -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- 平台统一样式分页控件 -->
+          <div class="pagination" id="pagination" style="padding: 16px 24px; border-top: 1px solid var(--gray-100);">
+            <div class="pagination-info" style="display:flex;align-items:center;gap:12px;">
+              <span id="paginationInfo">显示 1 到 10 条，共 12 条记录</span>
+              <select class="filter-select" style="width: 100px; height: 32px; min-width:unset; padding: 0 10px; font-size: 13px;" onchange="onPageSizeChange(this.value)">
+                <option value="10">10 条/页</option>
+                <option value="20">20 条/页</option>
+                <option value="50">50 条/页</option>
+              </select>
+            </div>
+            <div class="pagination-controls" id="paginationControls">
+              <button class="btn btn-ghost btn-sm" disabled>上一页</button>
+              <button class="btn btn-primary btn-sm page-num">1</button>
+              <button class="btn btn-ghost btn-sm" disabled>下一页</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- ── 弹窗 1：历史排查任务台账弹窗 (优化查看与管理所有历史任务) ── -->
+  <div class="modal-overlay" id="taskHistoryModal">
+    <div class="modal-box large">
+      <div class="modal-header">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <h3 class="modal-title">存量撞库排查 — 历史任务台账与管理</h3>
+          <span class="task-bank-badge" style="background:#ecfdf5;color:#047857;border-color:#a7f3d0;">共记录 6
+            个排查批次</span>
+        </div>
+        <button class="modal-close" onclick="closeTaskHistoryModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+          <div class="search-input-wrap" style="width:360px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" placeholder="按银行名称、任务名称或日期搜索历史记录..." id="historySearchInput"
+              oninput="filterHistoryTable(this.value)">
+          </div>
+          <button class="btn-action-primary" style="height:36px;font-size:13px;"
+            onclick="closeTaskHistoryModal(); openNewTaskModal();">
+            + 创建新排查任务
+          </button>
+        </div>
+
+        <table class="data-table" style="font-size:13px;">
+          <thead>
+            <tr>
+              <th>任务批次名称</th>
+              <th>匹配目标金融机构</th>
+              <th>导入存量总数</th>
+              <th>直接命中</th>
+              <th>图谱关联对</th>
+              <th>他行客户</th>
+              <th>完成时间</th>
+              <th style="text-align:center;">操作台账</th>
+            </tr>
+          </thead>
+          <tbody id="historyTableBody">
+            <!-- 历史任务表行由 JS 构建 -->
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-action-secondary" onclick="closeTaskHistoryModal()">关闭列表</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 弹窗 2：新建撞库排查任务弹窗 ── -->
+  <div class="modal-overlay" id="newTaskModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title">创建存量有贷户撞库排查任务</h3>
+        <button class="modal-close" onclick="closeNewTaskModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group-item">
+          <label class="form-group-label">1. 排查任务名称</label>
+          <input type="text" id="taskNameInput" class="filter-select" style="width:100%;height:40px;"
+            value="平安银行南京分行-2026年3月存量有贷户常规排查">
+        </div>
+
+        <div class="form-group-item">
+          <label class="form-group-label">2. 目标匹配银行机构 (单选)</label>
+          <select id="taskBankSelect" class="filter-select" style="width:100%;height:40px;">
+            <option value="平安银行 - 南京分行" selected>平安银行 - 南京分行</option>
+            <option value="宁波银行 - 南京分行">宁波银行 - 南京分行</option>
+            <option value="江苏银行 - 南京分行">江苏银行 - 南京分行</option>
+            <option value="中信银行 - 常州分行">中信银行 - 常州分行</option>
+          </select>
+        </div>
+
+        <div class="form-group-item">
+          <label class="form-group-label">3. 导入存量有贷户 Excel/CSV 表格</label>
+          <div class="upload-drop-zone" onclick="simulateFileUpload()">
+            <svg style="width:36px;height:36px;color:var(--gray-400);margin-bottom:8px;" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="17 8 12 3 7 8"></polyline>
+              <line x1="12" y1="3" x2="12" y2="15"></line>
+            </svg>
+            <div id="uploadFileText" style="font-size:14px;font-weight:600;color:var(--gray-800);">点击上传或将 Excel 文件拖拽至此区域
+            </div>
+            <div style="font-size:12px;color:var(--gray-500);margin-top:4px;">支持 .xlsx, .xls (需包含表头：企业名称、统一社会信用代码、来源列)
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group-item">
+          <label class="form-group-label">4. 选择撞库匹配排查维度 (多选)</label>
+          <div class="checkbox-row">
+            <label class="checkbox-item"><input type="checkbox" checked id="chkDirect"> 1. 本行白名单&amp;交付命中排查</label>
+            <label class="checkbox-item"><input type="checkbox" checked id="chkRelation"> 2. 关联关系深度排查(股权/交易/人企)</label>
+            <label class="checkbox-item"><input type="checkbox" checked id="chkCrossBank"> 3. 跨行平台营销重叠排查</label>
+          </div>
+        </div>
+
+        <!-- 进度条提示 -->
+        <div class="progress-bar-wrap" id="taskProgressWrap">
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="taskProgressBar"></div>
+          </div>
+          <div class="progress-status-text">
+            <span id="taskProgressLabel">正在检索全量数据库并比对 1-Hop 图谱...</span>
+            <span id="taskProgressPercent">0%</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-action-secondary" onclick="closeNewTaskModal()">取消</button>
+        <button class="btn-action-primary" id="startTaskBtn" onclick="runSimulationTask()">开始离线撞库匹配</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast 提示 -->
+  <div class="toast-msg" id="toastMsg">导出 Excel 成功！文件已开始下载</div>
+
+  <!-- 挂载侧边栏组件 -->
+  <script src="js/sidebar.js"></script>
+  <script>
+    /* ── 历史任务管理台账数据库 (6个历史批次) ── */
+    const TASK_HISTORY_LIST = [
+      { id: "task_01", title: "平安银行南京分行 - 存量有贷户撞库白名单&交付名单排查", bank: "平安银行 - 南京分行", total: 7094, direct: 312, directRatio: "4.40%", relation: 1571, cross: 189, time: "2026-03-03 11:30" },
+      { id: "task_02", title: "平安银行南京分行 - 增量贷款客户第二轮增补比对", bank: "平安银行 - 南京分行", total: 1280, direct: 64, directRatio: "5.00%", relation: 310, cross: 45, time: "2026-02-18 16:45" },
+      { id: "task_03", title: "宁波银行南京分行 - 重点科技园区存量授信客户大筛", bank: "宁波银行 - 南京分行", total: 3500, direct: 190, directRatio: "5.43%", relation: 680, cross: 95, time: "2026-01-25 09:20" },
+      { id: "task_04", title: "江苏银行南京分行 - 普惠小微信贷存量重合排查专班", bank: "江苏银行 - 南京分行", total: 5200, direct: 285, directRatio: "5.48%", relation: 1120, cross: 142, time: "2025-12-14 14:10" },
+      { id: "task_05", title: "中信银行常州分行 - 辖区存量对公授信企业图谱核查", bank: "中信银行 - 常州分行", total: 2800, direct: 112, directRatio: "4.00%", relation: 420, cross: 68, time: "2025-11-20 11:00" },
+      { id: "task_06", title: "平安银行南京分行 - 四季度重点存量企业撞库摸底", bank: "平安银行 - 南京分行", total: 4150, direct: 203, directRatio: "4.89%", relation: 890, cross: 110, time: "2025-10-28 15:30" }
+    ];
+
+    /* ── 核心静态假数据池：100% 吻合客户提供的 Excel 实际排查结果 ── */
+    const DATA_DIRECT_MATCH = [
+      { name: "ORIENTAL ENERGY (SINGAPORE) IN...", code: "91320000MA1W88X998", source: "sheet1", whiteBatch: "--", delivBatch: "--" },
+      { name: "一一体育文化(常州)有限公司", code: "91320400MA2B87C010", source: "sheet2", whiteBatch: "--", delivBatch: "第五次" },
+      { name: "万物一体(常州)家居有限公司", code: "91320400MA23T8E808", source: "sheet2", whiteBatch: "--", delivBatch: "--" },
+      { name: "万联能源集团有限公司", code: "91320100MA1W00H876", source: "sheet1", whiteBatch: "第一批", delivBatch: "第三批" },
+      { name: "南京浦口科学城建设发展有限公司", code: "91320111MA1UYCGKX9", source: "sheet1", whiteBatch: "第一批", delivBatch: "第三批" },
+      { name: "江苏硕世生物科技股份有限公司", code: "913212005603889234", source: "sheet1", whiteBatch: "第一批", delivBatch: "--" },
+      { name: "江苏徐工机械工程股份有限公司", code: "913203002206890123", source: "sheet1", whiteBatch: "第一批", delivBatch: "第五次" },
+      { name: "常州红星美凯龙家居集团股份有限公司", code: "913204001348882098", source: "sheet1", whiteBatch: "第一批", delivBatch: "第三批" },
+      { name: "苏州金螳螂建筑装饰股份有限公司", code: "913205001378820124", source: "sheet1", whiteBatch: "第二批", delivBatch: "--" },
+      { name: "无锡药明康德新药开发股份有限公司", code: "913202007241880918", source: "sheet2", whiteBatch: "第一批", delivBatch: "第五次" },
+      { name: "南京先声东谷制药有限公司", code: "913201007802881902", source: "sheet1", whiteBatch: "第二批", delivBatch: "第三批" },
+      { name: "江苏恒瑞医药销售发展有限公司", code: "913207007140889209", source: "sheet1", whiteBatch: "第一批", delivBatch: "第三批" }
+    ];
+
+    const DATA_RELATION_MATCH = [
+      {
+        nameA: "南京浦口科学城建设发展有限公司",
+        codeA: "91320111MA1UYCGKX9",
+        sourceA: "sheet1",
+        nameB: "康格建设有限公司",
+        codeB: "9132011107072686XU",
+        sourceB: "第一批",
+        delivBatchB: "--",
+        relType: "交易关系",
+        relDesc: "供应商",
+        sentence: "(A)南京浦口科学城建设发展有限公司是(B)康格建设有限公司的供应商"
+      },
+      {
+        nameA: "南京浦口科学城建设发展有限公司",
+        codeA: "91320111MA1UYCGKX9",
+        sourceA: "sheet1",
+        nameB: "南京腾飞不锈钢厨房设备有限公司",
+        codeB: "913201151352476092",
+        sourceB: "第一批",
+        delivBatchB: "第五次",
+        relType: "交易关系",
+        relDesc: "客户",
+        sentence: "(A)南京浦口科学城建设发展有限公司是(B)南京腾飞不锈钢厨房设备有限公司的客户"
+      },
+      {
+        nameA: "南京浦口科学城建设发展有限公司",
+        codeA: "91320111MA1UYCGKX9",
+        sourceA: "sheet1",
+        nameB: "江苏润邦智能车库股份有限公司",
+        codeB: "91320000592528254T",
+        sourceB: "第一批",
+        delivBatchB: "--",
+        relType: "交易关系",
+        relDesc: "客户",
+        sentence: "(A)南京浦口科学城建设发展有限公司是(B)江苏润邦智能车库股份有限公司的客户"
+      },
+      {
+        nameA: "南京浦口科学城建设发展有限公司",
+        codeA: "91320111MA1UYCGKX9",
+        sourceA: "sheet1",
+        nameB: "南京开关厂股份有限公司",
+        codeB: "913201151348781266",
+        sourceB: "第一批",
+        delivBatchB: "第三批",
+        relType: "交易关系",
+        relDesc: "供应商",
+        sentence: "(A)南京浦口科学城建设发展有限公司是(B)南京开关厂股份有限公司的供应商"
+      },
+      {
+        nameA: "万物一体(常州)家居有限公司",
+        codeA: "91320400MA23T8E808",
+        sourceA: "sheet2",
+        nameB: "常州红星美凯龙家居集团股份有限公司",
+        codeB: "913204001348882098",
+        sourceB: "第一批",
+        delivBatchB: "第三批",
+        relType: "股权关系",
+        relDesc: "子公司",
+        sentence: "(A)万物一体(常州)家居有限公司是(B)常州红星美凯龙家居集团股份有限公司的子公司"
+      },
+      {
+        nameA: "江苏硕世生物科技股份有限公司",
+        codeA: "913212005603889234",
+        sourceA: "sheet1",
+        nameB: "江苏泰州生物医疗科技创新中心",
+        codeB: "91321200MA1T992019",
+        sourceB: "第一批",
+        delivBatchB: "第五次",
+        relType: "股权关系",
+        relDesc: "股东",
+        sentence: "(A)江苏硕世生物科技股份有限公司是(B)江苏泰州生物医疗科技创新中心的股东"
+      },
+      {
+        nameA: "南京智算网络技术有限公司",
+        codeA: "91320100MA1Y998012",
+        sourceA: "sheet1",
+        nameB: "江苏云计算大数据实业公司",
+        codeB: "913201007802112349",
+        sourceB: "第二批",
+        delivBatchB: "第三批",
+        relType: "人企关系",
+        relDesc: "相同董监高",
+        sentence: "(A)南京智算网络技术有限公司与(B)江苏云计算大数据实业公司存在相同董监高"
+      },
+      {
+        nameA: "苏州金螳螂建筑装饰股份有限公司",
+        codeA: "913205001378820124",
+        sourceA: "sheet1",
+        nameB: "苏州金螳螂园林绿化有限公司",
+        codeB: "913205007201889982",
+        sourceB: "第二批",
+        delivBatchB: "第五次",
+        relType: "人企关系",
+        relDesc: "相同法人",
+        sentence: "(A)苏州金螳螂建筑装饰股份有限公司与(B)苏州金螳螂园林绿化有限公司存在相同法人"
+      }
+    ];
+
+    const DATA_CROSS_BANK = [
+      { name: "万联能源集团有限公司", code: "91320100MA1W00H876", bankName: "招商银行 - 南京分行", firstDate: "2025-10-18", channel: "智能体生成-普惠专项", advice: "他行已授信客户，建议差异化信用贷产品切入" },
+      { name: "江苏硕世生物科技股份有限公司", code: "913212005603889234", bankName: "宁波银行 - 南京分行", firstDate: "2025-11-04", channel: "人工导表-重点专案", advice: "他行重点营销客户，近期有授信申请动态" },
+      { name: "南京浦口科学城建设发展有限公司", code: "91320111MA1UYCGKX9", bankName: "建设银行 - 江苏省分行", firstDate: "2025-08-20", channel: "智能体生成-基建专班", advice: "他行基本户存续，支持项目贷补充申请" },
+      { name: "一一体育文化(常州)有限公司", code: "91320400MA2B87C010", bankName: "中信银行 - 常州分行", firstDate: "2025-12-01", channel: "智能体生成-文旅专项", advice: "他行流贷存续中，建议结合经营流水授信" },
+      { name: "常州红星美凯龙家居集团股份有限公司", code: "913204001348882098", bankName: "工商银行 - 常州分行", firstDate: "2025-09-15", channel: "人工导表-大型民企", advice: "他行银团成员，建议开展供应链融资合围" }
+    ];
+
+    /* ── 页面状态管理 ── */
+    let currentTab = 0;
+    let filterKeyword = "";
+    let filterRelType = "ALL";
+    let filterRelDesc = "ALL";
+    let filterBatch = "ALL";
+    let currentPage = 1;
+    let pageSize = 10;
+
+    // 初始化运行
+    window.addEventListener("DOMContentLoaded", () => {
+      // 挂载控制台左侧侧边栏 (按照运维端约定方式调用 renderSidebar)
+      if (typeof renderSidebar === 'function') {
+        renderSidebar({ currentPage: 'collision-check' });
+      }
+      // 初始展示 Tab 0 与历史台账
+      renderWorkspace();
+      renderHistoryTable(TASK_HISTORY_LIST);
+    });
+
+    /* ── 切换选项卡 (完美联动 Metric-Card Tabs) ── */
+    function switchTab(tabIndex) {
+      currentTab = tabIndex;
+      document.querySelectorAll(".metric-tab-card").forEach((card, idx) => {
+        card.classList.toggle("active", idx === currentTab);
+      });
+      filterKeyword = "";
+      filterRelType = "ALL";
+      filterRelDesc = "ALL";
+      filterBatch = "ALL";
+      currentPage = 1;
+      renderWorkspace();
+    }
+
+    /* ── 核心视图渲染控制 ── */
+    function renderWorkspace() {
+      renderFilterBar();
+      renderTable();
+    }
+
+    /* ── 动态过滤工具条 ── */
+    function renderFilterBar() {
+      const container = document.getElementById("filterBarContainer");
+      if (currentTab === 0) {
+        container.innerHTML = `
+        <div class="filter-group-left">
+          <select class="filter-select" onchange="onFilterBatchChange(this.value)">
+            <option value="ALL">全部交付批次</option>
+            <option value="第三批">第三批</option>
+            <option value="第五次">第五次</option>
+            <option value="--">仅命中白名单(未交付)</option>
+          </select>
+        </div>
+        <div class="search-input-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <input type="text" placeholder="搜索存量企业名称或信用代码..." value="${filterKeyword}" oninput="onSearchInput(this.value)">
+        </div>
+      `;
+      } else if (currentTab === 1) {
+        container.innerHTML = `
+        <div class="filter-group-left">
+          <select class="filter-select" onchange="onFilterRelTypeChange(this.value)">
+            <option value="ALL">全部关系类型</option>
+            <option value="股权关系">股权关系</option>
+            <option value="交易关系">交易关系</option>
+            <option value="人企关系">人企关系</option>
+          </select>
+          <select class="filter-select" onchange="onFilterRelDescChange(this.value)">
+            <option value="ALL">全部关系描述</option>
+            <option value="股东">股东</option>
+            <option value="子公司">子公司</option>
+            <option value="供应商">供应商</option>
+            <option value="客户">客户</option>
+            <option value="相同法人">相同法人</option>
+            <option value="相同董监高">相同董监高</option>
+          </select>
+        </div>
+        <div class="search-input-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <input type="text" placeholder="搜索(A)存量或(B)白名单企业..." value="${filterKeyword}" oninput="onSearchInput(this.value)">
+        </div>
+      `;
+      } else {
+        container.innerHTML = `
+        <div class="filter-group-left">
+          <span style="font-size:13px;font-weight:600;color:var(--gray-700);">当前展示：营销平台平台内已交付重叠企业排查 (敏感保护模式)</span>
+        </div>
+        <div class="search-input-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <input type="text" placeholder="搜索存量企业名称..." value="${filterKeyword}" oninput="onSearchInput(this.value)">
+        </div>
+      `;
+      }
+    }
+
+    /* ── 表格内容动态构建与分页支持 ── */
+    function renderTable() {
+      const thead = document.getElementById("tableHead");
+      const tbody = document.getElementById("tableBody");
+
+      let fullList = [];
+      if (currentTab === 0) {
+        fullList = getFilteredDirectList();
+      } else if (currentTab === 1) {
+        fullList = getFilteredRelationList();
+      } else {
+        fullList = DATA_CROSS_BANK.filter(item => item.name.includes(filterKeyword));
+      }
+
+      const totalRecords = fullList.length;
+      const totalPages = Math.max(1, Math.ceil(totalRecords / pageSize));
+      if (currentPage > totalPages) currentPage = 1;
+      const startIdx = (currentPage - 1) * pageSize;
+      const pagedList = fullList.slice(startIdx, startIdx + pageSize);
+
+      if (currentTab === 0) {
+        thead.innerHTML = `
+        <tr>
+          <th style="width:50px;text-align:center;">序号</th>
+          <th>企业名称 (存量有贷户)</th>
+          <th>统一社会信用代码</th>
+          <th>原始来源</th>
+          <th>白名单批次</th>
+          <th>交付批次</th>
+          <th>状态判定</th>
+          <th style="width:140px;text-align:center;white-space:nowrap;">操作</th>
+        </tr>
+      `;
+        tbody.innerHTML = pagedList.map((item, idx) => {
+          const isDeliv = item.delivBatch !== "--";
+          const batchBadge = isDeliv
+            ? `<span class="badge-batch-hit">${item.delivBatch}</span>`
+            : `<span class="badge-batch-none">未生成交付</span>`;
+          return `
+          <tr>
+            <td style="text-align:center;color:var(--gray-500);font-weight:500;">${startIdx + idx + 1}</td>
+            <td>
+              <div class="ent-name-main">${item.name}</div>
+            </td>
+            <td><span class="ent-code-sub">${item.code}</span></td>
+            <td><span class="badge-source">${item.source}</span></td>
+            <td><span style="font-weight:500;color:var(--gray-800);">${item.whiteBatch}</span></td>
+            <td>${batchBadge}</td>
+            <td>
+              <span style="font-size:12px;color:${isDeliv ? '#047857' : 'var(--gray-400)'};font-weight:600;">
+                ${isDeliv ? '命中正式交付池' : '仅在基础白名单'}
+              </span>
+            </td>
+            <td style="text-align:center;white-space:nowrap;">
+              <button class="btn-action-secondary" style="height:30px;font-size:12px;padding:0 14px;white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;margin:0 auto;" onclick="viewEnterpriseDetail('${item.name}')">
+                查看企业画像
+              </button>
+            </td>
+          </tr>
+        `;
+        }).join("");
+      } else if (currentTab === 1) {
+        thead.innerHTML = `
+        <tr>
+          <th style="width:50px;text-align:center;">序号</th>
+          <th>（A）存量企业名称 &amp; 代码</th>
+          <th>（B）白名单/交付企业 &amp; 批次</th>
+          <th>关系类型</th>
+          <th>关系描述</th>
+          <th>系统标准关系描述短句</th>
+          <th style="width:140px;text-align:center;white-space:nowrap;">关系图谱</th>
+        </tr>
+      `;
+        tbody.innerHTML = pagedList.map((item, idx) => {
+          let relCls = "trade";
+          if (item.relType === "股权关系") relCls = "equity";
+          if (item.relType === "人企关系") relCls = "person";
+          return `
+          <tr>
+            <td style="text-align:center;color:var(--gray-500);font-weight:500;">${startIdx + idx + 1}</td>
+            <td>
+              <div class="ent-name-main">${item.nameA}</div>
+              <div class="ent-code-sub">${item.codeA} (${item.sourceA})</div>
+            </td>
+            <td>
+              <div class="ent-name-main" style="color:#047857;">${item.nameB}</div>
+              <div class="ent-code-sub">白名单: ${item.sourceB} / 交付批次: <b>${item.delivBatchB}</b></div>
+            </td>
+            <td><span class="tag-rel-type ${relCls}">${item.relType}</span></td>
+            <td><span class="pill-desc">${item.relDesc}</span></td>
+            <td>
+              <div class="rel-sentence-text">
+                (A)${item.nameA}是<span class="highlight-b">(B)${item.nameB}</span>的<b>${item.relDesc}</b>
+              </div>
+            </td>
+            <td style="text-align:center;white-space:nowrap;">
+              <button class="btn-action-secondary" style="height:30px;font-size:12px;padding:0 14px;white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;margin:0 auto;" onclick="viewRelationGraph('${item.nameA}', '${item.nameB}', '${item.relDesc}')">
+                查看关系图谱
+              </button>
+            </td>
+          </tr>
+        `;
+        }).join("");
+      } else {
+        thead.innerHTML = `
+        <tr>
+          <th style="width:50px;text-align:center;">序号</th>
+          <th>存量有贷户企业名称 &amp; 代码</th>
+          <th>重叠第三方金融机构</th>
+          <th>初次交付平台时间</th>
+          <th>平台交付渠道类型</th>
+          <th>智能运营优化策略建议</th>
+          <th style="width:140px;text-align:center;white-space:nowrap;">操作</th>
+        </tr>
+      `;
+        tbody.innerHTML = pagedList.map((item, idx) => `
+        <tr>
+          <td style="text-align:center;color:var(--gray-500);font-weight:500;">${startIdx + idx + 1}</td>
+          <td>
+            <div class="ent-name-main">${item.name}</div>
+            <div class="ent-code-sub">${item.code}</div>
+          </td>
+          <td><span style="font-weight:600;color:var(--gray-900);">${item.bankName}</span></td>
+          <td><span style="color:var(--gray-500);font-size:13px;">${item.firstDate}</span></td>
+          <td><span class="pill-desc" style="background:#f0fdf4;color:#047857;border-color:#a7f3d0;">${item.channel}</span></td>
+          <td><span style="font-size:13px;color:var(--gray-800);"> 建议：${item.advice}</span></td>
+          <td style="text-align:center;white-space:nowrap;">
+            <button class="btn-action-secondary" style="height:30px;font-size:12px;padding:0 14px;white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;margin:0 auto;" onclick="viewEnterpriseDetail('${item.name}')">
+              查看企业画像
+            </button>
+          </td>
+        </tr>
+      `).join("");
+      }
+
+      renderPagination(totalRecords, totalPages);
+    }
+
+    /* ── 平台统一样式分页器渲染与控制 ── */
+    function renderPagination(totalRecords, totalPages) {
+      const paginationEl = document.getElementById("pagination");
+      if (!paginationEl) return;
+
+      const startNum = totalRecords === 0 ? 0 : (currentPage - 1) * pageSize + 1;
+      const endNum = Math.min(currentPage * pageSize, totalRecords);
+
+      const infoEl = document.getElementById("paginationInfo");
+      if (infoEl) {
+        infoEl.textContent = `显示 ${startNum} 到 ${endNum} 条，共 ${totalRecords} 条记录`;
+      }
+
+      const controlsEl = document.getElementById("paginationControls");
+      if (!controlsEl) return;
+
+      let buttonsHtml = `
+        <button class="btn btn-ghost btn-sm" ${currentPage === 1 ? 'disabled' : ''} onclick="onPageChange(${currentPage - 1})">上一页</button>
+      `;
+
+      for (let i = 1; i <= totalPages; i++) {
+        if (i === currentPage) {
+          buttonsHtml += `<button class="btn btn-primary btn-sm page-num">${i}</button>`;
+        } else {
+          buttonsHtml += `<button class="btn btn-ghost btn-sm page-num" onclick="onPageChange(${i})">${i}</button>`;
+        }
+      }
+
+      buttonsHtml += `
+        <button class="btn btn-ghost btn-sm" ${currentPage === totalPages || totalPages === 0 ? 'disabled' : ''} onclick="onPageChange(${currentPage + 1})">下一页</button>
+      `;
+
+      controlsEl.innerHTML = buttonsHtml;
+    }
+
+    function onPageChange(page) {
+      if (page < 1) return;
+      currentPage = page;
+      renderTable();
+    }
+
+    function onPageSizeChange(size) {
+      pageSize = parseInt(size, 10) || 10;
+      currentPage = 1;
+      renderTable();
+    }
+
+    /* ── 筛选助手函数 ── */
+    function getFilteredDirectList() {
+      return DATA_DIRECT_MATCH.filter(item => {
+        const matchKey = (item.name + item.code).toLowerCase().includes(filterKeyword.toLowerCase());
+        const matchBatch = filterBatch === "ALL" || item.delivBatch === filterBatch;
+        return matchKey && matchBatch;
+      });
+    }
+
+    function getFilteredRelationList() {
+      return DATA_RELATION_MATCH.filter(item => {
+        const matchKey = (item.nameA + item.nameB + item.codeA).toLowerCase().includes(filterKeyword.toLowerCase());
+        const matchType = filterRelType === "ALL" || item.relType === filterRelType;
+        const matchDesc = filterRelDesc === "ALL" || item.relDesc === filterRelDesc;
+        return matchKey && matchType && matchDesc;
+      });
+    }
+
+    function onSearchInput(val) {
+      filterKeyword = val.trim();
+      renderTable();
+    }
+    function onFilterBatchChange(val) {
+      filterBatch = val;
+      renderTable();
+    }
+    function onFilterRelTypeChange(val) {
+      filterRelType = val;
+      renderTable();
+    }
+    function onFilterRelDescChange(val) {
+      filterRelDesc = val;
+      renderTable();
+    }
+
+    /* ── 历史排查任务台账控制：全景管理与快速切换 ── */
+    function openTaskHistoryModal() {
+      document.getElementById("taskHistoryModal").classList.add("open");
+    }
+    function closeTaskHistoryModal() {
+      document.getElementById("taskHistoryModal").classList.remove("open");
+    }
+
+    function renderHistoryTable(list) {
+      const tbody = document.getElementById("historyTableBody");
+      tbody.innerHTML = list.map(item => `
+      <tr>
+        <td>
+          <div style="font-weight:600;color:var(--gray-900);">${item.title}</div>
+          <div style="font-size:12px;color:var(--gray-400);font-family:monospace;">ID: ${item.id}</div>
+        </td>
+        <td>
+          <span class="task-bank-badge">${item.bank}</span>
+        </td>
+        <td><b>${item.total.toLocaleString()}</b> 家</td>
+        <td>
+          <span style="color:#047857;font-weight:600;">${item.direct}</span>
+          <span style="font-size:12px;color:var(--gray-400);">(${item.directRatio})</span>
+        </td>
+        <td><span style="color:#2563eb;font-weight:600;">${item.relation} 对</span></td>
+        <td><span style="color:#d97706;font-weight:600;">${item.cross} 家</span></td>
+        <td><span style="font-size:12px;color:var(--gray-500);">${item.time}</span></td>
+        <td style="text-align:center;">
+          <div style="display:inline-flex;align-items:center;justify-content:center;gap:8px;">
+            <button class="btn-action-primary" style="height:30px;font-size:12px;padding:0 12px;" onclick="loadHistoryTaskReport('${item.id}')">
+              加载此报告
+            </button>
+            <button class="btn-action-secondary" style="height:30px;font-size:12px;padding:0 12px;" onclick="exportExcelReport()">
+              导出 Excel
+            </button>
+          </div>
+        </td>
+      </tr>
+    `).join("");
+    }
+
+    function filterHistoryTable(kw) {
+      const term = kw.trim().toLowerCase();
+      const filtered = TASK_HISTORY_LIST.filter(item =>
+        item.title.toLowerCase().includes(term) || item.bank.toLowerCase().includes(term)
+      );
+      renderHistoryTable(filtered);
+    }
+
+    function loadHistoryTaskReport(taskId) {
+      const target = TASK_HISTORY_LIST.find(i => i.id === taskId);
+      if (!target) return;
+      document.getElementById("currentTaskNameDisplay").textContent = target.title;
+      document.getElementById("currentTaskBankDisplay").innerHTML = `
+      <svg style="width:13px;height:13px;color:var(--brand);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22V12h6v10"/><path d="M8 6h.01M16 6h.01M12 6h.01M8 10h.01M16 10h.01M12 10h.01"/></svg>
+      ${target.bank}
+    `;
+      document.getElementById("currentTaskMetaText").innerHTML = `
+      <span class="hero-stat-pill">
+        <svg style="width:14px;height:14px;color:var(--brand);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        全量导入存量有贷户：<b id="kpiTotalCount">${target.total.toLocaleString()}</b> 家
+      </span>
+      <span class="hero-stat-pill">
+        <svg style="width:14px;height:14px;color:var(--gray-500);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        任务完成时间：${target.time}
+      </span>
+    `;
+
+      // 联动看板块与页签数值
+      document.getElementById("kpiDirectMatchCount").textContent = target.direct.toLocaleString();
+      document.getElementById("kpiRelationMatchCount").textContent = target.relation.toLocaleString();
+      document.getElementById("kpiCrossBankCount").textContent = target.cross.toLocaleString();
+
+      closeTaskHistoryModal();
+      showToast(`已成功加载排查任务报告：「${target.title}」`);
+    }
+
+    /* ── 弹窗控制：新建排查任务 ── */
+    function openNewTaskModal() {
+      const modal = document.getElementById("newTaskModal");
+      if (modal) {
+        modal.classList.add("open");
+        const progressWrap = document.getElementById("taskProgressWrap");
+        if (progressWrap) progressWrap.style.display = "none";
+        const startBtn = document.getElementById("startTaskBtn");
+        if (startBtn) {
+          startBtn.disabled = false;
+          startBtn.textContent = "开始离线撞库匹配";
+        }
+      }
+    }
+    function closeNewTaskModal() {
+      const modal = document.getElementById("newTaskModal");
+      if (modal) modal.classList.remove("open");
+    }
+
+    function simulateFileUpload() {
+      const textEl = document.getElementById("uploadFileText");
+      if (textEl) {
+        textEl.innerHTML = `已选文件：<b>平安存量有贷户企业撞库白名单&amp;交付名单.xlsx</b> (共 7,094 行)`;
+        textEl.style.color = "#047857";
+      }
+    }
+
+    function runSimulationTask() {
+      const btn = document.getElementById("startTaskBtn");
+      const progressWrap = document.getElementById("taskProgressWrap");
+      const bar = document.getElementById("taskProgressBar");
+      const percent = document.getElementById("taskProgressPercent");
+      const label = document.getElementById("taskProgressLabel");
+
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = "正在计算图谱交集...";
+      }
+      if (progressWrap) progressWrap.style.display = "block";
+
+      let p = 0;
+      const interval = setInterval(() => {
+        p += 20;
+        if (bar) bar.style.width = p + "%";
+        if (percent) percent.textContent = p + "%";
+        if (label) {
+          if (p === 40) label.textContent = "完成统一社会信用代码直配... 命中 312 家";
+          if (p === 80) label.textContent = "深入分析 1-Hop 关系图谱... 发现 1,571 对关联";
+          if (p >= 100) {
+            clearInterval(interval);
+            label.textContent = "撞库任务全量比对成功！";
+            setTimeout(() => {
+              closeNewTaskModal();
+              showToast("新任务运行成功！已自动向历史台账增加新记录并刷新看板");
+            }, 600);
+          }
+        }
+      }, 300);
+    }
+
+    /* ── 一键导出满足行内标准规范的报表（纯原生无依赖，本地高速下载） ── */
+    function exportExcelReport() {
+      showToast("正在生成多表工作簿：平安存量有贷户撞库排查报告.csv...");
+
+      setTimeout(() => {
+        let csvContent = "\uFEFF";
+        csvContent += "=== 1. 撞库结果 (本行营销名单重叠核查) ===\n";
+        csvContent += "企业名称,统一社会信用代码,来源,白名单批次,交付批次\n";
+        DATA_DIRECT_MATCH.forEach(i => {
+          csvContent += `"${i.name}","${i.code}","${i.source}","${i.whiteBatch}","${i.delivBatch}"\n`;
+        });
+        csvContent += "\n=== 2. 关联关系排查 ===\n";
+        csvContent += "（A）企业名称,统一社会信用代码,来源,（B）白名单企业名称,白名单企业统一社会信用代码,白名单企业来源,白名单企业交付批次,关系类型,关系描述\n";
+        DATA_RELATION_MATCH.forEach(i => {
+          csvContent += `"${i.nameA}","${i.codeA}","${i.sourceA}","${i.nameB}","${i.codeB}","${i.sourceB}","${i.delivBatchB}","${i.relType}","${i.sentence}"\n`;
+        });
+        csvContent += "\n=== 3. 营销平台平台内已交付重叠企业排查 ===\n";
+        csvContent += "存量企业名称,统一信用代码,重叠第三方金融机构,首次交付平台时间,交付营销渠道,智能优化建议\n";
+        DATA_CROSS_BANK.forEach(i => {
+          csvContent += `"${i.name}","${i.code}","${i.bankName}","${i.firstDate}","${i.channel}","${i.advice}"\n`;
+        });
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+        link.setAttribute("href", url);
+        link.setAttribute("download", "平安存量有贷户撞库排查综合分析报告_20260303.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        showToast("Excel 报表已成功导出并开始下载！");
+      }, 300);
+    }
+
+    /* ── 交互小提示函数 ── */
+    function viewEnterpriseDetail(name) {
+      showToast("正在打开存量企业全息图谱画像：" + name);
+    }
+    function viewRelationGraph(nameA, nameB, relDesc) {
+      showToast(`已展开双企关系谱：(A)${nameA} ━━ [${relDesc}] ━━ (B)${nameB}`);
+    }
+    function showToast(msg) {
+      const el = document.getElementById("toastMsg");
+      el.textContent = msg;
+      el.style.display = "block";
+      setTimeout(() => { el.style.display = "none"; }, 3500);
+    }
+  </script>
+</body>
+
+</html>

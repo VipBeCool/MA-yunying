@@ -78,10 +78,22 @@ function getNavConfig() {
   sections.push({
     label: '机构营销',
     items: [
-      { id: 'customers', label: '客户名单', icon: 'users', href: 'customers.html' },
+      { id: 'customers', label: '营销名单', icon: 'users', href: 'customers.html' },
       { id: 'allocation', label: '名单分配', icon: 'shuffle', href: 'allocation.html' },
-      { id: 'report', label: '营销跟踪', icon: 'chart', href: 'report.html' },
       { id: 'team', label: '机构业绩', icon: 'team', href: 'team.html' },
+      { id: 'report', label: '营销跟踪', icon: 'chart', href: 'report.html' },
+    ],
+  });
+
+  // ── 贷后管理（征信资产赋能与风险闭环） ──
+  sections.push({
+    label: '贷后管理',
+    items: [
+      { id: 'postloan-dashboard', label: '贷后监控看板', icon: 'chart', href: 'postloan-dashboard.html' },
+      { id: 'customer-pool', label: '机构客户池', icon: 'users', href: 'customer-pool.html' },
+      { id: 'credit-monitoring', label: '信贷余额监控', icon: 'trending_up', href: 'credit-monitoring.html' },
+      { id: 'risk-warning', label: '风险预警', icon: 'alert', href: 'risk-warning.html' },
+      { id: 'renewal-list', label: '潜在续贷/转贷商机', icon: 'refresh', href: 'renewal-list.html' },
     ],
   });
 
@@ -89,9 +101,11 @@ function getNavConfig() {
   sections.push({
     label: '运营工具',
     items: [
+      { id: 'agents', label: '智能体管理', icon: 'bot', href: 'agents.html' },
       { id: 'select', label: '智能探客', icon: 'target', href: 'select.html' },
       { id: 'batch-enrich', label: '批量画像查询', icon: 'clipboard', href: 'batch-enrich.html' },
-      { id: 'agents', label: '智能体管理', icon: 'bot', href: 'agents.html' },
+      { id: 'deliveries', label: '名单交付', icon: 'package', href: 'deliveries.html' },
+      { id: 'collision-check', label: '存量撞库排查', icon: 'filecheck', href: 'collision-check.html' },
     ],
   });
 
@@ -116,16 +130,32 @@ function getNavConfig() {
   return sections;
 }
 
+/* ── 页面别名映射表（确保子页面/历史页面能够稳定高亮父级菜单） ── */
+const PAGE_ALIASES = {
+  'smart-search': 'select',
+  'select-filter': 'select',
+  'select-trade': 'select',
+  'select-park': 'select',
+  'select-chain': 'select',
+  'select-newbiz': 'select',
+  'select-map': 'select',
+  'distribution': 'allocation',
+  'rules': 'agents',
+  'products': 'agents',
+  'analytics': 'report',
+};
+
 /* ── 渲染一个导航项 ── */
 function renderNavItem(item, currentPage) {
-  const isActive = currentPage === item.id;
+  const targetPage = PAGE_ALIASES[currentPage] || currentPage;
+  const isActive = targetPage === item.id;
 
   if (item.children && item.children.length) {
-    const hasActiveChild = item.children.some(c => currentPage === c.id);
+    const hasActiveChild = item.children.some(c => targetPage === c.id);
     const openClass = (hasActiveChild) ? 'open' : '';
 
     const childrenHtml = item.children.map(child => {
-      const ca = currentPage === child.id;
+      const ca = targetPage === child.id;
       return `<a href="${child.href}" class="nav-child ${ca ? 'active' : ''}" data-id="${child.id}">${child.label}</a>`;
     }).join('');
 

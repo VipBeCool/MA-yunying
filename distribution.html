@@ -31,29 +31,29 @@
             <div class="tab-content active" id="tab0">
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">🔒 客户去重规则</h3>
+                        <h3 class="card-title">客户排他保护与去重规则</h3>
                     </div>
                     <div style="padding: 16px; background: #f5f5f5; border-radius: 8px; margin-bottom: 16px;">
                         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
                             <div
                                 style="padding: 16px; background: white; border-radius: 8px; border: 1px solid #e8e8e8;">
                                 <div style="font-size: 24px; font-weight: 600; color: var(--brand);">90天</div>
-                                <div style="font-size: 13px; color: #8c8c8c;">同机构冷却期</div>
-                                <div style="font-size: 12px; color: #595959; margin-top: 8px;">同一客户推送给同一机构后，90天内不再推送
+                                <div style="font-size: 13px; color: #8c8c8c;">同机构保护期</div>
+                                <div style="font-size: 12px; color: #595959; margin-top: 8px;">同一客户推送给同一机构后，90天内处于独家保护
                                 </div>
                             </div>
                             <div
                                 style="padding: 16px; background: white; border-radius: 8px; border: 1px solid #e8e8e8;">
                                 <div style="font-size: 24px; font-weight: 600; color: var(--brand);">30天</div>
-                                <div style="font-size: 13px; color: #8c8c8c;">跨机构冷却期</div>
+                                <div style="font-size: 13px; color: #8c8c8c;">跨机构排他期</div>
                                 <div style="font-size: 12px; color: #595959; margin-top: 8px;">客户被任一机构触达后，30天内不推给其他机构
                                 </div>
                             </div>
                             <div
                                 style="padding: 16px; background: white; border-radius: 8px; border: 1px solid #e8e8e8;">
                                 <div style="font-size: 24px; font-weight: 600; color: #faad14;">180天</div>
-                                <div style="font-size: 13px; color: #8c8c8c;">拒绝冷却期</div>
-                                <div style="font-size: 12px; color: #595959; margin-top: 8px;">明确拒绝的客户，180天后才可再次推送</div>
+                                <div style="font-size: 13px; color: #8c8c8c;">无意向保护期</div>
+                                <div style="font-size: 12px; color: #595959; margin-top: 8px;">明确暂无融资意向的客户，180天后方可再次激活</div>
                             </div>
                         </div>
                     </div>
@@ -69,10 +69,10 @@
                     <div class="stat-card warning">
                         <div class="stat-label">待重分配</div>
                         <div class="stat-value">1,234<span class="stat-suffix">家</span></div>
-                        <div class="stat-trend">冷却期已过</div>
+                        <div class="stat-trend">保护期届满</div>
                     </div>
                     <div class="stat-card primary">
-                        <div class="stat-label">冷却中</div>
+                        <div class="stat-label">流转跟进中</div>
                         <div class="stat-value">856<span class="stat-suffix">家</span></div>
                         <div class="stat-trend">30天内入库</div>
                     </div>

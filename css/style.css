@@ -3,8 +3,6 @@
    设计规范：与机构端统一设计语言，翡翠绿主色区分身份
    ===================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-
 /* =====================================================
    CSS 变量
    ===================================================== */
@@ -1209,23 +1207,32 @@ select.form-control {
 .modal-xl  { max-width: 940px; }
 
 /* =====================================================
-   抽屉弹窗 (Drawer)
+   抽屉弹窗 (Drawer) — 全平台统一毛玻璃遮罩规范
    ===================================================== */
 .drawer-overlay {
-  position: fixed; inset: 0;
-  background: rgba(15,23,42,0.45);
-  backdrop-filter: blur(3px);
-  z-index: 1000;
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 9999;
   display: flex;
   justify-content: flex-end;
   opacity: 0;
   visibility: hidden;
+  pointer-events: none;
   transition: opacity var(--duration-base) var(--ease),
               visibility var(--duration-base) var(--ease);
+  overscroll-behavior: contain;
 }
-.drawer-overlay.show {
-  opacity: 1;
-  visibility: visible;
+.drawer-overlay.show,
+.drawer-overlay.active {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  display: flex !important;
 }
 .drawer-box {
   background: var(--bg-card);
@@ -1237,8 +1244,11 @@ select.form-control {
   box-shadow: -10px 0 40px rgba(0,0,0,0.15);
   transform: translateX(100%);
   transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+  z-index: 10000;
+  overscroll-behavior: contain;
 }
-.drawer-overlay.show .drawer-box {
+.drawer-overlay.show .drawer-box,
+.drawer-overlay.active .drawer-box {
   transform: translateX(0);
 }
 

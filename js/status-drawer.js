@@ -348,13 +348,15 @@ function injectDrawerStyles() {
   style.textContent = `
     .drawer-overlay {
       position: fixed; inset: 0;
-      background: rgba(0,0,0,0.45);
-      z-index: 1000;
+      background: rgba(15,23,42,0.45);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 9999;
       display: none;
       justify-content: flex-end;
-      backdrop-filter: blur(3px);
+      overscroll-behavior: contain;
     }
-    .drawer-overlay.show { display: flex; animation: fadeIn 0.2s ease; }
+    .drawer-overlay.show, .drawer-overlay.active { display: flex; animation: fadeIn 0.2s ease; }
     .drawer-panel {
       position: fixed;
       right: -480px;
@@ -362,13 +364,14 @@ function injectDrawerStyles() {
       bottom: 0;
       width: 440px;
       background: var(--bg-card, #fff);
-      z-index: 1001;
-      box-shadow: -8px 0 40px rgba(0,0,0,0.12);
+      z-index: 10000;
+      box-shadow: -8px 0 40px rgba(0,0,0,0.18);
       transition: right 0.3s cubic-bezier(0.4,0,0.2,1);
       display: flex;
       flex-direction: column;
+      overscroll-behavior: contain;
     }
-    .drawer-panel.show { right: 0; }
+    .drawer-panel.show, .drawer-panel.active { right: 0; }
     .drawer-header {
       padding: 22px 24px 18px;
       border-bottom: 1px solid var(--border, #f3f4f6);

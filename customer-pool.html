@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
-  <title>客户池管理 - 运营管控台</title>
+  <title>机构客户池 - 运营管控台</title>
     <link rel="stylesheet" href="css/style.css?v=1783867207">
     <style>
         
@@ -17,88 +17,42 @@
         /* 统计卡片区 */
         .pool-stats {
             display: grid;
-            grid-template-columns: repeat(6, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 16px;
             margin-bottom: 24px;
         }
 
         .stat-card {
             background: #fff;
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-            border-left: 4px solid #e8e8e8;
-            transition: all 0.3s;
+            border-radius: 8px;
+            padding: 16px 20px;
+            text-align: left;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            transition: all 0.2s;
         }
 
         .stat-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            border-color: #cbd5e1;
         }
 
         .stat-card .stat-value {
-            font-size: 28px;
+            font-size: 26px;
             font-weight: 700;
             margin-bottom: 4px;
+            color: #0f172a;
         }
 
         .stat-card .stat-label {
-            font-size: 13px;
-            color: #8c8c8c;
+            font-size: 12.5px;
+            color: #64748b;
         }
 
         .stat-card .stat-trend {
-            font-size: 12px;
+            font-size: 11.5px;
             margin-top: 6px;
-        }
-
-        .stat-card.total {
-            border-left-color: var(--brand);
-        }
-
-        .stat-card.total .stat-value {
-            color: var(--brand);
-        }
-
-        .stat-card.available {
-            border-left-color: var(--brand);
-        }
-
-        .stat-card.available .stat-value {
-            color: var(--brand);
-        }
-
-        .stat-card.marketing {
-            border-left-color: #fa8c16;
-        }
-
-        .stat-card.marketing .stat-value {
-            color: #fa8c16;
-        }
-
-        .stat-card.cooling {
-            border-left-color: #722ed1;
-        }
-
-        .stat-card.cooling .stat-value {
-            color: #722ed1;
-        }
-
-        .stat-card.loaned {
-            border-left-color: #13c2c2;
-        }
-
-        .stat-card.loaned .stat-value {
-            color: #13c2c2;
-        }
-
-        .stat-card.blacklist {
-            border-left-color: #f5222d;
-        }
-
-        .stat-card.blacklist .stat-value {
-            color: #f5222d;
+            color: #94a3b8;
         }
 
         /* 筛选栏 */
@@ -115,7 +69,7 @@
         }
 
         .filter-bar select,
-        .filter-bar input {
+        .filter-bar input:not([type="checkbox"]):not([type="radio"]) {
             padding: 8px 12px;
             border: 1px solid #d9d9d9;
             border-radius: 6px;
@@ -125,7 +79,8 @@
         }
 
         .filter-bar input[type="text"] {
-            min-width: 200px;
+            width: 320px;
+            min-width: 280px;
         }
 
         .filter-bar .filter-actions {
@@ -134,112 +89,165 @@
             gap: 8px;
         }
 
-        /* 状态标签 */
-        .pool-status {
-            display: inline-flex;
-            align-items: center;
-            padding: 3px 10px;
-            border-radius: 10px;
-            font-size: 12px;
+        /* 客户来源文本 */
+        .source-name {
+            font-size: 13px;
+            color: #334155;
             font-weight: 500;
-            gap: 4px;
         }
 
-        .pool-status::before {
-            content: '';
+        /* 平台服务胶囊标签（重构：统一浅色基底 + 微状态圆点，消除五颜六色的视觉杂乱） */
+        .service-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #334155;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            line-height: 1.4;
+            white-space: nowrap;
+        }
+        .service-dot {
             width: 6px;
             height: 6px;
             border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .service-dot.dot-marketing {
+            background: #2563eb;
+        }
+        .service-dot.dot-monitor {
+            background: #16a34a;
+        }
+        .service-dot.dot-risk {
+            background: #ea580c;
         }
 
-        .pool-status.s-available {
-            background: #f6ffed;
-            color: var(--brand);
+        /* 多选下拉控件样式 */
+        .multiselect-container {
+            position: relative;
+            display: inline-block;
+        }
+        .multiselect-trigger {
+            height: 34px;
+            padding: 0 12px;
+            border: 1px solid #d9d9d9;
+            border-radius: 6px;
+            background: #fff;
+            font-size: 13px;
+            color: #334155;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            min-width: 145px;
+            transition: all 0.2s;
+            box-sizing: border-box;
+        }
+        .multiselect-trigger:hover {
+            border-color: var(--brand);
+        }
+        .multiselect-dropdown {
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            z-index: 100;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            box-shadow: 0 10px 20px -5px rgba(15, 23, 42, 0.1), 0 4px 6px -2px rgba(15, 23, 42, 0.05);
+            padding: 6px;
+            min-width: 145px;
+            box-sizing: border-box;
+        }
+        .multiselect-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 10px;
+            font-size: 13px;
+            color: #1e293b;
+            border-radius: 6px;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.15s ease;
+            white-space: nowrap;
+        }
+        .multiselect-item:hover {
+            background: #f1f5f9;
+            color: #0f172a;
+        }
+        .multiselect-item input[type="checkbox"] {
+            width: 15px !important;
+            height: 15px !important;
+            min-width: 15px !important;
+            max-width: 15px !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            border: 1px solid #cbd5e1 !important;
+            border-radius: 3px !important;
+            cursor: pointer;
+            accent-color: var(--brand);
+            flex-shrink: 0;
         }
 
-        .pool-status.s-available::before {
-            background: var(--brand);
+        /* 导入存量客户弹窗 — 统一毛玻璃遮罩规范 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.45);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
         }
-
-        .pool-status.s-locked {
-            background: #fff7e6;
-            color: #fa8c16;
+        .modal-overlay.active,
+        .modal-overlay.show {
+            display: flex !important;
+            opacity: 1 !important;
+            visibility: visible !important;
         }
-
-        .pool-status.s-locked::before {
-            background: #fa8c16;
+        .modal-box {
+            background: #fff;
+            border-radius: 12px;
+            width: 600px;
+            max-width: 92vw;
+            box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.18), 0 8px 10px -6px rgba(15, 23, 42, 0.1);
+            overflow: hidden;
+            animation: modalFadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+            border: 1px solid #e2e8f0;
         }
-
-        .pool-status.s-assigned {
-            background: #e6f7ff;
-            color: var(--brand);
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.95) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
         }
-
-        .pool-status.s-assigned::before {
-            background: var(--brand);
+        .modal-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fafbfc;
         }
-
-        .pool-status.s-contacting {
-            background: #fff0f6;
-            color: #eb2f96;
+        .modal-body {
+            padding: 20px 24px;
         }
-
-        .pool-status.s-contacting::before {
-            background: #eb2f96;
-        }
-
-        .pool-status.s-interested {
-            background: #f9f0ff;
-            color: #722ed1;
-        }
-
-        .pool-status.s-interested::before {
-            background: #722ed1;
-        }
-
-        .pool-status.s-credited {
-            background: #e6fffb;
-            color: #13c2c2;
-        }
-
-        .pool-status.s-credited::before {
-            background: #13c2c2;
-        }
-
-        .pool-status.s-loaned {
-            background: #d9f7be;
-            color: #389e0d;
-        }
-
-        .pool-status.s-loaned::before {
-            background: #389e0d;
-        }
-
-        .pool-status.s-rejected {
-            background: #fff1f0;
-            color: #f5222d;
-        }
-
-        .pool-status.s-rejected::before {
-            background: #f5222d;
-        }
-
-        .pool-status.s-cooling {
-            background: #efdbff;
-            color: #722ed1;
-        }
-
-        .pool-status.s-cooling::before {
-            background: #722ed1;
-        }
-
-        .pool-status.s-blacklisted {
-            background: #ffa39e;
-            color: #a8071a;
-        }
-
-        .pool-status.s-blacklisted::before {
-            background: #a8071a;
+        .modal-footer {
+            padding: 14px 24px;
+            background: #fafbfc;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
         }
 
         /* 表格增强 */
@@ -277,74 +285,161 @@
 
         .region-tag {
             display: inline-block;
-            padding: 2px 8px;
-            background: #f0f5ff;
-            color: #2f54eb;
+            padding: 1px 6px;
+            background: #f1f5f9;
+            color: #475569;
             border-radius: 4px;
-            font-size: 11px;
+            font-size: 11.5px;
+            border: 1px solid #e2e8f0;
             margin: 1px 2px;
         }
 
         .inst-tag {
             display: inline-block;
             padding: 2px 8px;
-            background: #fff7e6;
-            color: #d48806;
+            background: #f8fafc;
+            color: #1e293b;
             border-radius: 4px;
             font-size: 12px;
+            font-weight: 500;
+            border: 1px solid #e2e8f0;
+        }
+
+        /* 管客机构多头折叠与深色 Tooltip 气泡 */
+        .inst-cell-wrap {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .inst-badge-count {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11.5px;
+            font-weight: 600;
+            color: #0284c7;
+            background: #e0f2fe;
+            padding: 1px 6px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .inst-cell-wrap:hover .inst-badge-count {
+            background: #bae6fd;
+            color: #0369a1;
+        }
+
+        .inst-popover {
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%) translateY(4px);
+            background: #181c28;
+            color: #ffffff;
+            font-size: 12px;
+            line-height: 1.8;
+            padding: 8px 14px;
+            border-radius: 6px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
+            white-space: nowrap;
+            z-index: 999;
+            pointer-events: none;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s;
+        }
+
+        .inst-popover::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 5px;
+            border-style: solid;
+            border-color: #181c28 transparent transparent transparent;
+        }
+
+        .inst-cell-wrap:hover .inst-popover {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
         }
 
         .cooling-info {
             font-size: 12px;
-            color: #722ed1;
+            color: #64748b;
         }
 
         .cooling-info .days-left {
-            font-weight: 600;
+            font-weight: 500;
+            color: #475569;
         }
 
         .assign-count {
-            font-weight: 600;
-            color: #595959;
+            font-weight: 500;
+            color: #334155;
         }
 
         .reject-count {
-            color: #f5222d;
+            color: #94a3b8;
             font-size: 12px;
         }
 
-        /* 详情抽屉 */
+        .reject-count.has-reject {
+            color: #b91c1c;
+            font-weight: 500;
+        }
+
+        /* 详情抽屉统一遮罩规范 (与营销名单 customers.html 统一) */
         .drawer-overlay {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.45);
-            z-index: 1000;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(15, 23, 42, 0.45);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.25s ease, visibility 0.25s ease;
+            overscroll-behavior: contain;
+            touch-action: none;
         }
 
-        .drawer-overlay.active {
-            display: block;
+        .drawer-overlay.active,
+        .drawer-overlay.show {
+            display: block !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+            pointer-events: auto !important;
         }
 
         .drawer {
             position: fixed;
             top: 0;
-            right: -520px;
-            width: 520px;
-            height: 100%;
+            right: -660px;
+            width: 620px;
+            max-width: 90vw;
+            height: 100vh;
             background: #fff;
-            z-index: 1001;
-            transition: right 0.3s ease;
-            box-shadow: -4px 0 24px rgba(0, 0, 0, 0.15);
+            z-index: 10000;
+            transition: right 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: -6px 0 36px rgba(0, 0, 0, 0.18);
             display: flex;
             flex-direction: column;
+            overscroll-behavior: contain;
         }
 
-        .drawer.active {
-            right: 0;
+        .drawer.active,
+        .drawer.show {
+            right: 0 !important;
         }
 
         .drawer-header {
@@ -523,81 +618,77 @@
         <main class="main-content anim-fade-in">
             <div class="page-header" style="display:flex;justify-content:space-between;align-items:center;">
                 <div>
-                    <h2>客户池管理</h2>
-                    <div class="breadcrumb">运营管控台 / 客户池管理</div>
+                    <h2>机构客户池</h2>
+                    <div class="breadcrumb">运营管控台 / 贷后管理 / 机构客户池</div>
                 </div>
                 <div style="display:flex;gap:10px;">
-                    <button class="btn btn-default" onclick="showCoolingConfig()">⏱ 冷却期配置</button>
-                    <button class="btn btn-default" onclick="exportPool()">📥 导出</button>
-                </div>
-            </div>
-
-            <!-- 统计卡片 -->
-            <div class="pool-stats">
-                <div class="stat-card total">
-                    <div class="stat-value">324,186</div>
-                    <div class="stat-label">总入池</div>
-                    <div class="stat-trend" style="color:var(--brand);">↑ 1,240 今日新增</div>
-                </div>
-                <div class="stat-card available">
-                    <div class="stat-value">187,432</div>
-                    <div class="stat-label">可分配</div>
-                    <div class="stat-trend" style="color:var(--brand);">占 57.8%</div>
-                </div>
-                <div class="stat-card marketing">
-                    <div class="stat-value">52,318</div>
-                    <div class="stat-label">营销中</div>
-                    <div class="stat-trend" style="color:#fa8c16;">含已分配 + 营销中 + 意向中</div>
-                </div>
-                <div class="stat-card cooling">
-                    <div class="stat-value">31,056</div>
-                    <div class="stat-label">冷却中</div>
-                    <div class="stat-trend" style="color:#722ed1;">预计7日内释放 4,200</div>
-                </div>
-                <div class="stat-card loaned">
-                    <div class="stat-value">48,180</div>
-                    <div class="stat-label">已放款</div>
-                    <div class="stat-trend" style="color:#13c2c2;">累计 ¥23.7亿</div>
-                </div>
-                <div class="stat-card blacklist">
-                    <div class="stat-value">5,200</div>
-                    <div class="stat-label">黑名单</div>
-                    <div class="stat-trend" style="color:#f5222d;">占 1.6%</div>
+                    <button class="btn btn-default" onclick="exportPool()">导出</button>
+                    <button class="btn btn-default" onclick="openImportHistoryModal()">导入记录</button>
+                    <button class="btn btn-primary" onclick="openImportModal()">+ 导入存量客户</button>
                 </div>
             </div>
 
             <!-- 筛选栏 -->
             <div class="filter-bar">
-                <select id="filterStatus">
-                    <option value="">全部状态</option>
-                    <option value="AVAILABLE">可分配</option>
-                    <option value="LOCKED">已锁定</option>
-                    <option value="ASSIGNED">已分配</option>
-                    <option value="CONTACTING">营销中</option>
-                    <option value="INTERESTED">意向中</option>
-                    <option value="CREDITED">已授信</option>
-                    <option value="LOAN_SUCCESS">已放款</option>
-                    <option value="COOLING">冷却中</option>
-                    <option value="BLACKLISTED">黑名单</option>
+                <select id="filterInst">
+                    <option value="">管客机构</option>
+                    <option value="江苏银行">江苏银行</option>
+                    <option value="南京银行">南京银行</option>
+                    <option value="苏州农商行">苏州农商行</option>
+                    <option value="常州农商行">常州农商行</option>
+                    <option value="苏州银行">苏州银行</option>
                 </select>
+                <select id="filterMultiHead">
+                    <option value="">管客形态</option>
+                    <option value="MULTI">多头管客（≥2家）</option>
+                    <option value="SINGLE">单一管客（1家）</option>
+                </select>
+                <select id="filterSource">
+                    <option value="">客户来源</option>
+                    <option value="AGENT">营销智能体推送</option>
+                    <option value="DELIVERY">名单交付导入</option>
+                    <option value="BANK_IMPORT">客户池导入</option>
+                </select>
+                <!-- 平台服务多选控件 -->
+                <div class="multiselect-container" id="serviceMultiSelectWrap">
+                    <button type="button" class="multiselect-trigger" id="serviceTriggerBtn" onclick="toggleServiceDropdown(event)">
+                        <span id="serviceTriggerText">平台服务</span>
+                        <svg style="width:12px;height:12px;margin-left:6px;transition:transform 0.2s;" id="serviceArrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                    </button>
+                    <div class="multiselect-dropdown" id="serviceDropdown" style="display:none;" onclick="event.stopPropagation()">
+                        <label class="multiselect-item" style="font-weight:600;margin-bottom:2px;">
+                            <input type="checkbox" id="cbServiceAll" onchange="toggleAllServices(this)" checked>
+                            <span>全选服务</span>
+                        </label>
+                        <div style="height:1px;background:#f1f5f9;margin:3px 0 5px;"></div>
+                        <label class="multiselect-item">
+                            <input type="checkbox" value="MARKETING" class="cb-service" onchange="onServiceCheckboxChange()" checked>
+                            <span class="service-dot dot-marketing"></span>
+                            <span>智能营销</span>
+                        </label>
+                        <label class="multiselect-item">
+                            <input type="checkbox" value="MONITOR" class="cb-service" onchange="onServiceCheckboxChange()" checked>
+                            <span class="service-dot dot-monitor"></span>
+                            <span>信贷监控</span>
+                        </label>
+                        <label class="multiselect-item">
+                            <input type="checkbox" value="RISK" class="cb-service" onchange="onServiceCheckboxChange()" checked>
+                            <span class="service-dot dot-risk"></span>
+                            <span>风险预警</span>
+                        </label>
+                    </div>
+                </div>
                 <select id="filterRegion">
-                    <option value="">全部地区</option>
+                    <option value="">地区</option>
                     <option value="320100">南京市</option>
                     <option value="320500">苏州市</option>
                     <option value="320200">无锡市</option>
                     <option value="320400">常州市</option>
                     <option value="320600">南通市</option>
                 </select>
-                <select id="filterInst">
-                    <option value="">全部机构</option>
-                    <option value="jsbank">江苏银行</option>
-                    <option value="njbank">南京银行</option>
-                    <option value="szrcb">苏州农商行</option>
-                    <option value="xlA">某小贷公司A</option>
-                </select>
                 <input type="text" id="searchInput" placeholder="搜索企业名称 / 统一社会信用代码">
                 <div class="filter-actions">
-                    <button class="btn btn-primary btn-sm" onclick="applyFilter()">筛选</button>
+                    <button class="btn btn-primary btn-sm" onclick="applyFilter()">查询</button>
                     <button class="btn btn-default btn-sm" onclick="resetFilter()">重置</button>
                 </div>
             </div>
@@ -607,20 +698,20 @@
                 <table class="table pool-table">
                     <thead>
                         <tr>
-                            <th style="width:22%;">企业信息</th>
-                            <th>地区</th>
-                            <th>状态</th>
-                            <th>当前机构</th>
-                            <th>分配/拒绝</th>
-                            <th>冷却截止</th>
-                            <th>最近分配</th>
-                            <th style="width:15%;">操作</th>
+                            <th style="width:50px;text-align:center;">序号</th>
+                            <th style="width:24%;">企业主体</th>
+                            <th style="width:10%;">所属地区</th>
+                            <th style="width:14%;">客户来源</th>
+                            <th style="width:18%;">管客机构</th>
+                            <th style="width:20%;">平台服务</th>
+                            <th style="width:11%;">入池时间</th>
+                            <th style="width:90px;text-align:center;">操作</th>
                         </tr>
                     </thead>
                     <tbody id="poolTableBody"></tbody>
                 </table>
                 <div class="pagination" style="padding:12px 20px;">
-                    <span>共 <strong>324,186</strong> 条记录，当前第 1/16,210 页</span>
+                    <span>共 <strong id="totalCountLabel">324,186</strong> 条记录，当前第 1/16,210 页</span>
                     <div class="page-btns">
                         <div class="page-btn">«</div>
                         <div class="page-btn active">1</div>
@@ -635,157 +726,682 @@
         </main>
     </div>
 
+    <!-- 导入存量客户模态弹窗 -->
+    <div class="modal-overlay" id="importModal" onclick="if(event.target===this)closeImportModal()">
+        <div class="modal-box" style="max-width:540px;width:90%;">
+            <div class="modal-header" style="padding:16px 22px;border-bottom:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center;background:#fafbfc;">
+                <div>
+                    <h3 style="font-size:15px;font-weight:600;color:#0f172a;margin:0;">导入存量客户</h3>
+                    <div style="font-size:12px;color:#64748b;margin-top:2px;">批量导入存量客户名单，关联管客机构</div>
+                </div>
+                <button type="button" onclick="closeImportModal()" style="border:none;background:none;font-size:18px;color:#94a3b8;cursor:pointer;line-height:1;padding:4px;" title="关闭">✕</button>
+            </div>
+            <div class="modal-body" style="padding:20px 22px;max-height:calc(85vh - 120px);overflow-y:auto;">
+                <!-- 机构与批次 -->
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+                    <div>
+                        <label style="display:block;font-size:12.5px;font-weight:600;color:#334155;margin-bottom:6px;">
+                            管客金融机构 <span style="color:#ef4444;">*</span>
+                        </label>
+                        <select id="importInstSelect" style="width:100%;height:35px;padding:0 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:13px;background:#fff;color:#0f172a;">
+                            <option value="江苏银行">江苏银行</option>
+                            <option value="南京银行">南京银行</option>
+                            <option value="苏州农商行">苏州农商行</option>
+                            <option value="常州农商行">常州农商行</option>
+                            <option value="苏州银行">苏州银行</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:12.5px;font-weight:600;color:#334155;margin-bottom:6px;">
+                            导入批次名称
+                        </label>
+                        <input type="text" id="importBatchName" placeholder="例如：2026年9月存量客户导入" style="width:100%;height:35px;padding:0 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:13px;box-sizing:border-box;background:#fff;color:#0f172a;">
+                    </div>
+                </div>
+
+                <!-- 上传名单与下载模板 -->
+                <div class="form-group" style="margin-bottom:0;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                        <label style="font-size:12.5px;font-weight:600;color:#334155;margin:0;">上传客户名单文件 <span style="color:#ef4444;">*</span></label>
+                        <a href="javascript:void(0)" onclick="downloadImportTemplate()" style="font-size:12px;color:var(--brand);text-decoration:none;font-weight:500;display:flex;align-items:center;gap:4px;">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            下载存量客户导入模板.csv
+                        </a>
+                    </div>
+
+                    <!-- 拖拽上传区 -->
+                    <div id="importDropZone" class="dropzone" onclick="document.getElementById('importFileInput').click()"
+                        style="border:2px dashed #cbd5e1;background:#fafbfc;border-radius:8px;padding:24px 20px;text-align:center;cursor:pointer;transition:all .2s;"
+                        ondragover="event.preventDefault(); this.style.borderColor='var(--brand)'; this.style.background='#eff6ff';"
+                        ondragleave="this.style.borderColor='#cbd5e1'; this.style.background='#fafbfc';"
+                        ondrop="event.preventDefault(); this.style.borderColor='#cbd5e1'; this.style.background='#fafbfc'; handleImportFile(event.dataTransfer)">
+                        <svg style="width:34px;height:34px;color:#94a3b8;margin-bottom:6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                            <polyline points="17 8 12 3 7 8" />
+                            <line x1="12" y1="3" x2="12" y2="15" />
+                        </svg>
+                        <div style="font-size:13px;font-weight:600;color:#334155;margin-bottom:3px;">点击或将文件拖拽到这里上传</div>
+                        <div style="font-size:11.5px;color:#64748b;">支持 .xlsx / .xls / .csv 格式，单个文件不超过 10MB</div>
+                    </div>
+                    <input type="file" id="importFileInput" accept=".xlsx,.xls,.csv" style="display:none;" onchange="handleImportFile(this)">
+
+                    <!-- 选中文件卡片展示 -->
+                    <div id="importFileInfo" style="display:none;margin-top:10px;padding:10px 14px;background:#f8fafc;border-radius:8px;font-size:13px;border:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between;">
+                        <span id="importFileName" style="display:flex;align-items:center;"></span>
+                        <button type="button" class="btn btn-ghost btn-sm" onclick="clearImportFile()" style="padding:4px 8px;color:#dc2626;font-size:12.5px;white-space:nowrap;border:none;background:none;cursor:pointer;">删除</button>
+                    </div>
+                </div>
+
+                <!-- 导入结果反馈提示框 -->
+                <div id="importResultFeedback" style="display:none;margin-top:14px;padding:12px 14px;border-radius:6px;font-size:12.5px;line-height:1.5;"></div>
+            </div>
+            <div class="modal-footer" style="padding:14px 22px;border-top:1px solid #e2e8f0;display:flex;justify-content:flex-end;align-items:center;gap:10px;background:#fafbfc;">
+                <button type="button" class="btn btn-default" onclick="closeImportModal()">取消</button>
+                <button type="button" class="btn btn-primary" id="btnDoImport" onclick="executeImport()">确认导入</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 导入批次记录模态弹窗 -->
+    <div class="modal-overlay" id="importHistoryModal" onclick="if(event.target===this)closeImportHistoryModal()">
+        <div class="modal-box" style="max-width:860px;width:92%;">
+            <div class="modal-header" style="padding:16px 22px;border-bottom:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center;background:#fafbfc;">
+                <div>
+                    <h3 style="font-size:15px;font-weight:600;color:#0f172a;margin:0;">存量导入批次记录</h3>
+                    <div style="font-size:12px;color:#64748b;margin-top:2px;">追溯各金融机构客户导入日志与批次入池情况</div>
+                </div>
+                <button type="button" onclick="closeImportHistoryModal()" style="border:none;background:none;font-size:18px;color:#94a3b8;cursor:pointer;line-height:1;padding:4px;" title="关闭">✕</button>
+            </div>
+            <div class="modal-body" style="padding:16px 22px;max-height:calc(80vh - 120px);overflow-y:auto;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                    <div style="font-size:13px;color:#475569;">
+                        累计纳管导入批次：<strong style="color:var(--brand);" id="importHistoryBatchCount">3</strong> 个
+                    </div>
+                    <div>
+                        <select id="historyFilterInst" onchange="filterImportHistoryTable()" style="height:32px;padding:0 8px;border:1px solid #cbd5e1;border-radius:6px;font-size:12px;background:#fff;color:#0f172a;">
+                            <option value="">管客机构</option>
+                            <option value="江苏银行">江苏银行</option>
+                            <option value="南京银行">南京银行</option>
+                            <option value="苏州农商行">苏州农商行</option>
+                            <option value="常州农商行">常州农商行</option>
+                        </select>
+                    </div>
+                </div>
+                <table class="table" style="width:100%;font-size:12.5px;">
+                    <thead>
+                        <tr style="background:#f8fafc;border-bottom:1px solid #e2e8f0;">
+                            <th style="padding:8px 10px;text-align:left;font-weight:600;color:#475569;">批次名称</th>
+                            <th style="padding:8px 10px;text-align:left;font-weight:600;color:#475569;">管客机构</th>
+                            <th style="padding:8px 10px;text-align:center;font-weight:600;color:#475569;">纳管结果</th>
+                            <th style="padding:8px 10px;text-align:left;font-weight:600;color:#475569;">导入时间</th>
+                            <th style="padding:8px 10px;text-align:left;font-weight:600;color:#475569;">操作人</th>
+                            <th style="padding:8px 10px;text-align:center;font-weight:600;color:#475569;">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="importHistoryTableBody"></tbody>
+                </table>
+            </div>
+            <div class="modal-footer" style="padding:12px 22px;border-top:1px solid #e2e8f0;display:flex;justify-content:flex-end;align-items:center;background:#fafbfc;">
+                <button type="button" class="btn btn-default" onclick="closeImportHistoryModal()">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 移出客户池确认模态弹窗（支持业务拦截与确认执行两套视图） -->
+    <div class="modal-overlay" id="deleteCustomerModal" onclick="if(event.target===this)closeDeleteModal()">
+        <div class="modal-box" style="max-width:460px;width:90%;">
+            <!-- 视图 A：禁止移出（拦截智能营销客户） -->
+            <div id="delBlockedView" style="display:none;">
+                <div class="modal-header" style="padding:16px 20px;border-bottom:1px solid #fed7aa;background:#fffbeb;display:flex;align-items:center;justify-content:space-between;">
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <div style="width:26px;height:26px;border-radius:50%;background:#ffedd5;color:#ea580c;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px;border:1px solid #fdba74;">!</div>
+                        <h3 style="font-size:15px;font-weight:600;color:#9a3412;margin:0;">无法移出客户池</h3>
+                    </div>
+                    <button type="button" onclick="closeDeleteModal()" style="border:none;background:none;font-size:18px;color:#94a3b8;cursor:pointer;line-height:1;padding:4px;" title="关闭">✕</button>
+                </div>
+                <div class="modal-body" style="padding:20px 22px;">
+                    <div style="font-size:13.5px;color:#0f172a;line-height:1.6;margin-bottom:12px;">
+                        企业【<strong id="delBlockedCustomerName" style="color:#0f172a;"></strong>】当前不可移出：
+                    </div>
+                    <div style="font-size:12.5px;color:#9a3412;line-height:1.6;background:#fff7ed;padding:12px 14px;border-radius:6px;border:1px solid #fed7aa;margin-bottom:12px;">
+                        <strong>拦截原因：</strong>该企业已开通<strong style="color:#ea580c;">「智能营销」</strong>协同服务，处于名单派发、客户经理认领跟进或营销商机流转链路中。为避免营销跟进状态与统计指标断层，系统禁止直接移出。
+                    </div>
+                    <div style="font-size:12px;color:#64748b;line-height:1.5;">
+                        建议处理方案：如确实无需纳管，请先在「机构营销 / 营销跟踪」模块中结束该企业的营销任务与认领状态。
+                    </div>
+                </div>
+                <div class="modal-footer" style="padding:12px 20px;border-top:1px solid #e2e8f0;display:flex;justify-content:flex-end;background:#fafbfc;">
+                    <button type="button" class="btn btn-primary" onclick="closeDeleteModal()" style="font-size:13px;">我知道了</button>
+                </div>
+            </div>
+
+            <!-- 视图 B：允许移出（确认执行） -->
+            <div id="delAllowedView" style="display:none;">
+                <div class="modal-header" style="padding:16px 20px;border-bottom:1px solid #fee2e2;background:#fef2f2;display:flex;align-items:center;justify-content:space-between;">
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <div style="width:26px;height:26px;border-radius:50%;background:#fee2e2;color:#ef4444;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px;border:1px solid #fca5a5;">!</div>
+                        <h3 style="font-size:15px;font-weight:600;color:#991b1b;margin:0;">移出机构客户池确认</h3>
+                    </div>
+                    <button type="button" onclick="closeDeleteModal()" style="border:none;background:none;font-size:18px;color:#94a3b8;cursor:pointer;line-height:1;padding:4px;" title="关闭">✕</button>
+                </div>
+                <div class="modal-body" style="padding:20px 22px;">
+                    <div style="font-size:13px;color:#334155;line-height:1.6;margin-bottom:12px;">
+                        您正在将企业【<strong id="delCustomerName" style="color:#0f172a;"></strong>】移出机构客户池。
+                    </div>
+                    <div id="delMultiInstNotice" style="display:none;background:#f8fafc;padding:10px 12px;border-radius:6px;border:1px solid #e2e8f0;font-size:12px;margin-bottom:12px;">
+                        <div style="font-weight:600;color:#334155;margin-bottom:6px;">该企业涉及多家管客机构，请选择操作范围：</div>
+                        <label style="display:flex;align-items:center;gap:6px;margin-bottom:6px;cursor:pointer;">
+                            <input type="radio" name="delScope" value="SINGLE" checked onchange="toggleDelScope(this.value)" style="accent-color:var(--brand);">
+                            <span>仅解除指定机构管客关系（保留其他管客机构）</span>
+                        </label>
+                        <div id="delInstSelectWrap" style="margin-left:22px;margin-bottom:8px;">
+                            <select id="delInstTargetSelect" style="height:28px;font-size:12px;padding:0 8px;border:1px solid #cbd5e1;border-radius:4px;background:#fff;"></select>
+                        </div>
+                        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+                            <input type="radio" name="delScope" value="ALL" onchange="toggleDelScope(this.value)" style="accent-color:#ef4444;">
+                            <span style="color:#b91c1c;">从客户池全局彻底移出该企业主体</span>
+                        </label>
+                    </div>
+                    <div style="font-size:12px;color:#475569;line-height:1.5;background:#f8fafc;padding:8px 10px;border-radius:6px;border:1px solid #e2e8f0;">
+                        提示：已确认该企业未开通智能营销服务（无营销跟进与状态流转依赖），移出后将解除管客归属，并不再纳入信贷监控与风险预警列表。
+                    </div>
+                </div>
+                <div class="modal-footer" style="padding:12px 20px;border-top:1px solid #e2e8f0;display:flex;justify-content:flex-end;gap:10px;background:#fafbfc;">
+                    <button type="button" class="btn btn-default" onclick="closeDeleteModal()">取消</button>
+                    <button type="button" class="btn btn-primary" id="btnConfirmDelete" onclick="executeDeleteCustomer()" style="background:#ef4444;border-color:#ef4444;color:#fff;">确认移出</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- 详情抽屉 -->
     <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
     <div class="drawer" id="detailDrawer">
-        <div class="drawer-header">
-            <h3 id="drawerTitle">企业详情</h3>
+        <div class="drawer-header" style="border-bottom: 1px solid #e2e8f0; background: #fafbfc;">
+            <div>
+                <h3 id="drawerTitle" style="font-size: 15px; font-weight: 600; color: #0f172a;">企业主体档案</h3>
+            </div>
             <button class="drawer-close" onclick="closeDrawer()">✕</button>
         </div>
-        <div class="drawer-body" id="drawerBody"></div>
+        <div class="drawer-body" id="drawerBody" style="padding: 20px 24px;"></div>
     </div>
 
-    <!-- 冷却期配置弹窗 -->
-    <div class="modal-overlay" id="coolingModal">
-        <div class="modal" style="max-width:560px;">
-            <div class="modal-header">
-                <h3>⏱ 冷却期配置</h3>
-                <button class="modal-close" onclick="closeCoolingConfig()">✕</button>
-            </div>
-            <div class="modal-body">
-                <table class="table" style="font-size:13px;">
-                    <thead>
-                        <tr>
-                            <th>场景</th>
-                            <th>冷却天数</th>
-                            <th>适用范围</th>
-                            <th>状态</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>授信拒绝</td>
-                            <td><input type="number" value="30"
-                                    style="width:60px;padding:4px 8px;border:1px solid #d9d9d9;border-radius:4px;"> 天
-                            </td>
-                            <td>跨机构</td>
-                            <td><span class="status-dot dot-green">启用</span></td>
-                        </tr>
-                        <tr>
-                            <td>客户明确拒绝</td>
-                            <td><input type="number" value="90"
-                                    style="width:60px;padding:4px 8px;border:1px solid #d9d9d9;border-radius:4px;"> 天
-                            </td>
-                            <td>跨机构</td>
-                            <td><span class="status-dot dot-green">启用</span></td>
-                        </tr>
-                        <tr>
-                            <td>银行退回</td>
-                            <td><input type="number" value="15"
-                                    style="width:60px;padding:4px 8px;border:1px solid #d9d9d9;border-radius:4px;"> 天
-                            </td>
-                            <td>跨机构</td>
-                            <td><span class="status-dot dot-green">启用</span></td>
-                        </tr>
-                        <tr>
-                            <td>放款完成</td>
-                            <td><input type="number" value="365"
-                                    style="width:60px;padding:4px 8px;border:1px solid #d9d9d9;border-radius:4px;"> 天
-                            </td>
-                            <td>同机构</td>
-                            <td><span class="status-dot dot-green">启用</span></td>
-                        </tr>
-                        <tr>
-                            <td>同机构重推</td>
-                            <td><input type="number" value="180"
-                                    style="width:60px;padding:4px 8px;border:1px solid #d9d9d9;border-radius:4px;"> 天
-                            </td>
-                            <td>同机构</td>
-                            <td><span class="status-dot dot-green">启用</span></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-default" onclick="closeCoolingConfig()">取消</button>
-                <button class="btn btn-primary" onclick="closeCoolingConfig()">保存配置</button>
-            </div>
-        </div>
-    </div>
-
-    <script src="js/contact-config.js"></script>
     <script>
-        // Mock 数据
-        const mockData = [
-            { id: 1, entId: '91320500MA1WXXX1', name: '苏州创芯微电子有限公司', region: '苏州市', regionCode: '320500', status: 'CONTACTING', inst: '江苏银行', instId: 'jsbank', product: '科技贷', assignCount: 1, rejectCount: 0, coolingUntil: null, assignTime: '2026-02-08', score: 782 },
-            { id: 2, entId: '91320100MA2BXXX2', name: '南京智云数据科技有限公司', region: '南京市', regionCode: '320100', status: 'AVAILABLE', inst: null, instId: null, product: null, assignCount: 2, rejectCount: 1, coolingUntil: null, assignTime: '2026-01-15', score: 756 },
-            { id: 3, entId: '91320500MA3CXXX3', name: '苏州恒力精密制造有限公司', region: '苏州市', regionCode: '320500', status: 'COOLING', inst: '苏州农商行', instId: 'szrcb', product: '税e融', assignCount: 3, rejectCount: 2, coolingUntil: '2026-03-10', assignTime: '2026-02-05', score: 712 },
-            { id: 4, entId: '91320200MA4DXXX4', name: '无锡太湖新能源科技股份有限公司', region: '无锡市', regionCode: '320200', status: 'LOAN_SUCCESS', inst: '江苏银行', instId: 'jsbank', product: '科技贷', assignCount: 1, rejectCount: 0, coolingUntil: null, assignTime: '2026-01-20', score: 805, loanAmount: 300 },
-            { id: 5, entId: '91320100MA5EXXX5', name: '南京紫金山生物医药有限公司', region: '南京市', regionCode: '320100', status: 'INTERESTED', inst: '南京银行', instId: 'njbank', product: '宁创贷', assignCount: 1, rejectCount: 0, coolingUntil: null, assignTime: '2026-02-06', score: 768 },
-            { id: 6, entId: '91320400MA6FXXX6', name: '常州龙城智能装备有限公司', region: '常州市', regionCode: '320400', status: 'ASSIGNED', inst: '江苏银行', instId: 'jsbank', product: '税e融', assignCount: 1, rejectCount: 0, coolingUntil: null, assignTime: '2026-02-10', score: 734 },
-            { id: 7, entId: '91320500MA7GXXX7', name: '苏州工业园区集成电路设计有限公司', region: '苏州市', regionCode: '320500', status: 'CREDITED', inst: '苏州农商行', instId: 'szrcb', product: '科创贷', assignCount: 2, rejectCount: 1, coolingUntil: null, assignTime: '2026-02-01', score: 791 },
-            { id: 8, entId: '91320600MA8HXXX8', name: '南通海工装备制造有限公司', region: '南通市', regionCode: '320600', status: 'AVAILABLE', inst: null, instId: null, product: null, assignCount: 0, rejectCount: 0, coolingUntil: null, assignTime: null, score: 698 },
-            { id: 9, entId: '91320100MA9IXXX9', name: '南京某涉诉企业有限公司', region: '南京市', regionCode: '320100', status: 'BLACKLISTED', inst: null, instId: null, product: null, assignCount: 1, rejectCount: 1, coolingUntil: null, assignTime: '2025-11-20', score: 320, blacklistReason: '多起司法诉讼，列入失信被执行人' },
-            { id: 10, entId: '91320500MAAJXXA', name: '苏州纳米新材料有限公司', region: '苏州市', regionCode: '320500', status: 'COOLING', inst: '江苏银行', instId: 'jsbank', product: '科技贷', assignCount: 2, rejectCount: 1, coolingUntil: '2026-02-28', assignTime: '2026-01-28', score: 745 },
-            { id: 11, entId: '91320200MABKXXB', name: '无锡惠山区精密机械有限公司', region: '无锡市', regionCode: '320200', status: 'AVAILABLE', inst: null, instId: null, product: null, assignCount: 1, rejectCount: 1, coolingUntil: null, assignTime: '2025-12-10', score: 721 },
-            { id: 12, entId: '91320100MACLXXC', name: '南京江北新区人工智能有限公司', region: '南京市', regionCode: '320100', status: 'CONTACTING', inst: '某小贷公司A', instId: 'xlA', product: '信用贷', assignCount: 3, rejectCount: 2, coolingUntil: null, assignTime: '2026-02-09', score: 668 },
+        // 运营端客户池全局底层数据（融合智能体挖掘、名单交付、机构存量导入三大客群）
+        let mockData = [
+            {
+                id: 1,
+                entId: '91320500MA1WXXX1',
+                name: '苏州创芯微电子有限公司',
+                source: 'AGENT',
+                sourceLabel: '营销智能体推送',
+                sourceSub: '跑批挖掘',
+                legalPerson: '张建国',
+                regCapital: '5,000 万元人民币',
+                industry: '计算机、通信和其他电子设备制造业',
+                scale: '小型企业',
+                foundedDate: '2018-05-16',
+                tags: ['国家高新技术企业', '专精特新中小企业', '纳税A级'],
+                region: '苏州市',
+                regionCode: '320500',
+                institutions: ['江苏银行'],
+                services: ['MARKETING', 'MONITOR', 'RISK'],
+                entryDate: '2026-02-08',
+                score: 782,
+                taxRating: 'A级（连续2年）',
+                riskStatus: '正常（无涉诉负面）',
+                loanAmount: 800,
+                mlModels: {
+                    suxinScore: 782, suxinLevel: '优秀',
+                    defaultRate: '0.6%', defaultLevel: '低风险',
+                    demandScore: 88, demandLevel: '高',
+                    growthScore: 92, growthLevel: '高速成长'
+                },
+                history: [
+                    { time: '2026-02-08 10:15', title: '智能体挖掘建档入池', desc: '专精特新智能体跑批命中白名单，主体纳管建档并进入全平台客户池。' },
+                    { time: '2026-02-09 14:30', title: '江苏银行认领建档为管客机构', desc: '江苏银行建立管客关系，启动协同服务。' },
+                    { time: '2026-02-15 16:30', title: '开通信贷时序监控与风险动态预警服务', desc: '首期授信放款落地，全面纳入信贷余额时序监测与每日风险巡检。' }
+                ]
+            },
+            {
+                id: 2,
+                entId: '91320100MA2BXXX2',
+                name: '南京智云数据科技有限公司',
+                source: 'AGENT',
+                sourceLabel: '营销智能体推送',
+                sourceSub: '任务追加',
+                legalPerson: '陈志远',
+                regCapital: '2,000 万元人民币',
+                industry: '软件和信息技术服务业',
+                scale: '小型企业',
+                foundedDate: '2019-11-20',
+                tags: ['科技型中小企业', '专精特新培育'],
+                region: '南京市',
+                regionCode: '320100',
+                institutions: ['南京银行'],
+                services: [],
+                entryDate: '2026-01-15',
+                score: 756,
+                taxRating: 'B级',
+                riskStatus: '正常（无涉诉负面）',
+                loanAmount: 0,
+                mlModels: {
+                    suxinScore: 756, suxinLevel: '良好',
+                    defaultRate: '1.2%', defaultLevel: '低风险',
+                    demandScore: 82, demandLevel: '高',
+                    growthScore: 85, growthLevel: '成长型'
+                },
+                history: [
+                    { time: '2026-01-15 09:00', title: '智能体专项任务名单追加', desc: '普惠科技专项任务手动追加目标名单，由南京银行管客建档入池。' }
+                ]
+            },
+            {
+                id: 3,
+                entId: '91320500MA3CXXX3',
+                name: '苏州恒力精密制造有限公司',
+                source: 'AGENT',
+                sourceLabel: '营销智能体推送',
+                sourceSub: '跑批挖掘',
+                legalPerson: '王德海',
+                regCapital: '3,800 万元人民币',
+                industry: '通用设备制造业',
+                scale: '中型企业',
+                foundedDate: '2015-03-22',
+                tags: ['规模以上工业企业', '纳税A级'],
+                region: '苏州市',
+                regionCode: '320500',
+                institutions: ['苏州农商行'],
+                services: ['MARKETING'],
+                entryDate: '2026-02-05',
+                score: 712,
+                taxRating: 'A级',
+                riskStatus: '关注（历史行政处罚已结案）',
+                loanAmount: 0,
+                mlModels: {
+                    suxinScore: 712, suxinLevel: '良好',
+                    defaultRate: '2.8%', defaultLevel: '中风险',
+                    demandScore: 76, demandLevel: '中',
+                    growthScore: 78, growthLevel: '稳健型'
+                },
+                history: [
+                    { time: '2026-02-05 11:30', title: '智能体跑批挖掘入池', desc: '先进制造算法跑批挖掘命中，由苏州农商行建档管客。' }
+                ]
+            },
+            {
+                id: 4,
+                entId: '91320200MA4DXXX4',
+                name: '无锡太湖新能源科技股份有限公司',
+                source: 'DELIVERY',
+                sourceLabel: '名单交付导入',
+                sourceSub: '新能源专项交付',
+                legalPerson: '周宏光',
+                regCapital: '12,000 万元人民币',
+                industry: '电气机械和器材制造业',
+                scale: '中型企业',
+                foundedDate: '2016-08-10',
+                tags: ['专精特新“小巨人”', '国家高新技术企业', '纳税A级'],
+                region: '无锡市',
+                regionCode: '320200',
+                institutions: ['江苏银行'],
+                services: ['MONITOR', 'RISK'],
+                entryDate: '2026-01-20',
+                score: 805,
+                taxRating: 'A级（连续3年）',
+                riskStatus: '优（无涉诉负面）',
+                loanAmount: 300,
+                mlModels: {
+                    suxinScore: 805, suxinLevel: '极优',
+                    defaultRate: '0.3%', defaultLevel: '极低风险',
+                    demandScore: 91, demandLevel: '高',
+                    growthScore: 96, growthLevel: '领军高成长'
+                },
+                history: [
+                    { time: '2026-01-20 14:00', title: '名单交付批次导入入池', desc: '无锡新能源专项交付批次导入，直接绑定江苏银行管客。' },
+                    { time: '2026-01-26 11:15', title: '开通信贷时序监控与风险动态预警', desc: '授信合同生效，开通信贷余额时序监测与多维风险巡检。' }
+                ]
+            },
+            {
+                id: 5,
+                entId: '91320100MA5EXXX5',
+                name: '南京紫金山生物医药有限公司',
+                source: 'AGENT',
+                sourceLabel: '营销智能体推送',
+                sourceSub: '跑批挖掘',
+                legalPerson: '林晓峰',
+                regCapital: '4,500 万元人民币',
+                industry: '医药制造业',
+                scale: '小型企业',
+                foundedDate: '2020-06-18',
+                tags: ['科技型中小企业', '研发投入占比超15%'],
+                region: '南京市',
+                regionCode: '320100',
+                institutions: ['南京银行'],
+                services: ['MARKETING', 'RISK'],
+                entryDate: '2026-02-06',
+                score: 768,
+                taxRating: 'B级',
+                riskStatus: '正常（无涉诉负面）',
+                loanAmount: 0,
+                mlModels: {
+                    suxinScore: 768, suxinLevel: '良好',
+                    defaultRate: '1.1%', defaultLevel: '低风险',
+                    demandScore: 85, demandLevel: '高',
+                    growthScore: 89, growthLevel: '高速成长'
+                },
+                history: [
+                    { time: '2026-02-06 09:30', title: '智能体跑批挖掘入池并由南京银行管客', desc: '生物医药产业专项策略命中，由南京银行管辖并开启风险扫描。' }
+                ]
+            },
+            {
+                id: 6,
+                entId: '91320400MA6FXXX6',
+                name: '常州龙城智能装备有限公司',
+                source: 'DELIVERY',
+                sourceLabel: '名单交付导入',
+                sourceSub: '先进制造专项交付',
+                legalPerson: '吴建华',
+                regCapital: '1,500 万元人民币',
+                industry: '专用设备制造业',
+                scale: '微型企业',
+                foundedDate: '2021-04-12',
+                tags: ['科技型中小企业'],
+                region: '常州市',
+                regionCode: '320400',
+                institutions: ['江苏银行', '常州农商行'],
+                services: ['MARKETING', 'MONITOR'],
+                entryDate: '2026-02-10',
+                score: 734,
+                taxRating: 'B级',
+                riskStatus: '正常（无涉诉负面）',
+                loanAmount: 200,
+                mlModels: {
+                    suxinScore: 734, suxinLevel: '良好',
+                    defaultRate: '2.1%', defaultLevel: '中低风险',
+                    demandScore: 78, demandLevel: '中',
+                    growthScore: 80, growthLevel: '成长型'
+                },
+                history: [
+                    { time: '2026-02-10 10:00', title: '名单交付导入并关联两家管客机构', desc: '常州先进制造名单交付导入，由江苏银行与常州农商行联合管客。' },
+                    { time: '2026-02-12 15:00', title: '开启信贷时序监控', desc: '企业已在江苏银行提款，启动余额走势与多头借贷动态监测。' }
+                ]
+            },
+            {
+                id: 7,
+                entId: '91320500MA7GXXX7',
+                name: '苏州工业园区集成电路设计有限公司',
+                source: 'AGENT',
+                sourceLabel: '营销智能体推送',
+                sourceSub: '跑批挖掘',
+                legalPerson: '徐浩',
+                regCapital: '6,000 万元人民币',
+                industry: '集成电路与芯片设计',
+                scale: '小型企业',
+                foundedDate: '2019-07-25',
+                tags: ['国家高新技术企业', '专精特新中小企业'],
+                region: '苏州市',
+                regionCode: '320500',
+                institutions: ['苏州农商行'],
+                services: ['MARKETING'],
+                entryDate: '2026-02-01',
+                score: 791,
+                taxRating: 'A级',
+                riskStatus: '优（无涉诉负面）',
+                loanAmount: 0,
+                mlModels: {
+                    suxinScore: 791, suxinLevel: '优秀',
+                    defaultRate: '0.5%', defaultLevel: '极低风险',
+                    demandScore: 89, demandLevel: '高',
+                    growthScore: 94, growthLevel: '高成长'
+                },
+                history: [
+                    { time: '2026-02-01 11:30', title: '智能体批次策略挖掘入池', desc: '芯片产业链专项算法命中，由苏州农商行管辖跟进。' }
+                ]
+            },
+            {
+                id: 8,
+                entId: '91320600MA8HXXX8',
+                name: '南通海工装备制造有限公司',
+                source: 'BANK_IMPORT',
+                sourceLabel: '客户池导入',
+                sourceSub: '存量纳管',
+                legalPerson: '陆强',
+                regCapital: '8,000 万元人民币',
+                industry: '铁路、船舶、航空航天和其他运输设备制造业',
+                scale: '中型企业',
+                foundedDate: '2017-09-08',
+                tags: ['规模以上企业', '存量纳管重点客户'],
+                region: '南通市',
+                regionCode: '320600',
+                institutions: ['江苏银行'],
+                services: ['MONITOR', 'RISK'],
+                entryDate: '2026-02-01',
+                score: 752,
+                taxRating: 'A级',
+                riskStatus: '正常（动态监测中）',
+                loanAmount: 850,
+                mlModels: {
+                    suxinScore: 752, suxinLevel: '良好',
+                    defaultRate: '1.4%', defaultLevel: '低风险',
+                    demandScore: 72, demandLevel: '稳健需求',
+                    growthScore: 83, growthLevel: '稳步扩张'
+                },
+                history: [
+                    { time: '2026-02-01 09:00', title: '江苏银行导入存量在贷名单纳管', desc: '纳入平台统一管理，直接开启信贷余额时序监测与风险预警服务。' }
+                ]
+            },
+            {
+                id: 9,
+                entId: '91320100MA9IXXX9',
+                name: '南京金陵环境工程有限公司',
+                source: 'BANK_IMPORT',
+                sourceLabel: '客户池导入',
+                sourceSub: '绿色金融纳管',
+                legalPerson: '周正明',
+                regCapital: '3,200 万元人民币',
+                industry: '生态保护和环境治理业',
+                scale: '小型企业',
+                foundedDate: '2018-03-12',
+                tags: ['绿色金融白名单', '存量在贷'],
+                region: '南京市',
+                regionCode: '320100',
+                institutions: ['南京银行', '江苏银行', '常州农商行'],
+                services: ['MONITOR', 'RISK'],
+                entryDate: '2026-02-03',
+                score: 741,
+                taxRating: 'B级',
+                riskStatus: '关注（人行跨行逾期信号已结清）',
+                loanAmount: 420,
+                mlModels: {
+                    suxinScore: 741, suxinLevel: '良好',
+                    defaultRate: '3.2%', defaultLevel: '中风险',
+                    demandScore: 86, demandLevel: '高',
+                    growthScore: 79, growthLevel: '转型成长'
+                },
+                history: [
+                    { time: '2026-02-03 14:15', title: '行内存量在贷导入入池', desc: '由南京银行导入，后续关联江苏银行，双行联合管客。开启多头信贷与司法风险动态穿透。' }
+                ]
+            },
+            {
+                id: 10,
+                entId: '91320200MA10XXX0',
+                name: '无锡华瑞传感微系统技术有限公司',
+                source: 'DELIVERY',
+                sourceLabel: '名单交付导入',
+                sourceSub: '传感物联专项交付',
+                legalPerson: '陈立新',
+                regCapital: '5,500 万元人民币',
+                industry: '仪器仪表制造业',
+                scale: '小型企业',
+                foundedDate: '2019-03-15',
+                tags: ['专精特新中小企业', '纳税A级'],
+                region: '无锡市',
+                regionCode: '320200',
+                institutions: ['江苏银行'],
+                services: ['MARKETING', 'MONITOR', 'RISK'],
+                entryDate: '2026-02-12',
+                score: 775,
+                taxRating: 'A级',
+                riskStatus: '正常（动态监测中）',
+                loanAmount: 500,
+                mlModels: {
+                    suxinScore: 775, suxinLevel: '优秀',
+                    defaultRate: '0.7%', defaultLevel: '低风险',
+                    demandScore: 87, demandLevel: '高',
+                    growthScore: 90, growthLevel: '高速成长'
+                },
+                history: [
+                    { time: '2026-02-12 10:00', title: '名单交付导入并由江苏银行管客', desc: '传感物联专项交付导入，三项平台服务（智能营销、信贷监控、风险预警）全量开通。' }
+                ]
+            }
         ];
 
-        const statusMap = {
-            'AVAILABLE': { label: '可分配', cls: 's-available' },
-            'LOCKED': { label: '已锁定', cls: 's-locked' },
-            'ASSIGNED': { label: '已分配', cls: 's-assigned' },
-            'CONTACTING': { label: '营销中', cls: 's-contacting' },
-            'INTERESTED': { label: '意向中', cls: 's-interested' },
-            'CREDITED': { label: '已授信', cls: 's-credited' },
-            'LOAN_SUCCESS': { label: '已放款', cls: 's-loaned' },
-            'REJECTED': { label: '已拒绝', cls: 's-rejected' },
-            'COOLING': { label: '冷却中', cls: 's-cooling' },
-            'BLACKLISTED': { label: '黑名单', cls: 's-blacklisted' },
-        };
+        // 平台服务多选下拉控制
+        function toggleServiceDropdown(e) {
+            e.stopPropagation();
+            const dropdown = document.getElementById('serviceDropdown');
+            const arrow = document.getElementById('serviceArrow');
+            const isOpen = dropdown.style.display === 'block';
+            dropdown.style.display = isOpen ? 'none' : 'block';
+            arrow.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+        }
+
+        document.addEventListener('click', () => {
+            const dropdown = document.getElementById('serviceDropdown');
+            const arrow = document.getElementById('serviceArrow');
+            if (dropdown) dropdown.style.display = 'none';
+            if (arrow) arrow.style.transform = 'rotate(0deg)';
+        });
+
+        function toggleAllServices(allCb) {
+            const cbs = document.querySelectorAll('.cb-service');
+            cbs.forEach(cb => cb.checked = allCb.checked);
+            updateServiceTriggerText();
+            applyFilter();
+        }
+
+        function onServiceCheckboxChange() {
+            const cbs = Array.from(document.querySelectorAll('.cb-service'));
+            const checkedCbs = cbs.filter(cb => cb.checked);
+            const allCb = document.getElementById('cbServiceAll');
+            allCb.checked = (checkedCbs.length === cbs.length);
+            updateServiceTriggerText();
+            applyFilter();
+        }
+
+        function updateServiceTriggerText() {
+            const cbs = Array.from(document.querySelectorAll('.cb-service'));
+            const checkedCbs = cbs.filter(cb => cb.checked);
+            const triggerText = document.getElementById('serviceTriggerText');
+            if (checkedCbs.length === cbs.length || checkedCbs.length === 0) {
+                triggerText.textContent = '平台服务';
+            } else if (checkedCbs.length === 1) {
+                const map = { MARKETING: '智能营销', MONITOR: '信贷监控', RISK: '风险预警' };
+                triggerText.textContent = map[checkedCbs[0].value] || '平台服务';
+            } else {
+                triggerText.textContent = `平台服务 (${checkedCbs.length}项)`;
+            }
+        }
 
         function renderTable(data) {
             const tbody = document.getElementById('poolTableBody');
-            tbody.innerHTML = data.map(d => {
-                const s = statusMap[d.status] || { label: d.status, cls: '' };
-                const instHtml = d.inst ? `<span class="inst-tag">${d.inst}</span><br><span style="font-size:11px;color:#bfbfbf;">${d.product || ''}</span>` : '<span style="color:#bfbfbf;">-</span>';
-                const coolingHtml = d.coolingUntil ? `<span class="cooling-info">截至 <span class="days-left">${d.coolingUntil}</span></span>` : '<span style="color:#d9d9d9;">-</span>';
-                const assignTimeHtml = d.assignTime ? d.assignTime : '<span style="color:#d9d9d9;">从未分配</span>';
+            document.getElementById('totalCountLabel').textContent = data.length.toLocaleString();
 
-                // 操作按钮根据状态
-                let actions = `<button class="btn btn-text btn-sm" onclick="openDrawer(${d.id})">详情</button>`;
-                if (d.status === 'AVAILABLE') {
-                    actions += `<button class="btn btn-text btn-sm" onclick="freezeEnt(${d.id})" style="color:#fa8c16;">冻结</button>`;
-                    actions += `<button class="btn btn-text btn-sm" onclick="blacklistEnt(${d.id})" style="color:#f5222d;">拉黑</button>`;
-                } else if (d.status === 'COOLING') {
-                    actions += `<button class="btn btn-text btn-sm" onclick="releaseEnt(${d.id})" style="color:var(--brand);">释放</button>`;
-                } else if (d.status === 'BLACKLISTED') {
-                    actions += `<button class="btn btn-text btn-sm" onclick="unblacklist(${d.id})" style="color:var(--brand);">移出</button>`;
+            const serviceMap = {
+                MARKETING: { label: '智能营销', dotCls: 'dot-marketing' },
+                MONITOR: { label: '信贷监控', dotCls: 'dot-monitor' },
+                RISK: { label: '风险预警', dotCls: 'dot-risk' }
+            };
+
+            tbody.innerHTML = data.map((d, idx) => {
+                // 客户来源：仅展示到第一级分类，避免冗余细分
+                let sourceText = '';
+                if (d.source === 'AGENT') {
+                    sourceText = '营销智能体推送';
+                } else if (d.source === 'DELIVERY') {
+                    sourceText = '名单交付导入';
+                } else if (d.source === 'BANK_IMPORT') {
+                    sourceText = '客户池导入';
+                } else {
+                    sourceText = d.sourceLabel || '客户池导入';
                 }
 
+                // 管客机构：可直接展示最多2个；超出2个时展示前2个 + 浅蓝+N徽标，悬停弹出深色气泡列出全部机构
+                let instHtml = '';
+                if (d.institutions && d.institutions.length > 2) {
+                    const firstTwo = d.institutions.slice(0, 2).join('、');
+                    const moreCount = d.institutions.length - 2;
+                    const popoverItems = d.institutions.map(inst => `<div>${inst}</div>`).join('');
+                    instHtml = `<div class="inst-cell-wrap">
+                        <span style="color:#1e293b;font-size:13px;font-weight:500;">${firstTwo}</span>
+                        <span class="inst-badge-count">+${moreCount}</span>
+                        <div class="inst-popover">${popoverItems}</div>
+                    </div>`;
+                } else if (d.institutions && d.institutions.length > 0) {
+                    instHtml = `<span style="color:#1e293b;font-size:13px;font-weight:500;">${d.institutions.join('、')}</span>`;
+                } else {
+                    instHtml = `<span style="color:#94a3b8;">-</span>`;
+                }
+
+                // 平台服务：统一底色边框，微状态圆点标识服务；无服务时直接留空
+                const servicePills = (d.services && d.services.length > 0)
+                    ? d.services.map(s => {
+                        const info = serviceMap[s];
+                        return info ? `<span class="service-pill"><span class="service-dot ${info.dotCls}"></span>${info.label}</span>` : '';
+                    }).join('')
+                    : '';
+
                 return `<tr>
-                <td><div class="ent-name-cell"><span class="name">${d.name}</span><span class="code">${d.entId}</span></div></td>
-                <td><span class="region-tag">${d.region}</span></td>
-                <td><span class="pool-status ${s.cls}">${s.label}</span></td>
-                <td>${instHtml}</td>
-                <td><span class="assign-count">${d.assignCount}次</span> / <span class="reject-count">${d.rejectCount}拒</span></td>
-                <td>${coolingHtml}</td>
-                <td>${assignTimeHtml}</td>
-                <td>${actions}</td>
-            </tr>`;
+                    <td style="text-align:center;color:#64748b;font-size:13px;">${idx + 1}</td>
+                    <td>
+                        <div class="ent-name-cell">
+                            <span class="name">${d.name}</span>
+                            <span class="code" style="font-family:monospace;color:#64748b;font-size:12px;margin-top:2px;">${d.entId}</span>
+                        </div>
+                    </td>
+                    <td><span style="color:#475569;font-size:13px;">${d.region}</span></td>
+                    <td><span class="source-name">${sourceText}</span></td>
+                    <td>${instHtml}</td>
+                    <td><div style="display:flex;flex-wrap:wrap;gap:4px;">${servicePills}</div></td>
+                    <td><span style="font-size:12.5px;color:#475569;">${d.entryDate || '-'}</span></td>
+                    <td style="text-align:center;white-space:nowrap;">
+                        <button class="btn btn-text btn-sm" onclick="openDrawer(${d.id})" style="color:var(--brand);font-weight:500;padding:2px 4px;">查看详情</button>
+                        <button class="btn btn-text btn-sm" onclick="confirmDeleteCustomer(${d.id})" style="color:#ef4444;padding:2px 4px;font-size:12px;font-weight:500;">移出</button>
+                    </td>
+                </tr>`;
             }).join('');
         }
 
-        // 筛选
+        // 筛选逻辑
         function applyFilter() {
-            const status = document.getElementById('filterStatus').value;
-            const region = document.getElementById('filterRegion').value;
             const inst = document.getElementById('filterInst').value;
-            const search = document.getElementById('searchInput').value.toLowerCase();
+            const multiHead = document.getElementById('filterMultiHead').value;
+            const source = document.getElementById('filterSource').value;
+            const region = document.getElementById('filterRegion').value;
+            const search = document.getElementById('searchInput').value.toLowerCase().trim();
+
+            // 多选平台服务
+            const checkedServices = Array.from(document.querySelectorAll('.cb-service:checked')).map(cb => cb.value);
+
             let filtered = mockData.filter(d => {
-                if (status && d.status !== status) return false;
+                // 管客机构筛选
+                if (inst) {
+                    if (!d.institutions || !d.institutions.includes(inst)) return false;
+                }
+                // 是否多头管客筛选
+                if (multiHead) {
+                    const count = (d.institutions && Array.isArray(d.institutions)) ? d.institutions.length : 0;
+                    if (multiHead === 'MULTI' && count < 2) return false;
+                    if (multiHead === 'SINGLE' && count !== 1) return false;
+                }
+                // 客户来源
+                if (source && d.source !== source) return false;
+                // 所属地区
                 if (region && d.regionCode !== region) return false;
-                if (inst && d.instId !== inst) return false;
+                // 平台服务（如果未全选，则筛选包含任意所选服务的企业）
+                if (checkedServices.length > 0 && checkedServices.length < 3) {
+                    if (!d.services || !d.services.some(s => checkedServices.includes(s))) return false;
+                }
+                // 搜索企业名称或统一代码
                 if (search && !d.name.toLowerCase().includes(search) && !d.entId.toLowerCase().includes(search)) return false;
                 return true;
             });
@@ -793,180 +1409,713 @@
         }
 
         function resetFilter() {
-            document.getElementById('filterStatus').value = '';
-            document.getElementById('filterRegion').value = '';
             document.getElementById('filterInst').value = '';
+            document.getElementById('filterMultiHead').value = '';
+            document.getElementById('filterSource').value = '';
+            document.getElementById('filterRegion').value = '';
             document.getElementById('searchInput').value = '';
+            document.getElementById('cbServiceAll').checked = true;
+            document.querySelectorAll('.cb-service').forEach(cb => cb.checked = true);
+            updateServiceTriggerText();
             renderTable(mockData);
         }
 
-        // 抽屉详情
+        // 导入存量客户相关状态与业务逻辑
+        let currentImportFileObj = null;
+
+        function openImportModal() {
+            const modal = document.getElementById('importModal');
+            modal.classList.add('active', 'show');
+            document.body.style.overflow = 'hidden';
+            document.getElementById('importResultFeedback').style.display = 'none';
+            const inst = document.getElementById('importInstSelect') ? document.getElementById('importInstSelect').value : '江苏银行';
+            const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+            document.getElementById('importBatchName').value = `${inst}_存量客户纳管_${dateStr}`;
+            clearImportFile();
+        }
+
+        function closeImportModal() {
+            const modal = document.getElementById('importModal');
+            modal.classList.remove('active', 'show');
+            document.body.style.overflow = '';
+        }
+
+        function downloadImportTemplate() {
+            showToast('开始下载《存量客户导入模板.csv》');
+            const sampleHeader = '企业名称*,统一社会信用代码*\n' +
+                '苏州盛科网络通信有限公司,91320500MA8KNEW1\n' +
+                '南京擎天智能科技有限公司,91320100MA9LNEW2\n' +
+                '无锡微研精密模具有限公司,91320200MABMNEW3\n' +
+                '苏州创芯微电子有限公司,91320500MA1WXXX1\n';
+            const blob = new Blob(["\uFEFF" + sampleHeader], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = '存量客户导入模板.csv';
+            link.click();
+        }
+
+        function handleImportFile(input) {
+            const file = (input.files && input.files[0]) ? input.files[0] : null;
+            if (!file) return;
+            currentImportFileObj = file;
+
+            document.getElementById('importDropZone').style.display = 'none';
+            const infoEl = document.getElementById('importFileInfo');
+            infoEl.style.display = 'flex';
+            document.getElementById('importFileName').innerHTML = `
+                <svg style="width:20px;height:20px;margin-right:8px;color:#16a34a;flex-shrink:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                </svg>
+                <div>
+                    <strong style="color:#0f172a;font-size:13px;">${file.name}</strong>
+                    <div style="font-size:11.5px;color:#64748b;">${(file.size / 1024).toFixed(1)} KB · 已解析格式</div>
+                </div>
+            `;
+            const batchInput = document.getElementById('importBatchName');
+            if (!batchInput.value) {
+                batchInput.value = file.name.replace(/\.[^/.]+$/, "") + '_' + new Date().toISOString().slice(5, 10).replace('-', '');
+            }
+        }
+
+        function clearImportFile() {
+            currentImportFileObj = null;
+            const fileInput = document.getElementById('importFileInput');
+            if (fileInput) fileInput.value = '';
+            document.getElementById('importDropZone').style.display = 'block';
+            document.getElementById('importFileInfo').style.display = 'none';
+        }
+
+        function executeImport() {
+            if (!currentImportFileObj) {
+                showToast('请先选择上传客户名单文件');
+                return;
+            }
+
+            const instName = document.getElementById('importInstSelect').value;
+            const batchName = document.getElementById('importBatchName').value || `${instName}_存量客户导入_${Date.now()}`;
+            const feedbackEl = document.getElementById('importResultFeedback');
+            const btnDoImport = document.getElementById('btnDoImport');
+
+            btnDoImport.disabled = true;
+            btnDoImport.textContent = '正在解析并关联机构...';
+
+            setTimeout(() => {
+                // 模拟名单数据：仅包含企业名称与统一社会信用代码
+                const candidateList = [
+                    { name: '苏州创芯微电子有限公司', uscc: '91320500MA1WXXX1', legalPerson: '张建国', region: '苏州市', regionCode: '320500', capital: '5,000 万元' },
+                    { name: '苏州盛科网络通信有限公司', uscc: '91320500MA8KNEW1', legalPerson: '孙成', region: '苏州市', regionCode: '320500', capital: '3,800 万元' },
+                    { name: '南京擎天智能科技有限公司', uscc: '91320100MA9LNEW2', legalPerson: '戴伟', region: '南京市', regionCode: '320100', capital: '2,600 万元' },
+                    { name: '无锡微研精密模具有限公司', uscc: '91320200MABMNEW3', legalPerson: '钱振华', region: '无锡市', regionCode: '320200', capital: '4,200 万元' }
+                ];
+
+                const existingCodeMap = new Map();
+                mockData.forEach(d => existingCodeMap.set(d.entId.toUpperCase(), d));
+
+                let successCount = 0;
+                let mergedCount = 0;
+                const mergedNames = [];
+                const newEntries = [];
+
+                candidateList.forEach((c, index) => {
+                    const existingItem = existingCodeMap.get(c.uscc.toUpperCase());
+                    if (existingItem) {
+                        // 默认合并：单纯关联管客机构，不更新任何贷款信息
+                        mergedCount++;
+                        mergedNames.push(c.name);
+                        if (!existingItem.institutions.includes(instName)) {
+                            existingItem.institutions.push(instName);
+                            existingItem.history.unshift({
+                                time: new Date().toISOString().slice(0, 16).replace('T', ' '),
+                                title: `关联管客机构：${instName}`,
+                                desc: `存量客户名单导入，追加【${instName}】为管客金融机构。`
+                            });
+                        }
+                    } else {
+                        // 新企业入池：单纯关联当前管客机构
+                        successCount++;
+                        const newId = Date.now() + index;
+                        newEntries.push({
+                            id: newId,
+                            entId: c.uscc,
+                            name: c.name,
+                            source: 'BANK_IMPORT',
+                            sourceLabel: '客户池导入',
+                            sourceSub: '存量纳管',
+                            legalPerson: c.legalPerson,
+                            regCapital: c.capital,
+                            industry: '高新技术制造 / 软件信息',
+                            scale: '小型企业',
+                            foundedDate: '2020-05-20',
+                            tags: ['行内存量客户', '机构管客纳管'],
+                            region: c.region,
+                            regionCode: c.regionCode,
+                            institutions: [instName],
+                            services: ['MONITOR', 'RISK'],
+                            entryDate: new Date().toISOString().slice(0, 10),
+                            score: 758,
+                            loanAmount: 0,
+                            taxRating: 'A级',
+                            riskStatus: '正常（动态监测中）',
+                            mlModels: {
+                                suxinScore: 765, suxinLevel: '良好',
+                                defaultRate: '0.9%', defaultLevel: '低风险',
+                                demandScore: 84, demandLevel: '高',
+                                growthScore: 88, growthLevel: '高速成长'
+                            },
+                            history: [
+                                { time: new Date().toISOString().slice(0, 16).replace('T', ' '), title: `${instName}存量客户名单纳管入池`, desc: `批次《${batchName}》导入入池，关联管客机构【${instName}】。` }
+                            ]
+                        });
+                    }
+                });
+
+                mockData = [...newEntries, ...mockData];
+                renderTable(mockData);
+
+                // 自动追加至导入批次历史记录
+                importHistoryData.unshift({
+                    id: Date.now(),
+                    batchName: batchName,
+                    instName: instName,
+                    fileName: currentImportFileObj ? currentImportFileObj.name : '存量客户导入文件.csv',
+                    time: new Date().toISOString().slice(0, 16).replace('T', ' '),
+                    totalCount: candidateList.length,
+                    newCount: successCount,
+                    mergedCount: mergedCount,
+                    operator: '运营管理员'
+                });
+
+                btnDoImport.disabled = false;
+                btnDoImport.textContent = '导入完成';
+                feedbackEl.style.display = 'block';
+                feedbackEl.style.background = '#f0fdf4';
+                feedbackEl.style.border = '1px solid #bbf7d0';
+                feedbackEl.style.color = '#166534';
+                feedbackEl.innerHTML = `
+                    <div style="font-weight:600;margin-bottom:6px;display:flex;align-items:center;gap:6px;color:#15803d;">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                        导入与管客机构关联已完成：
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 10px;font-size:12px;margin-bottom:6px;">
+                        <div>• 新增入池客户：<strong style="color:#15803d;font-size:13.5px;">${successCount}</strong> 家</div>
+                        <div>• 追加管客关联：<strong style="color:#2563eb;font-size:13.5px;">${mergedCount}</strong> 家</div>
+                        <div>• 校验总记录数：<strong>${candidateList.length}</strong> 条</div>
+                        <div>• 关联机构：<strong style="color:#0f172a;">${instName}</strong></div>
+                    </div>
+                    ${mergedNames.length > 0 ? `<div style="font-size:11.5px;color:#64748b;border-top:1px dashed #dcfce7;padding-top:4px;">追加管客关联主体：${mergedNames.join('、')}</div>` : ''}
+                `;
+
+                showToast(`导入成功！新增入池 ${successCount} 家客户，追加关联 ${mergedCount} 家管客机构`);
+
+                setTimeout(() => {
+                    closeImportModal();
+                }, 1600);
+
+            }, 500);
+        }
+
+        // ==================== 导入批次历史记录管理 ====================
+        let importHistoryData = [
+            { id: 101, batchName: '江苏银行_存量客户纳管_20260920', instName: '江苏银行', fileName: '江苏银行_存量在贷纳管清单_20260920.xlsx', time: '2026-09-20 16:45', totalCount: 120, newCount: 95, mergedCount: 25, operator: '张主管' },
+            { id: 102, batchName: '南京银行_绿色企业纳管导入_20260918', instName: '南京银行', fileName: '南京分行_绿色重点纳管企业.csv', time: '2026-09-18 10:20', totalCount: 68, newCount: 52, mergedCount: 16, operator: '李运营' },
+            { id: 103, batchName: '常州农商行_先进制造客户导入_20260915', instName: '常州农商行', fileName: '常州农商行先进制造客群.xlsx', time: '2026-09-15 14:10', totalCount: 45, newCount: 38, mergedCount: 7, operator: '王专员' }
+        ];
+
+        function openImportHistoryModal() {
+            const modal = document.getElementById('importHistoryModal');
+            modal.classList.add('active', 'show');
+            document.body.style.overflow = 'hidden';
+            document.getElementById('historyFilterInst').value = '';
+            renderImportHistoryTable(importHistoryData);
+        }
+
+        function closeImportHistoryModal() {
+            const modal = document.getElementById('importHistoryModal');
+            modal.classList.remove('active', 'show');
+            document.body.style.overflow = '';
+        }
+
+        function renderImportHistoryTable(list) {
+            const tbody = document.getElementById('importHistoryTableBody');
+            document.getElementById('importHistoryBatchCount').textContent = list.length;
+            if (list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:#94a3b8;padding:24px;">暂无匹配的导入批次记录</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = list.map(item => `
+                <tr style="border-bottom:1px solid #f1f5f9;">
+                    <td style="padding:10px 10px;font-weight:500;color:#0f172a;">${item.batchName}</td>
+                    <td style="padding:10px 10px;"><span class="inst-tag">${item.instName}</span></td>
+                    <td style="padding:10px 10px;text-align:center;white-space:nowrap;">
+                        <span style="color:#15803d;font-weight:600;">+${item.newCount}</span> 新入池 / 
+                        <span style="color:#2563eb;font-weight:600;">${item.mergedCount}</span> 合并
+                    </td>
+                    <td style="padding:10px 10px;color:#64748b;font-size:12px;white-space:nowrap;">${item.time}</td>
+                    <td style="padding:10px 10px;color:#475569;white-space:nowrap;">${item.operator}</td>
+                    <td style="padding:10px 10px;text-align:center;white-space:nowrap;">
+                        <button type="button" class="btn btn-text btn-sm" onclick="filterByHistoryBatch('${item.instName}')" style="color:var(--brand);padding:2px 4px;font-size:12px;font-weight:500;">筛选此机构客户</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function filterImportHistoryTable() {
+            const inst = document.getElementById('historyFilterInst').value;
+            const filtered = inst ? importHistoryData.filter(x => x.instName === inst) : importHistoryData;
+            renderImportHistoryTable(filtered);
+        }
+
+        function filterByHistoryBatch(instName) {
+            closeImportHistoryModal();
+            document.getElementById('filterInst').value = instName;
+            applyFilter();
+            showToast(`已为您筛选【${instName}】关联纳管的客户`);
+        }
+
+        // ==================== 移出客户池业务安全逻辑 ====================
+        let deleteTargetId = null;
+
+        function toggleDelScope(val) {
+            const wrap = document.getElementById('delInstSelectWrap');
+            const select = document.getElementById('delInstTargetSelect');
+            if (wrap && select) {
+                if (val === 'ALL') {
+                    wrap.style.opacity = '0.35';
+                    select.disabled = true;
+                } else {
+                    wrap.style.opacity = '1';
+                    select.disabled = false;
+                }
+            }
+        }
+
+        function confirmDeleteCustomer(id) {
+            const customer = mockData.find(x => x.id === id);
+            if (!customer) return;
+
+            deleteTargetId = id;
+            const modal = document.getElementById('deleteCustomerModal');
+            const blockedView = document.getElementById('delBlockedView');
+            const allowedView = document.getElementById('delAllowedView');
+
+            // 业务强校验：开通智能营销服务的客户涉及后续跟进与状态流转，弹窗内展示警示拦截视图
+            const hasMarketing = customer.services && customer.services.includes('MARKETING');
+            if (hasMarketing) {
+                blockedView.style.display = 'block';
+                allowedView.style.display = 'none';
+                document.getElementById('delBlockedCustomerName').textContent = customer.name;
+            } else {
+                blockedView.style.display = 'none';
+                allowedView.style.display = 'block';
+                document.getElementById('delCustomerName').textContent = customer.name;
+
+                const multiNotice = document.getElementById('delMultiInstNotice');
+                const targetSelect = document.getElementById('delInstTargetSelect');
+
+                if (customer.institutions && customer.institutions.length > 1) {
+                    multiNotice.style.display = 'block';
+                    targetSelect.innerHTML = customer.institutions.map(inst => `<option value="${inst}">解除【${inst}】管客关系</option>`).join('');
+                    const radioSingle = document.querySelector('input[name="delScope"][value="SINGLE"]');
+                    if (radioSingle) radioSingle.checked = true;
+                    toggleDelScope('SINGLE');
+                } else {
+                    multiNotice.style.display = 'none';
+                }
+            }
+
+            modal.classList.add('active', 'show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeDeleteModal() {
+            deleteTargetId = null;
+            const modal = document.getElementById('deleteCustomerModal');
+            modal.classList.remove('active', 'show');
+            document.body.style.overflow = '';
+        }
+
+        function executeDeleteCustomer() {
+            if (!deleteTargetId) return;
+            const customer = mockData.find(x => x.id === deleteTargetId);
+            if (!customer) {
+                closeDeleteModal();
+                return;
+            }
+
+            const multiNotice = document.getElementById('delMultiInstNotice');
+            const isMulti = customer.institutions && customer.institutions.length > 1;
+
+            if (isMulti && multiNotice.style.display !== 'none') {
+                const scopeRadio = document.querySelector('input[name="delScope"]:checked');
+                const scope = scopeRadio ? scopeRadio.value : 'SINGLE';
+
+                if (scope === 'SINGLE') {
+                    const instToRemove = document.getElementById('delInstTargetSelect').value;
+                    customer.institutions = customer.institutions.filter(i => i !== instToRemove);
+                    customer.history.unshift({
+                        time: new Date().toISOString().slice(0, 16).replace('T', ' '),
+                        title: `解除管客关联：${instToRemove}`,
+                        desc: `运营管理员手动解除该企业与【${instToRemove}】的管客归属关联，停止针对该行的监控预警推送。`
+                    });
+                    showToast(`已成功解除【${customer.name}】与【${instToRemove}】的管客关联`);
+                } else {
+                    mockData = mockData.filter(x => x.id !== deleteTargetId);
+                    showToast(`已成功将【${customer.name}】移出客户池，相关信贷监控与风险预警已停止`);
+                }
+            } else {
+                mockData = mockData.filter(x => x.id !== deleteTargetId);
+                showToast(`已成功将【${customer.name}】移出客户池，相关信贷监控与风险预警已停止`);
+            }
+
+            closeDeleteModal();
+            applyFilter();
+        }
+
+        // 抽屉详情：企业主体画像、管客机构与三大平台服务运行态势（屏蔽产品批次营销流水）
         function openDrawer(id) {
-            const d = mockData.find(x => x.id === id);
+            const d = mockData.find(x => x.id == id);
             if (!d) return;
-            const s = statusMap[d.status] || { label: d.status, cls: '' };
             document.getElementById('drawerTitle').textContent = d.name;
 
-            // 构建详情内容
+            // 标签组
+            const tagPills = (d.tags || []).map(t => `<span style="font-size:11px;padding:2px 8px;border-radius:4px;background:#f1f5f9;color:#334155;border:1px solid #e2e8f0;margin-right:6px;display:inline-block;">${t}</span>`).join('');
+
+            // 客户来源文字
+            let sourceFullText = '';
+            if (d.source === 'AGENT') sourceFullText = '营销智能体推送';
+            else if (d.source === 'DELIVERY') sourceFullText = '名单交付导入';
+            else sourceFullText = '客户池导入';
+
+            // 管客机构列表 HTML
+            let instListHtml = '';
+            if (d.institutions && d.institutions.length > 0) {
+                instListHtml = d.institutions.map(inst => `
+                    <div style="background:#fff;padding:10px 14px;border-radius:6px;border:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center;">
+                        <div style="font-size:13.5px;font-weight:600;color:#0f172a;">${inst}</div>
+                        <div style="text-align:right;">
+                            <span style="font-size:11px;padding:2px 7px;background:#dcfce7;color:#166534;border-radius:4px;font-weight:500;">
+                                ${d.loanAmount > 0 ? `在贷 ¥${d.loanAmount}万` : '营销管理中'}
+                            </span>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                instListHtml = `
+                    <div style="background:#f8fafc;padding:12px;border-radius:6px;border:1px dashed #cbd5e1;text-align:center;color:#64748b;font-size:12.5px;">
+                        暂无关联管客银行
+                    </div>
+                `;
+            }
+
+            // 平台三大服务矩阵状态
+            const hasMarketing = d.services && d.services.includes('MARKETING');
+            const hasMonitor = d.services && d.services.includes('MONITOR');
+            const hasRisk = d.services && d.services.includes('RISK');
+
             let html = `
-            <div class="ent-header">
-                <h4>${d.name}</h4>
-                <div class="ent-meta">
-                    <div class="ent-meta-item">统一社会信用代码：<span>${d.entId}</span></div>
-                    <div class="ent-meta-item">地区：<span>${d.region}</span></div>
-                    <div class="ent-meta-item">苏信分：<span>${d.score}</span></div>
-                </div>
-                <div style="margin-top:12px;">
-                    当前状态：<span class="pool-status ${s.cls}">${s.label}</span>
-                    ${d.inst ? `&nbsp;&nbsp;当前机构：<span class="inst-tag">${d.inst}</span>` : ''}
-                </div>
-            </div>`;
-
-            if (d.status === 'BLACKLISTED' && d.blacklistReason) {
-                html += `<div style="background:#fff1f0;border:1px solid #ffa39e;border-radius:8px;padding:12px;margin-bottom:16px;font-size:13px;color:#a8071a;">
-                ⚠️ 黑名单原因：${d.blacklistReason}
-            </div>`;
-            }
-
-            if (d.coolingUntil) {
-                html += `<div style="background:#f9f0ff;border:1px solid #d3adf7;border-radius:8px;padding:12px;margin-bottom:16px;font-size:13px;color:#722ed1;">
-                ⏱ 冷却期截止：<strong>${d.coolingUntil}</strong>
-            </div>`;
-            }
-
-            // 新增触达路径推荐 - 使用共享 contact-config.js
-            var aVis = MOCK_CONTACT_PATHS.slice(0,3).map(function(p, i){return window.buildContactCard(p, i)}).join('');
-            var aHid = MOCK_CONTACT_PATHS.slice(3).map(function(p, i){return window.buildContactCard(p, i + 3)}).join('');
-            var aHidN = MOCK_CONTACT_PATHS.length - 3;
-
-            html += `<div class="section-title">📞 触达路径推荐</div>
-            <div id="adminTabsContainer_${d.id}">
-                <div style="display:flex; border-bottom: 1px solid #f0f0f0; margin-bottom: 12px;">
-                    <div class="contact-tab-btn" style="padding: 6px 14px; border-bottom: 2px solid var(--brand); color: var(--brand); font-weight: 500; cursor: pointer; font-size: 12px;" onclick="window.switchContactTab(this, 'contactsTab_admin_${d.id}', 'adminTabsContainer_${d.id}')">🏢 本企直接触达</div>
-                    <div class="contact-tab-btn" style="padding: 6px 14px; color: #595959; font-weight: 500; cursor: pointer; font-size: 12px;" onclick="window.switchContactTab(this, 'relEnterpriseTab_admin_${d.id}', 'adminTabsContainer_${d.id}')">🕸️ 关联企业触达</div>
-                    <div class="contact-tab-btn" style="padding: 6px 14px; color: #595959; font-weight: 500; cursor: pointer; font-size: 12px;" onclick="window.switchContactTab(this, 'associationTab_admin_${d.id}', 'adminTabsContainer_${d.id}')">🔗 行内存量关联</div>
+            <!-- 板块一：企业主体工商与经营资质画像 -->
+            <div style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:16px;margin-bottom:16px;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+                    <div>
+                        <div style="font-size:16px;font-weight:600;color:#0f172a;">${d.name}</div>
+                        <div style="font-size:12.5px;font-family:monospace;color:#64748b;margin-top:2px;">${d.entId}</div>
+                    </div>
+                    <span class="region-tag" style="font-size:12px;padding:2px 8px;">${d.region}</span>
                 </div>
 
-                <div id="contactsTab_admin_${d.id}" class="contact-tab-panel">
-                    <div style="font-size:11px;color:#bfbfbf;margin-bottom:10px;display:flex;align-items:center;gap:5px;">
-                        <span style="display:inline-block;width:4px;height:4px;background:#bfbfbf;border-radius:50%;"></span>
-                        以下角色及排序由系统基于多源数据综合推测，仅供参考
-                    </div>
-                    ${aVis}
-                    <div id="moreContactsAdmin_${d.id}" style="display:none;">
-                        ${aHid}
-                    </div>
-                    <div style="text-align:center;margin-bottom:20px;">
-                        <a href="javascript:void(0)" data-count="${aHidN}" onclick="window.toggleMoreContacts(this, 'moreContactsAdmin_${d.id}')" style="font-size:12px;color:var(--brand);text-decoration:none;padding:5px 16px;background:#e6f7ff;border-radius:16px;display:inline-block;">🔽 展开更多 (${aHidN})</a>
-                    </div>
+                <div style="margin-bottom:12px;">${tagPills}</div>
+
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;font-size:12.5px;color:#475569;border-top:1px solid #f1f5f9;padding-top:12px;">
+                    <div>客群来源归属：<strong style="color:var(--brand);">${sourceFullText}</strong></div>
+                    <div>入池纳管时间：<strong style="color:#0f172a;">${d.entryDate || '-'}</strong></div>
+                    <div>法定代表人：<strong style="color:#0f172a;">${d.legalPerson || '-'}</strong></div>
+                    <div>注册资本：<strong style="color:#0f172a;">${d.regCapital || '-'}</strong></div>
+                    <div>所属行业：<strong style="color:#0f172a;">${d.industry || '-'}</strong></div>
+                    <div>企业规模：<strong style="color:#0f172a;">${d.scale || '-'}</strong></div>
+                    <div>成立时间：<strong style="color:#0f172a;">${d.foundedDate || '-'}</strong></div>
+                    <div>经营状态：<strong style="color:#166534;">在营（开业）</strong></div>
                 </div>
 
-                <div id="relEnterpriseTab_admin_${d.id}" class="contact-tab-panel" style="display:none; margin-bottom: 20px;">
-                    <div style="font-size:11px;color:#bfbfbf;margin-bottom:10px;display:flex;align-items:center;gap:5px;">
-                      <span style="display:inline-block;width:4px;height:4px;background:#bfbfbf;border-radius:50%;"></span>
-                      当本企业无法取得联系时，可尝试通过以下强关联企业建立沟通
-                    </div>
-                    
-                    <div style="padding:12px 14px;background:#fafafa;border:1px solid #f0f0f0;border-radius:10px;margin-bottom:10px;">
-                      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
-                        <div>
-                          <div style="font-size:13px;font-weight:600;color:#262626;">无锡市智云科技有限公司</div>
-                          <div style="font-size:10px;color:#722ed1;margin-top:4px;background:#f9f0ff;display:inline-block;padding:2px 6px;border-radius:4px;border:1px solid #d3adf7;">关联关系：控股股东 (持股65%)</div>
-                        </div>
-                        <button style="background:#fff;border:1px solid #d9d9d9;color:#595959;border-radius:4px;padding:3px 10px;font-size:11px;cursor:pointer;" onclick="alert('即将跳转至该企业画像页')">查看画像</button>
-                      </div>
-                      <div style="border-top:1px dashed #e8e8e8;padding-top:8px;">
-                        <div style="display:flex;align-items:center;gap:10px;font-size:13px;">
-                           <span style="color:var(--brand);font-weight:600;">139****8888</span>
-                           <span style="cursor:pointer;opacity:0.5;font-size:12px;" onclick="window.togglePhone(this, '139****8888', '13988888888')">👁️</span>
-                           <span style="font-size:10px;background:#e6f7ff;color:var(--brand);padding:2px 6px;border-radius:4px;border:1px solid #91d5ff;">[企业法人/实控人] 李总</span>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div style="padding:12px 14px;background:#fafafa;border:1px solid #f0f0f0;border-radius:10px;margin-bottom:10px;">
-                      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
-                        <div>
-                          <div style="font-size:13px;font-weight:600;color:#262626;">苏州工业园区智云软件服务中心</div>
-                          <div style="font-size:10px;color:#fa8c16;margin-top:4px;background:#fff7e6;display:inline-block;padding:2px 6px;border-radius:4px;border:1px solid #ffd591;">关联关系：同法定代表人</div>
-                        </div>
-                        <button style="background:#fff;border:1px solid #d9d9d9;color:#595959;border-radius:4px;padding:3px 10px;font-size:11px;cursor:pointer;" onclick="alert('即将跳转至该企业画像页')">查看画像</button>
-                      </div>
-                      <div style="border-top:1px dashed #e8e8e8;padding-top:8px;">
-                        <div style="display:flex;align-items:center;gap:10px;font-size:13px;">
-                           <span style="color:#262626;font-weight:600;">0512-6888****</span>
-                           <span style="cursor:pointer;opacity:0.5;font-size:12px;" onclick="window.togglePhone(this, '0512-6888****', '0512-68889999')">👁️</span>
-                           <span style="font-size:10px;background:#f5f5f5;color:#8c8c8c;padding:2px 6px;border-radius:4px;border:1px solid #d9d9d9;">[工商预留固话]</span>
-                        </div>
-                      </div>
-                    </div>
-                </div>
-
-                <div id="associationTab_admin_${d.id}" class="contact-tab-panel" style="display:none; margin-bottom: 20px;">
-                    <div style="font-size:11px;color:#bfbfbf;margin-bottom:10px;display:flex;align-items:center;gap:5px;">
-                      <span style="display:inline-block;width:4px;height:4px;background:#bfbfbf;border-radius:50%;"></span>
-                      关联关系由系统基于股权、法人、担保等维度自动匹配，仅供参考
-                    </div>
-                    <div style="background:linear-gradient(135deg,#e6f7ff 0%,#f0f5ff 100%);border:1px solid #91d5ff;border-radius:10px;padding:12px 14px;">
-                      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
-                        <span style="width:32px;height:32px;background:var(--brand);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:600;flex-shrink:0;">关</span>
-                        <div>
-                          <div style="font-size:13px;font-weight:600;color:#262626;">苏州创芯微电子有限公司</div>
-                          <div style="font-size:10px;color:#8c8c8c;margin-top:1px;">行内授信客户 · 贷款余额 800万 · 客户经理：王强</div>
-                        </div>
-                      </div>
-                      <div style="background:#fff;border-radius:6px;padding:8px 10px;font-size:11px;color:#595959;line-height:1.6;">
-                        <div style="margin-bottom:3px;"><b>关联关系：</b>该企业法人 <span style="color:var(--brand);">张明</span> 同时担任行内存量客户的股东（持股32%）</div>
-                        <div><b>触达建议：</b>可通过存量客户的客户经理王强引荐，或以关联企业授信为切入点沟通。</div>
-                      </div>
-                    </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;background:#f8fafc;padding:10px 12px;border-radius:6px;margin-top:12px;font-size:12px;border:1px solid #edf2f7;">
+                    <div>纳税信用评级：<strong style="color:#0f172a;">${d.taxRating || '-'}</strong></div>
+                    <div>司法涉诉状态：<strong style="color:#166534;">${d.riskStatus || '正常'}</strong></div>
                 </div>
             </div>`;
 
-            // 模拟分配历史时间线
-            html += `<div class="section-title">📋 分配历史</div><div class="timeline">`;
-            if (d.assignCount >= 1 && d.assignTime) {
-                html += `<div class="timeline-item${d.status === 'LOAN_SUCCESS' ? ' success' : ''}">
-                <div class="tl-time">${d.assignTime}</div>
-                <div class="tl-content">分配给 ${d.inst || '江苏银行'} - ${d.product || '科技贷'}</div>
-                <div class="tl-detail">批次号 BATCH-20260208-001</div>
+            // 板块二：模型评分矩阵（支持翻页切换其他模型）
+            const m = d.mlModels || {
+                suxinScore: d.score || 750,
+                suxinLevel: (d.score >= 780 ? '优秀' : (d.score >= 720 ? '良好' : '正常')),
+                defaultRate: (d.score >= 780 ? '0.6%' : (d.score >= 720 ? '1.5%' : '3.2%')),
+                defaultLevel: (d.score >= 750 ? '低风险' : '中风险'),
+                demandScore: 85,
+                demandLevel: '高',
+                growthScore: 88,
+                growthLevel: '高速成长'
+            };
+
+            html += `
+            <div style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:16px;margin-bottom:16px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                    <div style="font-size:13.5px;font-weight:600;color:#0f172a;">模型评分</div>
+                    <div style="display:flex;align-items:center;gap:6px;">
+                        <button type="button" onclick="switchModelPage(0)" id="modelPrevBtn" style="border:1px solid #cbd5e1;background:#fff;border-radius:4px;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:#64748b;padding:0;line-height:1;" title="上一页">‹</button>
+                        <span id="modelPageText" style="font-size:11.5px;color:#64748b;min-width:24px;text-align:center;">1/2</span>
+                        <button type="button" onclick="switchModelPage(1)" id="modelNextBtn" style="border:1px solid #cbd5e1;background:#fff;border-radius:4px;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:#64748b;padding:0;line-height:1;" title="下一页">›</button>
+                    </div>
+                </div>
+
+                <!-- 第 1 页模型：核心自研模型（苏信分、违约预测、贷款资金需求、企业成长评分） -->
+                <div id="modelPage0" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                    <!-- 苏信分 (清单第3项) -->
+                    <div style="background:#f8fafc;border:1px solid #edf2f7;border-radius:6px;padding:12px;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;">
+                            <span style="font-size:12.5px;font-weight:600;color:#334155;">苏信分</span>
+                            <span style="font-size:11px;padding:1px 6px;border-radius:3px;background:#f1f5f9;color:#334155;border:1px solid #e2e8f0;font-weight:500;">${m.suxinLevel}</span>
+                        </div>
+                        <div style="margin:8px 0 4px;display:flex;align-items:baseline;gap:4px;">
+                            <span style="font-size:20px;font-weight:700;color:#0f172a;font-family:Inter,-apple-system,sans-serif;">${m.suxinScore}</span>
+                            <span style="font-size:11px;color:#94a3b8;">/ 850分</span>
+                        </div>
+                        <div style="font-size:11px;color:#64748b;line-height:1.4;">基础/经营/合规/财务/关联/创新6维信用评价</div>
+                    </div>
+
+                    <!-- 违约预测模型 (清单第7项) -->
+                    <div style="background:#f8fafc;border:1px solid #edf2f7;border-radius:6px;padding:12px;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;">
+                            <span style="font-size:12.5px;font-weight:600;color:#334155;">违约预测模型</span>
+                            <span style="font-size:11px;padding:1px 6px;border-radius:3px;background:#f1f5f9;color:#334155;border:1px solid #e2e8f0;font-weight:500;">${m.defaultLevel}</span>
+                        </div>
+                        <div style="margin:8px 0 4px;display:flex;align-items:baseline;gap:4px;">
+                            <span style="font-size:20px;font-weight:700;color:#0f172a;font-family:Inter,-apple-system,sans-serif;">${m.defaultRate}</span>
+                            <span style="font-size:11px;color:#94a3b8;">(违约率)</span>
+                        </div>
+                        <div style="font-size:11px;color:#64748b;line-height:1.4;">12个月表现期借款后长期违约概率预测</div>
+                    </div>
+
+                    <!-- 贷款资金需求评分 (清单第1项) -->
+                    <div style="background:#f8fafc;border:1px solid #edf2f7;border-radius:6px;padding:12px;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;">
+                            <span style="font-size:12.5px;font-weight:600;color:#334155;">贷款资金需求评分</span>
+                            <span style="font-size:11px;padding:1px 6px;border-radius:3px;background:#f1f5f9;color:#334155;border:1px solid #e2e8f0;font-weight:500;">高</span>
+                        </div>
+                        <div style="margin:8px 0 4px;display:flex;align-items:baseline;gap:4px;">
+                            <span style="font-size:20px;font-weight:700;color:#0f172a;font-family:Inter,-apple-system,sans-serif;">${m.demandScore || 88}</span>
+                            <span style="font-size:11px;color:#94a3b8;">/ 100分</span>
+                        </div>
+                        <div style="font-size:11px;color:#64748b;line-height:1.4;">测算企业未来1-3个月内贷款资金需求紧迫度</div>
+                    </div>
+
+                    <!-- 企业成长评分 (清单第8项) -->
+                    <div style="background:#f8fafc;border:1px solid #edf2f7;border-radius:6px;padding:12px;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;">
+                            <span style="font-size:12.5px;font-weight:600;color:#334155;">企业成长评分</span>
+                            <span style="font-size:11px;padding:1px 6px;border-radius:3px;background:#f1f5f9;color:#334155;border:1px solid #e2e8f0;font-weight:500;">${m.growthLevel || '高速成长'}</span>
+                        </div>
+                        <div style="margin:8px 0 4px;display:flex;align-items:baseline;gap:4px;">
+                            <span style="font-size:20px;font-weight:700;color:#0f172a;font-family:Inter,-apple-system,sans-serif;">${m.growthScore || 92}</span>
+                            <span style="font-size:11px;color:#94a3b8;">/ 100分</span>
+                        </div>
+                        <div style="font-size:11px;color:#64748b;line-height:1.4;">财务/创新/经营多维量化企业未来发展趋势与速度</div>
+                    </div>
+                </div>
+
+                <!-- 第 2 页模型：真实自研扩展模型（科创分、早期逾期预测评分、空壳企业识别、逾期预警模型） -->
+                <div id="modelPage1" style="display:none;grid-template-columns:1fr 1fr;gap:10px;">
+                    <!-- 科创分 (清单第5项) -->
+                    <div style="background:#f8fafc;border:1px solid #edf2f7;border-radius:6px;padding:12px;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;">
+                            <span style="font-size:12.5px;font-weight:600;color:#334155;">科创分</span>
+                            <span style="font-size:11px;padding:1px 6px;border-radius:3px;background:#f1f5f9;color:#334155;border:1px solid #e2e8f0;font-weight:500;">高科创</span>
+                        </div>
+                        <div style="margin:8px 0 4px;display:flex;align-items:baseline;gap:4px;">
+                            <span style="font-size:20px;font-weight:700;color:#0f172a;font-family:Inter,-apple-system,sans-serif;">89</span>
+                            <span style="font-size:11px;color:#94a3b8;">/ 100分</span>
+                        </div>
+                        <div style="font-size:11px;color:#64748b;line-height:1.4;">知识产权价值、研发投入与专精特新能力综合评价</div>
+                    </div>
+
+                    <!-- 早期逾期预测评分 (清单第6项) -->
+                    <div style="background:#f8fafc;border:1px solid #edf2f7;border-radius:6px;padding:12px;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;">
+                            <span style="font-size:12.5px;font-weight:600;color:#334155;">早期逾期预测评分</span>
+                            <span style="font-size:11px;padding:1px 6px;border-radius:3px;background:#f1f5f9;color:#334155;border:1px solid #e2e8f0;font-weight:500;">低风险</span>
+                        </div>
+                        <div style="margin:8px 0 4px;display:flex;align-items:baseline;gap:4px;">
+                            <span style="font-size:20px;font-weight:700;color:#0f172a;font-family:Inter,-apple-system,sans-serif;">805</span>
+                            <span style="font-size:11px;color:#94a3b8;">/ 850分</span>
+                        </div>
+                        <div style="font-size:11px;color:#64748b;line-height:1.4;">评估企业自放款之日起未来6个月内初期逾期可能性</div>
+                    </div>
+
+                    <!-- 空壳企业识别 (清单第2项) -->
+                    <div style="background:#f8fafc;border:1px solid #edf2f7;border-radius:6px;padding:12px;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;">
+                            <span style="font-size:12.5px;font-weight:600;color:#334155;">空壳企业识别</span>
+                            <span style="font-size:11px;padding:1px 6px;border-radius:3px;background:#f1f5f9;color:#334155;border:1px solid #e2e8f0;font-weight:500;">正常</span>
+                        </div>
+                        <div style="margin:8px 0 4px;display:flex;align-items:baseline;gap:4px;">
+                            <span style="font-size:20px;font-weight:700;color:#0f172a;font-family:Inter,-apple-system,sans-serif;">未触碰</span>
+                            <span style="font-size:11px;color:#94a3b8;">(安全阈值)</span>
+                        </div>
+                        <div style="font-size:11px;color:#64748b;line-height:1.4;">工商社保税收多维预设规则疑似空壳企业排查</div>
+                    </div>
+
+                    <!-- 逾期预警模型 (清单第9项) -->
+                    <div style="background:#f8fafc;border:1px solid #edf2f7;border-radius:6px;padding:12px;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;">
+                            <span style="font-size:12.5px;font-weight:600;color:#334155;">逾期预警模型</span>
+                            <span style="font-size:11px;padding:1px 6px;border-radius:3px;background:#f1f5f9;color:#334155;border:1px solid #e2e8f0;font-weight:500;">低风险</span>
+                        </div>
+                        <div style="margin:8px 0 4px;display:flex;align-items:baseline;gap:4px;">
+                            <span style="font-size:20px;font-weight:700;color:#0f172a;font-family:Inter,-apple-system,sans-serif;">0.8%</span>
+                            <span style="font-size:11px;color:#94a3b8;">(预警概率)</span>
+                        </div>
+                        <div style="font-size:11px;color:#64748b;line-height:1.4;">滚动预测当前在贷正常企业未来6个月内逾期概率</div>
+                    </div>
+                </div>
+
+                <!-- 底部小圆点指示器 -->
+                <div style="display:flex;justify-content:center;align-items:center;gap:6px;margin-top:10px;">
+                    <span class="model-dot" id="modelDot0" onclick="switchModelPage(0)" style="width:14px;height:4px;border-radius:2px;background:#2563eb;cursor:pointer;transition:all .2s;"></span>
+                    <span class="model-dot" id="modelDot1" onclick="switchModelPage(1)" style="width:6px;height:4px;border-radius:2px;background:#cbd5e1;cursor:pointer;transition:all .2s;"></span>
+                </div>
             </div>`;
+
+            // 板块三：管客机构
+            html += `
+            <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:14px 16px;margin-bottom:16px;">
+                <div style="font-size:13px;font-weight:600;color:#0f172a;margin-bottom:10px;">
+                    管客金融机构 (${d.institutions ? d.institutions.length : 0} 家)
+                </div>
+                <div style="display:flex;flex-direction:column;gap:8px;">
+                    ${instListHtml}
+                </div>
+            </div>`;
+
+            // 板块四：平台服务开通状态（无冗余大色块、无长篇描述，仅服务名与对号样式）
+            html += `
+            <div style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:14px 16px;margin-bottom:16px;">
+                <div style="font-size:13.5px;font-weight:600;color:#0f172a;margin-bottom:10px;">
+                    平台服务开通状态
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:10px;">
+                    <!-- 智能营销 -->
+                    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;">
+                        <span style="font-size:12.5px;font-weight:600;color:${hasMarketing ? '#0f172a' : '#94a3b8'};">智能营销</span>
+                        ${hasMarketing 
+                            ? '<span style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:#dcfce7;color:#16a34a;font-size:11px;font-weight:700;">✓</span>' 
+                            : '<span style="color:#cbd5e1;font-size:12px;font-weight:600;">—</span>'}
+                    </div>
+
+                    <!-- 信贷监控 -->
+                    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;">
+                        <span style="font-size:12.5px;font-weight:600;color:${hasMonitor ? '#0f172a' : '#94a3b8'};">信贷监控</span>
+                        ${hasMonitor 
+                            ? '<span style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:#dcfce7;color:#166534;font-size:11px;font-weight:700;">✓</span>' 
+                            : '<span style="color:#cbd5e1;font-size:12px;font-weight:600;">—</span>'}
+                    </div>
+
+                    <!-- 风险预警 -->
+                    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;">
+                        <span style="font-size:12.5px;font-weight:600;color:${hasRisk ? '#0f172a' : '#94a3b8'};">风险预警</span>
+                        ${hasRisk 
+                            ? '<span style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:#dcfce7;color:#166534;font-size:11px;font-weight:700;">✓</span>' 
+                            : '<span style="color:#cbd5e1;font-size:12px;font-weight:600;">—</span>'}
+                    </div>
+                </div>
+            </div>`;
+
+            // 板块五：平台日志
+            html += `
+            <div style="margin-bottom:20px;">
+                <div class="section-title" style="margin-top:0;">
+                    平台日志
+                </div>
+                <div class="timeline" style="margin-top:12px;">`;
+
+            if (d.history && d.history.length > 0) {
+                d.history.forEach(item => {
+                    html += `
+                    <div class="timeline-item">
+                        <div class="tl-time">${item.time}</div>
+                        <div class="tl-content" style="font-weight:500;color:#0f172a;">${item.title}</div>
+                        <div class="tl-detail" style="color:#64748b;line-height:1.5;">${item.desc}</div>
+                    </div>`;
+                });
+            } else {
+                html += `
+                <div class="timeline-item">
+                    <div class="tl-time">-</div>
+                    <div class="tl-content" style="color:#94a3b8;">暂无纳管历史记录</div>
+                </div>`;
             }
-            if (d.status === 'CONTACTING') {
-                html += `<div class="timeline-item warning"><div class="tl-time">${d.assignTime}</div><div class="tl-content">银行确认触达，正在营销中</div></div>`;
-            }
-            if (d.status === 'LOAN_SUCCESS') {
-                html += `<div class="timeline-item success"><div class="tl-time">2026-02-15</div><div class="tl-content">放款成功 ¥${d.loanAmount}万</div></div>`;
-            }
-            if (d.rejectCount > 0) {
-                html += `<div class="timeline-item error"><div class="tl-time">2025-12-20</div><div class="tl-content">被拒绝（上一次分配）</div><div class="tl-detail">拒绝原因：额度不足 / 行业限制</div></div>`;
-            }
-            if (d.assignCount === 0) {
-                html += `<div class="timeline-item"><div class="tl-time">-</div><div class="tl-content">暂无分配历史</div></div>`;
-            }
-            html += `</div>`;
+
+            html += `</div></div>`;
+
+            // 抽屉底部操作按钮：仅保留关闭按钮
+            html += `
+            <div style="border-top:1px solid #e2e8f0;padding-top:16px;display:flex;justify-content:flex-end;">
+                <button class="btn btn-default btn-sm" onclick="closeDrawer()" style="min-width:80px;">关闭</button>
+            </div>`;
 
             document.getElementById('drawerBody').innerHTML = html;
-            document.getElementById('drawerOverlay').classList.add('active');
-            document.getElementById('detailDrawer').classList.add('active');
+            document.getElementById('drawerOverlay').classList.add('active', 'show');
+            document.getElementById('detailDrawer').classList.add('active', 'show');
+            document.body.style.overflow = 'hidden';
+            switchModelPage(0);
+        }
+
+        // 模型评分翻页控制（支持第1页核心模型与第2页demo扩展模型）
+        function switchModelPage(page) {
+            const p0 = document.getElementById('modelPage0');
+            const p1 = document.getElementById('modelPage1');
+            const d0 = document.getElementById('modelDot0');
+            const d1 = document.getElementById('modelDot1');
+            const txt = document.getElementById('modelPageText');
+            const btnPrev = document.getElementById('modelPrevBtn');
+            const btnNext = document.getElementById('modelNextBtn');
+            if (!p0 || !p1) return;
+
+            if (page === 0) {
+                p0.style.display = 'grid';
+                p1.style.display = 'none';
+                if (d0) { d0.style.width = '14px'; d0.style.background = '#2563eb'; }
+                if (d1) { d1.style.width = '6px'; d1.style.background = '#cbd5e1'; }
+                if (txt) txt.textContent = '1/2';
+                if (btnPrev) { btnPrev.style.color = '#cbd5e1'; btnPrev.style.cursor = 'not-allowed'; }
+                if (btnNext) { btnNext.style.color = '#475569'; btnNext.style.cursor = 'pointer'; }
+            } else {
+                p0.style.display = 'none';
+                p1.style.display = 'grid';
+                if (d0) { d0.style.width = '6px'; d0.style.background = '#cbd5e1'; }
+                if (d1) { d1.style.width = '14px'; d1.style.background = '#2563eb'; }
+                if (txt) txt.textContent = '2/2';
+                if (btnPrev) { btnPrev.style.color = '#475569'; btnPrev.style.cursor = 'pointer'; }
+                if (btnNext) { btnNext.style.color = '#cbd5e1'; btnNext.style.cursor = 'not-allowed'; }
+            }
         }
 
         function closeDrawer() {
-            document.getElementById('drawerOverlay').classList.remove('active');
-            document.getElementById('detailDrawer').classList.remove('active');
+            document.getElementById('drawerOverlay').classList.remove('active', 'show');
+            document.getElementById('detailDrawer').classList.remove('active', 'show');
+            document.body.style.overflow = '';
         }
 
-        // 操作
-        function freezeEnt(id) { if (confirm('确认冻结该企业？冻结后将不参与分配。')) showToast('已冻结'); }
-        function releaseEnt(id) { if (confirm('确认提前释放冷却期？')) showToast('已释放，状态变为可分配'); }
-        function blacklistEnt(id) { if (confirm('确认加入黑名单？该企业将永久不可分配。')) showToast('已加入黑名单'); }
-        function unblacklist(id) { if (confirm('确认移出黑名单？')) showToast('已移出黑名单'); }
-        function exportPool() { showToast('导出任务已创建'); setTimeout(() => { if (confirm('前往下载中心查看？')) location.href = 'downloads.html'; }, 1500); }
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') closeDrawer();
+        });
 
-        function showCoolingConfig() { document.getElementById('coolingModal').classList.add('active'); }
-        function closeCoolingConfig() { document.getElementById('coolingModal').classList.remove('active'); }
-
-
+        function exportAudit(id) {
+            showToast('正在生成该企业的全生命周期纳管审计凭证...');
+        }
+        function exportPool() { 
+            showToast('客户池导出任务已创建'); 
+            setTimeout(() => { 
+                if (confirm('前往下载中心查看？')) location.href = 'downloads.html'; 
+            }, 1500); 
+        }
 
         // 初始化
         document.addEventListener('DOMContentLoaded', () => renderTable(mockData));
