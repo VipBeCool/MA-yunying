@@ -161,7 +161,7 @@
     .chip.chip-cc button { color: #9ca3af; }
     .chip.chip-cc button:hover { color: #dc2626; }
 
-    /* 发送方式 */
+    /* 文件传输方式 */
     .mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
     .mode-opt { border: 1.5px solid var(--border); border-radius: 10px; padding: 12px 14px; cursor: pointer; transition: all 0.15s; user-select: none; }
     .mode-opt:hover { border-color: var(--brand-border); }
@@ -414,16 +414,16 @@
           </div>
         </div>
         <div class="way-card-body">
-          <!-- 1. 发送方式置顶 -->
+          <!-- 1. 文件传输方式置顶 -->
           <div class="form-group">
-            <label class="form-label">发送方式</label>
+            <label class="form-label">文件传输方式</label>
             <div class="mode-grid">
               <div class="mode-opt active" id="modeLink" onclick="setMode('link')">
                 <div class="mode-opt-title"><input type="radio" name="mailMode" checked>下载链接 <span class="rec-badge">推荐</span></div>
                 <div class="mode-opt-desc">邮件内附下载链接，可设有效期及访问密码</div>
               </div>
               <div class="mode-opt" id="modeAttach" onclick="setMode('attach')">
-                <div class="mode-opt-title"><input type="radio" name="mailMode">Excel 附件</div>
+                <div class="mode-opt-title"><input type="radio" name="mailMode">邮件附件</div>
                 <div class="mode-opt-desc">名单文件直接作为附件发送，可设文件密码</div>
               </div>
             </div>
@@ -544,7 +544,7 @@
         </div>
         <div class="summary-row"><span class="summary-lbl">收件人</span><span class="summary-val" id="sumMailTo">—</span></div>
         <div class="summary-row" id="sumMailCcRow" style="display:none;"><span class="summary-lbl">抄送人</span><span class="summary-val" id="sumMailCc">—</span></div>
-        <div class="summary-row"><span class="summary-lbl">发送方式</span><span class="summary-val" id="sumMailMode">—</span></div>
+        <div class="summary-row"><span class="summary-lbl">文件传输方式</span><span class="summary-val" id="sumMailMode">—</span></div>
         <div class="summary-row"><span class="summary-lbl">邮件主题</span><span class="summary-val" id="sumMailSubject">—</span></div>
         <div class="summary-row"><span class="summary-lbl">邮件正文预览</span><span class="summary-val" id="sumMailBody" style="font-size:12px;color:var(--gray-600);white-space:pre-wrap;">—</span></div>
       </div>
@@ -1098,7 +1098,7 @@
         $('sumMailMode').textContent = `下载链接（${daysStr}${pwdStr}）`;
       } else {
         const pwdStr = F.hasPwd ? `（文件密码：${($('fPwd').value || F.pwd || '').toUpperCase()}，需单独发送）` : '（无密码）';
-        $('sumMailMode').textContent = `Excel 附件发送${pwdStr}`;
+        $('sumMailMode').textContent = `邮件附件发送${pwdStr}`;
       }
       $('sumMailSubject').textContent = $('fSubject').value.trim();
       $('sumMailBody').textContent = $('fMailBody').value.trim();
@@ -1318,7 +1318,7 @@
           <span class="ich-extra"><button class="btn btn-default btn-sm" style="font-size:12px;" onclick="resendMail()">重新发送</button></span></div>
         <div class="info-row"><span class="info-label">收件人</span><span class="info-value">${e.to.join('； ')}</span></div>
         <div class="info-row"><span class="info-label">抄送</span><span class="info-value">${(e.cc && e.cc.length) ? e.cc.join('； ') : '<span style="color:var(--gray-300);">无</span>'}</span></div>
-        <div class="info-row"><span class="info-label">发送方式</span><span class="info-value">${isLink ? `下载链接（${expireText}）` : 'Excel 附件发送'}</span></div>`;
+        <div class="info-row"><span class="info-label">文件传输方式</span><span class="info-value">${isLink ? `下载链接（${expireText}）` : '邮件附件发送'}</span></div>`;
 
       if (isLink) {
         h += `
