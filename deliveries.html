@@ -5,205 +5,241 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
   <title>名单交付 - 智能营销平台</title>
-  <meta name="description" content="管理线下名单交付记录，规范人工名单交付流程">
+  <meta name="description" content="向合作金融机构交付营销名单：支持在线分发与系统邮件">
   <link rel="stylesheet" href="css/style.css?v=1783867207">
   <style>
     /* ====================================================
        名单交付 — 专属样式
        ==================================================== */
-
-    /* 工具栏 */
-    .delivery-toolbar {
-      display: flex; align-items: center; gap: 10px; margin-bottom: 20px;
-    }
+    .delivery-toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
     .delivery-search-box {
-      display: flex; align-items: center; gap: 8px;
-      padding: 8px 14px; border: 1.5px solid var(--border);
-      border-radius: 9px; background: var(--bg-card);
+      display: flex; align-items: center; gap: 8px; padding: 8px 14px;
+      border: 1.5px solid var(--border); border-radius: 9px; background: var(--bg-card);
       transition: border-color 0.2s; min-width: 240px;
     }
     .delivery-search-box:focus-within { border-color: var(--brand); }
-    .delivery-search-box input {
-      border: none; background: transparent; outline: none;
-      font-size: 13px; color: var(--gray-900); flex: 1;
-    }
-    .delivery-search-box svg {
-      width: 14px; height: 14px; stroke: var(--gray-400); fill: none;
-      stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0;
-    }
+    .delivery-search-box input { border: none; background: transparent; outline: none; font-size: 13px; color: var(--gray-900); flex: 1; }
+    .delivery-search-box svg { width: 14px; height: 14px; stroke: var(--gray-400); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
     .filter-select {
-      padding: 8px 28px 8px 12px; border: 1.5px solid var(--border);
-      border-radius: 9px; background: var(--bg-card); color: var(--gray-700);
-      font-size: 13px; cursor: pointer; outline: none; font-family: inherit;
+      padding: 8px 28px 8px 12px; border: 1.5px solid var(--border); border-radius: 9px;
+      background: var(--bg-card); color: var(--gray-700); font-size: 13px; cursor: pointer; outline: none; font-family: inherit;
       -webkit-appearance: none; appearance: none;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
       background-repeat: no-repeat; background-position: right 10px center;
     }
     .filter-select:focus { border-color: var(--brand); }
-    .delivery-count { margin-left: auto; font-size: 13px; color: var(--gray-400); white-space: nowrap; }
 
-    /* 列表名称列 */
-    .delivery-name { font-size: 13.5px; font-weight: 700; color: var(--brand); cursor: pointer; display: block; }
+    .delivery-name { font-size: 13.5px; font-weight: 700; color: var(--brand); cursor: pointer; display: inline-block; }
     .delivery-name:hover { text-decoration: underline; }
-    .delivery-remark { font-size: 12px; color: var(--gray-400); max-width: 240px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; margin-top: 2px; }
+    .delivery-remark-cell { font-size: 12.5px; color: var(--gray-600); max-width: 240px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; }
 
-    /* col-badge */
-    .col-badge { display: inline-block; padding: 1px 6px; border-radius: 4px; font-size: 11px; font-weight: 500; background: #fef3c7; color: #92400e; margin-right: 3px; margin-bottom: 2px; }
+    /* 交付方式标签 */
+    .way-tag { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 6px; font-size: 12px; font-weight: 500; margin: 1px 4px 1px 0; white-space: nowrap; }
+    .way-tag svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .way-platform { background: var(--brand-light); color: #047857; }
+    .way-email { background: #eff6ff; color: #1d4ed8; }
 
-    /* ══════════════════ 向导抽屉 ══════════════════ */
-    .side-overlay {
-      display: none; position: fixed; inset: 0;
-      background: rgba(0,0,0,0.28); z-index: 900;
-    }
+    /* ══════════ 抽屉通用 ══════════ */
+    .side-overlay { display: none; position: fixed; inset: 0; background: rgba(15,23,42,0.32); z-index: 900; }
     .side-overlay.show { display: block; }
-
-    /* 向导抽屉 860px */
-    .wizard-drawer {
-      position: fixed; top: 0; right: -900px;
-      width: 880px; height: 100vh;
-      background: var(--bg-card); z-index: 901;
-      box-shadow: -4px 0 32px rgba(0,0,0,0.14);
-      display: flex; flex-direction: column;
+    .drawer {
+      position: fixed; top: 0; right: -960px; height: 100vh; background: var(--bg-card); z-index: 901;
+      box-shadow: -8px 0 40px rgba(0,0,0,0.14); display: flex; flex-direction: column;
       transition: right 0.32s cubic-bezier(0.4,0,0.2,1);
     }
-    .wizard-drawer.show { right: 0; }
-
-    /* 详情抽屉 560px */
-    .detail-drawer {
-      position: fixed; top: 0; right: -600px;
-      width: 560px; height: 100vh;
-      background: var(--bg-card); z-index: 901;
-      box-shadow: -4px 0 32px rgba(0,0,0,0.14);
-      display: flex; flex-direction: column;
-      transition: right 0.32s cubic-bezier(0.4,0,0.2,1);
-    }
-    .detail-drawer.show { right: 0; }
-
-    .drawer-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 18px 24px; border-bottom: 1px solid var(--border); flex-shrink: 0;
-    }
+    .drawer.show { right: 0; }
+    .drawer-wizard { width: 780px; }
+    .drawer-detail { width: 900px; }
+    .drawer-header { display: flex; align-items: center; justify-content: space-between; padding: 18px 24px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
     .drawer-title { font-size: 17px; font-weight: 700; color: var(--gray-900); }
     .drawer-subtitle { font-size: 12.5px; color: var(--gray-400); margin-top: 2px; }
-    .drawer-close-btn {
-      width: 32px; height: 32px; border-radius: 8px; border: none;
-      background: transparent; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      color: var(--gray-400); transition: background 0.15s, color 0.15s;
-    }
+    .drawer-close-btn { width: 32px; height: 32px; border-radius: 8px; border: none; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--gray-400); transition: background 0.15s, color 0.15s; }
     .drawer-close-btn:hover { background: var(--gray-100); color: var(--gray-700); }
     .drawer-close-btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-
+    
     /* 步骤条 */
     .wiz-steps {
-      display: flex; align-items: center;
-      padding: 16px 24px; border-bottom: 1px solid var(--border); flex-shrink: 0;
+      display: flex; align-items: center; padding: 14px 28px; border-bottom: 1px solid var(--border);
+      background: var(--bg-card); flex-shrink: 0;
     }
-    .wiz-step { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+    .wiz-step { display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; }
     .wiz-step-num {
-      width: 22px; height: 22px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 11px; font-weight: 700; flex-shrink: 0;
-      background: var(--gray-200); color: var(--gray-500); transition: all 0.2s;
+      width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; background: var(--gray-200); color: var(--gray-600); transition: all 0.2s;
     }
+    .wiz-step-label { font-size: 13px; font-weight: 500; color: var(--gray-500); }
     .wiz-step.active .wiz-step-num { background: var(--brand); color: #fff; }
+    .wiz-step.active .wiz-step-label { color: var(--brand); font-weight: 700; }
     .wiz-step.done .wiz-step-num { background: #10b981; color: #fff; }
-    .wiz-step-label { font-size: 12px; color: var(--gray-400); font-weight: 500; }
-    .wiz-step.active .wiz-step-label { color: var(--brand); font-weight: 600; }
-    .wiz-step.done .wiz-step-label { color: #10b981; }
-    .wiz-line { flex: 1; height: 2px; background: var(--gray-200); margin: 0 8px; min-width: 24px; }
+    .wiz-step.done .wiz-step-label { color: var(--gray-800); }
+    .wiz-line { flex: 1; height: 2px; background: var(--gray-200); margin: 0 14px; min-width: 24px; }
     .wiz-line.done { background: #10b981; }
 
-    /* 向导内容 */
-    .wizard-body { flex: 1; overflow-y: auto; padding: 28px 32px; }
+    .drawer-body { flex: 1; overflow-y: auto; padding: 24px 28px; }
     .wiz-page { display: none; }
     .wiz-page.active { display: block; }
+    .drawer-footer { padding: 14px 24px; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 10px; flex-shrink: 0; background: var(--bg-card); }
 
     /* 表单 */
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     .form-group { margin-bottom: 18px; }
     .form-label { display: block; font-size: 13px; font-weight: 600; color: var(--gray-700); margin-bottom: 6px; }
     .form-req { color: #dc2626; margin-left: 2px; }
     .form-input { width: 100%; padding: 9px 12px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 13.5px; color: var(--gray-800); background: #fff; transition: border-color 0.15s; box-sizing: border-box; outline: none; font-family: inherit; }
     .form-input:focus { border-color: var(--brand); }
-    .form-textarea { resize: vertical; min-height: 72px; line-height: 1.6; }
-    .form-hint { font-size: 12px; color: var(--gray-400); margin-top: 4px; }
+    .form-textarea { resize: vertical; min-height: 64px; line-height: 1.6; }
+    .form-hint { font-size: 12px; color: var(--gray-400); margin-top: 5px; line-height: 1.6; }
     .form-select-input { width: 100%; padding: 9px 32px 9px 12px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 13.5px; color: var(--gray-800); background: #fff; outline: none; cursor: pointer; -webkit-appearance: none; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; box-sizing: border-box; font-family: inherit; }
     .form-select-input:focus { border-color: var(--brand); }
+    .form-select-input:disabled { background-color: var(--gray-50); color: var(--gray-400); cursor: not-allowed; }
 
-    /* section heading */
-    .section-heading {
-      display: flex; align-items: center; gap: 8px;
-      font-size: 13.5px; font-weight: 700; color: var(--gray-800);
-      margin: 24px 0 12px; padding-bottom: 8px; border-bottom: 1px solid var(--gray-100);
-    }
+    .section-heading { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; color: var(--gray-800); margin: 24px 0 14px; }
     .section-heading::before { content: ''; display: block; width: 4px; height: 14px; background: var(--brand); border-radius: 2px; }
     .section-heading:first-child { margin-top: 0; }
 
     /* 上传区 */
-    .dropzone {
-      border: 2px dashed var(--gray-300); border-radius: 10px;
-      padding: 28px 16px; text-align: center; cursor: pointer;
-      transition: border-color 0.2s, background 0.2s; background: #fafafa;
-    }
+    .dropzone { position: relative; border: 2px dashed var(--gray-300); border-radius: 12px; padding: 26px 16px; text-align: center; cursor: pointer; transition: border-color 0.2s, background 0.2s; background: #fafafa; }
     .dropzone:hover { border-color: var(--brand); background: var(--brand-light); }
+    .dropzone input[type=file] { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
 
-    /* toggle */
-    .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: var(--gray-50); border: 1px solid var(--border); border-radius: 9px; }
-    .toggle-label-group { display: flex; flex-direction: column; gap: 2px; }
-    .toggle-label-title { font-size: 13.5px; font-weight: 600; color: var(--gray-800); }
-    .toggle-label-desc { font-size: 12px; color: var(--gray-400); }
-    .toggle-switch { position: relative; width: 40px; height: 22px; background: var(--gray-300); border-radius: 11px; transition: background 0.2s; flex-shrink: 0; cursor: pointer; }
-    .toggle-switch::after { content: ''; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: transform 0.2s; }
-    .toggle-switch.on { background: var(--brand); }
-    .toggle-switch.on::after { transform: translateX(18px); }
+    /* 交付方式卡片 */
+    .way-card { border: 1.5px solid var(--border); border-radius: 12px; margin-bottom: 16px; transition: border-color 0.2s, box-shadow 0.2s; background: #fff; }
+    .way-card.on { border-color: var(--brand); box-shadow: 0 0 0 3px rgba(16,185,129,0.08); }
+    .way-card-head { display: flex; align-items: center; gap: 12px; padding: 14px 16px; cursor: pointer; user-select: none; }
+    .way-check { width: 18px; height: 18px; border-radius: 5px; border: 1.5px solid var(--gray-300); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.15s; background: #fff; }
+    .way-card.on .way-check { background: var(--brand); border-color: var(--brand); }
+    .way-check svg { width: 12px; height: 12px; stroke: #fff; fill: none; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; opacity: 0; }
+    .way-card.on .way-check svg { opacity: 1; }
+    .way-ico { width: 34px; height: 34px; border-radius: 9px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .way-ico svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .way-ico.p { background: var(--brand-light); color: var(--brand); }
+    .way-ico.e { background: #eff6ff; color: #2563eb; }
+    .way-card-title { font-size: 14px; font-weight: 700; color: var(--gray-800); }
+    .way-card-desc { font-size: 12px; color: var(--gray-400); margin-top: 2px; }
+    .way-card-body { display: none; padding: 4px 16px 16px 46px; }
+    .way-card.on .way-card-body { display: block; }
 
-    /* 字段映射 */
-    .mapping-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    .mapping-table th { padding: 9px 12px; text-align: left; font-size: 12px; font-weight: 600; color: var(--gray-500); background: var(--gray-50); border-bottom: 1px solid var(--border); }
-    .mapping-table td { padding: 8px 12px; border-bottom: 1px solid var(--gray-100); color: var(--gray-700); vertical-align: middle; }
-    .mapping-table tr:last-child td { border-bottom: none; }
-    .mapping-select { padding: 5px 26px 5px 8px; border: 1px solid var(--border); border-radius: 6px; font-size: 12.5px; color: var(--gray-700); background: #fff; cursor: pointer; font-family: inherit; -webkit-appearance: none; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 8px center; width: 100%; outline: none; }
-    .mapping-select:focus { border-color: var(--brand); }
-
-    /* 自定义列勾选 */
-    .col-check-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-top: 10px; }
-    .col-check-item { display: flex; align-items: center; gap: 8px; padding: 9px 12px; border: 1.5px solid var(--border); border-radius: 8px; cursor: pointer; background: #fff; transition: all 0.15s; user-select: none; font-size: 13px; color: var(--gray-700); }
-    .col-check-item.checked { border-color: var(--brand); background: var(--brand-light); color: var(--brand); font-weight: 600; }
-    .col-check-item input[type="checkbox"] { display: none; }
-
-    /* 状态 badge */
-    .status-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 99px; font-size: 12px; font-weight: 500; white-space: nowrap; }
-    .status-in-pool { background: var(--brand-light); color: var(--brand); }
-    .status-archived { background: var(--gray-100); color: var(--gray-600); }
-
-    /* 详情抽屉 info row */
-    .info-row { display: flex; padding: 10px 0; border-bottom: 1px solid var(--gray-100); font-size: 13.5px; }
-    .info-row:last-child { border-bottom: none; }
-    .info-label { width: 110px; color: var(--gray-400); flex-shrink: 0; }
-    .info-value { color: var(--gray-800); flex: 1; line-height: 1.6; }
-
-    /* 向导 footer */
-    .wizard-footer {
-      padding: 14px 24px; border-top: 1px solid var(--border);
-      display: flex; justify-content: space-between; align-items: center;
-      flex-shrink: 0; background: var(--bg-card);
+    /* 白名单校验结果 - 紧凑双行单选排版 */
+    .wl-box { border-radius: 8px; padding: 10px 14px; font-size: 13px; line-height: 1.5; margin-top: 10px; }
+    .wl-box.ok { background: var(--brand-light); border: 1px solid var(--brand-border); color: #065f46; }
+    .wl-box.warn { background: #fffbeb; border: 1px solid #fde68a; color: #92400e; }
+    .wl-box.muted { background: var(--gray-50); border: 1px solid var(--border); color: var(--gray-500); }
+    .wl-top-bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+    .wl-top-title { display: flex; align-items: center; gap: 6px; font-weight: 600; color: #92400e; font-size: 13px; }
+    .wl-top-links { display: flex; align-items: center; gap: 14px; font-size: 12px; }
+    .wl-action-btn {
+      background: none;
+      border: none;
+      padding: 0;
+      font-size: 12px;
+      font-family: inherit;
+      color: #047857;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      line-height: 1.4;
+      transition: color 0.15s;
     }
+    .wl-action-btn:hover {
+      color: #065f46;
+      text-decoration: underline;
+    }
+    .wl-radio-row { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; margin-top: 8px; padding-top: 8px; border-top: 1px dashed #fde68a; }
+    .wl-radio-item { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; user-select: none; font-size: 13px; color: #78350f; }
+    .wl-radio-item input[type="radio"] { margin: 0; accent-color: #d97706; width: 14px; height: 14px; cursor: pointer; }
+    .wl-radio-item.active { font-weight: 600; color: #92400e; }
 
-    /* 确认步骤摘要 */
-    .confirm-summary-box { background: var(--gray-50); border-radius: 10px; padding: 16px 20px; margin-bottom: 16px; }
+    /* 邮件收件人 Chip 输入框 */
+    .chip-input { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding: 6px 10px; border: 1.5px solid var(--border); border-radius: 8px; min-height: 42px; background: #fff; }
+    .chip-input:focus-within { border-color: var(--brand); }
+    .chip-input input { border: none; outline: none; flex: 1; min-width: 180px; font-size: 13px; font-family: inherit; padding: 4px; color: var(--gray-800); }
+    .chip { display: inline-flex; align-items: center; gap: 5px; padding: 3px 8px 3px 10px; background: #eff6ff; color: #1d4ed8; border-radius: 99px; font-size: 12.5px; font-weight: 500; }
+    .chip button { border: none; background: none; cursor: pointer; color: #60a5fa; font-size: 14px; line-height: 1; padding: 0 2px; }
+    .chip button:hover { color: #dc2626; }
+    .chip.chip-cc { background: #f3f4f6; color: #374151; }
+    .chip.chip-cc button { color: #9ca3af; }
+    .chip.chip-cc button:hover { color: #dc2626; }
+
+    /* 发送方式 */
+    .mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+    .mode-opt { border: 1.5px solid var(--border); border-radius: 10px; padding: 12px 14px; cursor: pointer; transition: all 0.15s; user-select: none; }
+    .mode-opt:hover { border-color: var(--brand-border); }
+    .mode-opt.active { border-color: var(--brand); background: var(--brand-light); }
+    .mode-opt-title { display: flex; align-items: center; gap: 6px; font-size: 13.5px; font-weight: 600; color: var(--gray-800); }
+    .mode-opt-title input { accent-color: var(--brand); margin: 0; }
+    .mode-opt-desc { font-size: 12px; color: var(--gray-500); margin-top: 4px; line-height: 1.6; padding-left: 20px; }
+    .rec-badge { font-size: 11px; font-weight: 500; padding: 1px 6px; border-radius: 4px; background: var(--brand); color: #fff; margin-left: 4px; }
+
+    /* 邮件正文编辑器 */
+    .mail-preview-box { border: 1.5px solid var(--border); border-radius: 8px; background: #fafafa; padding: 10px; }
+    .mail-body-editor { width: 100%; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px 12px; font-size: 13px; line-height: 1.7; color: var(--gray-800); background: #fff; font-family: inherit; resize: vertical; min-height: 130px; box-sizing: border-box; outline: none; }
+    .mail-body-editor:focus { border-color: var(--brand); }
+
+    /* 确认页面步骤3汇总 */
+    .summary-card { background: var(--gray-50); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; margin-bottom: 16px; }
+    .summary-card-title { font-size: 14px; font-weight: 700; color: var(--gray-800); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+    .summary-card-title svg { width: 16px; height: 16px; stroke: var(--brand); fill: none; stroke-width: 2; }
+    .summary-row { display: flex; font-size: 13px; padding: 6px 0; border-bottom: 1px dashed #e2e8f0; }
+    .summary-row:last-child { border-bottom: none; }
+    .summary-lbl { width: 110px; color: var(--gray-400); flex-shrink: 0; }
+    .summary-val { color: var(--gray-800); flex: 1; line-height: 1.6; }
+
+    /* 详情 */
+    .d-tabs { display: flex; gap: 4px; padding: 0 24px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+    .d-tab { padding: 12px 14px; font-size: 13.5px; color: var(--gray-500); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; font-weight: 500; }
+    .d-tab:hover { color: var(--gray-800); }
+    .d-tab.active { color: var(--brand); border-bottom-color: var(--brand); font-weight: 600; }
+    .d-tab .cnt { font-size: 11.5px; color: var(--gray-400); margin-left: 4px; }
+    .d-pane { display: none; }
+    .d-pane.active { display: block; }
+    .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 22px; }
+    .stat-box { background: var(--gray-50); border-radius: 10px; padding: 14px 16px; }
+    .stat-box-label { font-size: 12px; color: var(--gray-400); }
+    .stat-box-val { font-size: 22px; font-weight: 700; color: var(--gray-800); margin-top: 4px; }
+    .stat-box-val.brand { color: var(--brand); }
+    .info-card { border: 1px solid var(--border); border-radius: 12px; padding: 4px 18px; margin-bottom: 16px; }
+    .info-card-head { display: flex; align-items: center; gap: 8px; padding: 12px 0 10px; border-bottom: 1px solid var(--gray-100); font-size: 13.5px; font-weight: 700; color: var(--gray-800); }
+    .info-card-head .way-ico { width: 26px; height: 26px; border-radius: 7px; }
+    .info-card-head .way-ico svg { width: 14px; height: 14px; }
+    .info-card-head .ich-extra { margin-left: auto; display: flex; gap: 8px; font-weight: 400; }
+    .info-row { display: flex; padding: 9px 0; border-bottom: 1px solid var(--gray-100); font-size: 13px; }
+    .info-row:last-child { border-bottom: none; }
+    .info-label { width: 104px; color: var(--gray-400); flex-shrink: 0; }
+    .info-value { color: var(--gray-800); flex: 1; line-height: 1.6; }
+    .result-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .eye-btn {
+      background: none; border: none; cursor: pointer; padding: 2px 4px;
+      display: inline-flex; align-items: center; justify-content: center;
+      color: var(--gray-400); border-radius: 4px; transition: color 0.15s, background 0.15s;
+    }
+    .eye-btn:hover { color: var(--gray-700); background: var(--gray-200); }
+
+    /* 明细表（多维金融列与横向滚动） */
+    .rows-toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .rows-table-wrap { border: 1px solid var(--border); border-radius: 10px; overflow-x: auto; overflow-y: visible; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
+    .rows-table-wrap::-webkit-scrollbar { height: 7px; width: 7px; }
+    .rows-table-wrap::-webkit-scrollbar-track { background: #f8fafc; border-radius: 4px; }
+    .rows-table-wrap::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    .rows-table-wrap::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    .rows-table { width: 100%; border-collapse: collapse; font-size: 12.5px; white-space: nowrap; min-width: 1320px; }
+    .rows-table th { position: sticky; top: 0; padding: 10px 14px; text-align: left; font-weight: 600; color: var(--gray-600); background: var(--gray-50); border-bottom: 1px solid var(--border); }
+    .rows-table td { padding: 10px 14px; border-bottom: 1px solid var(--gray-100); color: var(--gray-700); }
+    .rows-table tr:last-child td { border-bottom: none; }
+    .rows-table tr:hover td { background: #f8fafc; }
+    .rows-pager .pg { display: flex; gap: 6px; }
 
     /* Modal */
     .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 2000; align-items: center; justify-content: center; }
     .modal-backdrop.show { display: flex; }
-    .modal-box { background: #fff; border-radius: 16px; width: 420px; max-width: 95vw; padding: 32px 28px; box-shadow: 0 12px 48px rgba(0,0,0,0.18); animation: fadeInUp 0.22s ease; text-align: center; }
+    .modal-box { background: #fff; border-radius: 16px; width: 440px; max-width: 95vw; padding: 30px 28px 24px; box-shadow: 0 12px 48px rgba(0,0,0,0.18); animation: fadeInUp 0.22s ease; text-align: center; }
     @keyframes fadeInUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
     .modal-icon { width: 52px; height: 52px; border-radius: 50%; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; }
-    .modal-icon.danger { background: #fee2e2; }
     .modal-icon svg { width: 26px; height: 26px; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-    .modal-icon.danger svg { stroke: #dc2626; }
+    .modal-icon.danger { background: #fee2e2; } .modal-icon.danger svg { stroke: #dc2626; }
+    .modal-icon.info { background: var(--brand-light); } .modal-icon.info svg { stroke: var(--brand); }
     .modal-title { font-size: 17px; font-weight: 700; color: var(--gray-900); margin-bottom: 8px; }
-    .modal-desc { font-size: 13.5px; color: var(--gray-500); line-height: 1.7; margin-bottom: 22px; }
+    .modal-desc { font-size: 13.5px; color: var(--gray-500); line-height: 1.75; margin-bottom: 22px; }
     .modal-btns { display: flex; gap: 10px; justify-content: center; }
 
     /* Toast */
@@ -228,22 +264,14 @@
         </p>
       </div>
       <div style="display:flex;align-items:center;gap:10px;">
-        <a href="credit-monitoring.html" class="btn btn-secondary" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;font-size:13px;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;color:var(--brand);">
-            <line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line>
-          </svg>
-          余额监控
-        </a>
-        <button class="btn btn-primary" onclick="openWizard()">
+        <button class="btn btn-primary" id="btnNewDelivery" onclick="openNew()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;flex-shrink:0;">
             <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
           </svg>
-          新建交付名单
+          新建交付
         </button>
       </div>
     </div>
-
-
 
     <!-- 工具栏 -->
     <div class="delivery-toolbar">
@@ -251,22 +279,15 @@
         <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <input id="searchInput" type="text" placeholder="搜索名单名称..." oninput="doFilter()">
       </div>
-      <select class="filter-select" id="orgFilter" onchange="doFilter()">
-        <option value="">全部机构</option>
-        <option value="平安银行">平安银行</option>
-        <option value="招商银行">招商银行</option>
-        <option value="农业银行">农业银行</option>
-        <option value="江苏银行">江苏银行</option>
-        <option value="南京银行">南京银行</option>
-      </select>
-      <select class="filter-select" id="poolFilter" onchange="doFilter()">
-        <option value="">全部状态</option>
-        <option value="true">已入客户池</option>
-        <option value="false">仅存档</option>
+      <select class="filter-select" id="orgFilter" onchange="doFilter()"></select>
+      <select class="filter-select" id="wayFilter" onchange="doFilter()">
+        <option value="">全部交付方式</option>
+        <option value="platform">在线分发</option>
+        <option value="email">系统邮件</option>
       </select>
     </div>
 
-    <!-- 交付名单列表 -->
+    <!-- 交付列表 -->
     <div class="card">
       <div class="table-wrapper">
         <table class="table">
@@ -276,8 +297,8 @@
               <th>名单名称</th>
               <th>接收机构</th>
               <th>企业数</th>
-              <th>关键数据字段</th>
-              <th>客户池</th>
+              <th>交付方式</th>
+              <th>备注</th>
               <th>交付时间</th>
               <th>操作人</th>
               <th style="text-align:right;">操作</th>
@@ -286,551 +307,1201 @@
           <tbody id="deliveryTbody"></tbody>
         </table>
       </div>
-      <!-- 分页控件 -->
-      <div class="pagination" id="pagination" style="padding: 16px 24px; border-top: 1px solid var(--gray-100);">
-        <div class="pagination-info" style="display:flex;align-items:center;gap:12px;">
-          <span id="paginationInfo">显示 1 到 9 条，共 9 条记录</span>
-          <select class="filter-input form-control" style="width: 100px; height: 32px; min-width:unset; padding: 0 10px; font-size: 13px;">
-            <option>10 条/页</option>
-            <option>20 条/页</option>
-          </select>
-        </div>
+      <div class="pagination" style="padding:16px 24px;border-top:1px solid var(--gray-100);">
+        <div class="pagination-info"><span id="paginationInfo"></span></div>
         <div class="pagination-controls">
           <button class="btn btn-ghost btn-sm" disabled>上一页</button>
           <button class="btn btn-primary btn-sm page-num">1</button>
-          <button class="btn btn-ghost btn-sm">下一页</button>
+          <button class="btn btn-ghost btn-sm" disabled>下一页</button>
         </div>
       </div>
     </div>
-
   </main>
 </div>
 
 <!-- ══════════════════════════════════════
-     新建交付名单向导（右侧宽抽屉）
+     新建交付（分步骤向导抽屉）
      ══════════════════════════════════════ -->
-<div class="side-overlay" id="wizardOverlay" onclick="closeWizard()"></div>
-<div class="wizard-drawer" id="wizardDrawer">
-  <!-- 头部 -->
+<div class="side-overlay" id="newOverlay" onclick="closeNew()"></div>
+<div class="drawer drawer-wizard" id="newDrawer">
   <div class="drawer-header">
     <div>
-      <div class="drawer-title">新建交付名单</div>
-      <div class="drawer-subtitle">填写基本信息并上传 Excel 名单文件，完成后自动进入营销名单池</div>
+      <div class="drawer-title">新建交付</div>
+      <div class="drawer-subtitle">向合作机构交付营销名单，支持在线分发与系统邮件</div>
     </div>
-    <button class="drawer-close-btn" onclick="closeWizard()">
-      <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-    </button>
+    <button class="drawer-close-btn" onclick="closeNew()"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
   </div>
 
-  <!-- 步骤条 -->
+  <!-- 步骤导航条 -->
   <div class="wiz-steps">
-    <div class="wiz-step active" id="wizStep1">
+    <div class="wiz-step active" id="ws1" onclick="jumpStep(1)">
       <div class="wiz-step-num">1</div>
-      <div class="wiz-step-label">基本信息 &amp; 上传文件</div>
+      <div class="wiz-step-label">基本信息 & 上传名单</div>
     </div>
-    <div class="wiz-line" id="wizLine1"></div>
-    <div class="wiz-step" id="wizStep2">
+    <div class="wiz-line" id="wl1"></div>
+    <div class="wiz-step" id="ws2" onclick="jumpStep(2)">
       <div class="wiz-step-num">2</div>
-      <div class="wiz-step-label">字段映射 &amp; 展示设置</div>
+      <div class="wiz-step-label">交付方式配置</div>
     </div>
-    <div class="wiz-line" id="wizLine2"></div>
-    <div class="wiz-step" id="wizStep3">
+    <div class="wiz-line" id="wl2"></div>
+    <div class="wiz-step" id="ws3" onclick="jumpStep(3)">
       <div class="wiz-step-num">3</div>
-      <div class="wiz-step-label">确认提交</div>
+      <div class="wiz-step-label">确认交付</div>
     </div>
   </div>
 
-  <!-- 内容 -->
-  <div class="wizard-body">
-
-    <!-- 步骤1 -->
-    <div class="wiz-page active" id="wizPage1">
+  <div class="drawer-body">
+    <!-- ── 步骤 1：基本信息 & 上传名单 ── -->
+    <div class="wiz-page active" id="wp1">
+      <div class="section-heading">基本信息</div>
       <div class="form-row">
         <div class="form-group">
-          <label class="form-label">名单名称 <span class="form-req">*</span></label>
-          <input type="text" class="form-input" id="wName" placeholder="如：平安银行-小微普惠2026Q2">
-          <div class="form-hint">建议格式：机构名 - 产品/项目 - 时间</div>
+          <label class="form-label" for="fName">名单名称<span class="form-req">*</span></label>
+          <input type="text" class="form-input" id="fName" placeholder="如：平安银行-小微普惠2026Q3" oninput="syncMailSubject()">
         </div>
         <div class="form-group">
-          <label class="form-label">接收机构 <span class="form-req">*</span></label>
-          <select class="form-select-input" id="wOrg">
-            <option value="">请选择合作机构</option>
-            <option value="平安银行股份有限公司|平安银行">平安银行</option>
-            <option value="招商银行股份有限公司|招商银行">招商银行</option>
-            <option value="中国农业银行股份有限公司|农业银行">农业银行</option>
-            <option value="江苏银行股份有限公司|江苏银行">江苏银行</option>
-            <option value="南京银行股份有限公司|南京银行">南京银行</option>
-          </select>
+          <label class="form-label" for="fOrg">接收机构<span class="form-req">*</span></label>
+          <select class="form-select-input" id="fOrg" onchange="onOrgChange()"></select>
         </div>
       </div>
       <div class="form-group">
-        <label class="form-label">备注（选填）</label>
-        <textarea class="form-input form-textarea" id="wRemark" placeholder="可记录获客口径说明、沟通背景等..."></textarea>
+        <label class="form-label" for="fRemark">备注</label>
+        <textarea class="form-input form-textarea" id="fRemark" placeholder="选填，可记录筛选口径说明、沟通背景等"></textarea>
       </div>
 
-      <div class="section-heading">上传名单文件</div>
-      <div class="form-group">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-          <span style="font-size:12.5px;color:var(--gray-500);">支持 .xlsx / .xls / .csv，单文件不超过 10MB</span>
-        </div>
-        <div class="dropzone" id="wDropZone" style="position: relative; overflow: hidden;"
-          ondragover="event.preventDefault();this.style.borderColor='var(--brand)';this.style.background='var(--brand-light)';"
-          ondragleave="this.style.borderColor='var(--gray-300)';this.style.background='#fafafa';"
-          ondrop="event.preventDefault();this.style.borderColor='var(--gray-300)';this.style.background='#fafafa';handleFile({files:event.dataTransfer.files})">
-          
-          <!-- 全透明覆盖整个区域的原生 input，点击任意位置都会直接触发选择器 -->
-          <input type="file" id="wFileInput" accept=".xlsx,.xls,.csv" 
-            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 10;" 
-            onchange="handleFile(this)">
-            
-          <svg style="width:38px;height:38px;color:var(--gray-400);margin-bottom:10px; position: relative; z-index: 1;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-            <polyline points="17 8 12 3 7 8"/>
-            <line x1="12" y1="3" x2="12" y2="15"/>
+      <div class="section-heading">上传名单文件<span class="form-req">*</span></div>
+      <p style="font-size:12.5px;color:var(--gray-500);line-height:1.6;margin-bottom:10px;">
+        系统根据企业进行识别匹配，请确保excel中包含「企业名称」、「统一社会信用代码」（可选）列；其余列原样保留。
+      </p>
+
+      <div class="dropzone" id="dropZone"
+        ondragover="event.preventDefault();this.style.borderColor='var(--brand)';"
+        ondragleave="this.style.borderColor='';"
+        ondrop="event.preventDefault();this.style.borderColor='';handleFile(event.dataTransfer.files[0])">
+        <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" onchange="handleFile(this.files[0])">
+        <svg style="width:36px;height:36px;color:var(--gray-400);margin-bottom:8px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <div style="font-size:14px;font-weight:600;color:var(--gray-700);margin-bottom:4px;">点击或将文件拖拽到这里上传</div>
+        <div style="font-size:12px;color:var(--gray-500);">支持 .xlsx / .xls / .csv 格式，单个文件不超过 20MB</div>
+      </div>
+
+      <div id="fileInfoRow"
+        style="display:none;margin-top:10px;padding:10px 14px;background:var(--gray-50);border-radius:8px;font-size:13px;border:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between;">
+        <span style="display:flex;align-items:center;overflow:hidden;min-width:0;">
+          <svg style="width:16px;height:16px;margin-right:6px;color:var(--brand);flex-shrink:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
           </svg>
-          <div style="font-size:14px;font-weight:600;color:var(--gray-700);margin-bottom:4px; position: relative; z-index: 1;">点击或将文件拖拽到这里上传</div>
-          <div style="font-size:12px;color:var(--gray-500); position: relative; z-index: 1;">上传后系统将自动读取列名，供下一步字段映射</div>
-        </div>
-        <div id="wFileInfo" style="display:none;margin-top:10px;padding:10px 14px;background:var(--gray-50);border-radius:8px;font-size:13px;border:1px solid #e2e8f0;align-items:center;justify-content:space-between;">
-          <span id="wFileName" style="display:flex;align-items:center;gap:8px;color:var(--gray-700);font-weight:600;"></span>
-          <button class="btn btn-ghost btn-sm" onclick="clearFile()" style="padding:4px 8px;color:#dc2626;font-size:13px;white-space:nowrap;">删除</button>
-        </div>
-      </div>
-
-      <div class="toggle-row">
-        <div class="toggle-label-group">
-          <div class="toggle-label-title">导入至营销名单池</div>
-          <div class="toggle-label-desc">开启后名单数据进入营销池，支持后续分配与营销跟进</div>
-        </div>
-        <div class="toggle-switch on" id="poolToggle" onclick="this.classList.toggle('on')"></div>
+          <strong id="fileInfoName" style="margin:0 6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:320px;">—</strong>
+          <span id="fileInfoSize" style="color:var(--gray-500);font-size:12px;white-space:nowrap;">—</span>
+        </span>
+        <button type="button" class="btn btn-ghost btn-sm" onclick="clearFile()"
+          style="padding:4px 8px;color:#dc2626;font-size:13px;white-space:nowrap;background:none;border:none;cursor:pointer;">删除</button>
       </div>
     </div>
 
-    <!-- 步骤2 -->
-    <div class="wiz-page" id="wizPage2">
-      <p style="font-size:13px;color:var(--gray-500);line-height:1.7;margin-bottom:20px;">
-        系统已自动识别 Excel 列名与平台标准字段的对应关系，请确认或调整。<br>
-        <strong style="color:var(--gray-700);">「企业名称」</strong>为必填，其余可按需映射。未映射的列可设为「关键数据」展示给机构端（无需电子授权）。
-      </p>
+    <!-- ── 步骤 2：交付方式配置 ── -->
+    <div class="wiz-page" id="wp2">
+      <div class="section-heading" style="margin-top:0;">交付方式<span class="form-req">*</span></div>
 
-      <div class="section-heading">标准字段映射</div>
-      <table class="mapping-table">
-        <thead>
-          <tr>
-            <th style="width:34%;">Excel 列名</th>
-            <th style="width:6%;text-align:center;">→</th>
-            <th>映射到平台字段</th>
-            <th style="width:90px;text-align:center;">状态</th>
-          </tr>
-        </thead>
-        <tbody id="mappingBody"></tbody>
-      </table>
+      <!-- 交付方式 1：系统邮件（置顶） -->
+      <div class="way-card" id="cardEmail">
+        <div class="way-card-head" onclick="toggleWay('email')">
+          <div class="way-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="way-ico e"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+          <div>
+            <div class="way-card-title">系统邮件</div>
+            <div class="way-card-desc">通过系统邮件发送交付通知与文件信息，支持安全下载链接或加密附件。</div>
+          </div>
+        </div>
+        <div class="way-card-body">
+          <!-- 1. 发送方式置顶 -->
+          <div class="form-group">
+            <label class="form-label">发送方式</label>
+            <div class="mode-grid">
+              <div class="mode-opt active" id="modeLink" onclick="setMode('link')">
+                <div class="mode-opt-title"><input type="radio" name="mailMode" checked>下载链接 <span class="rec-badge">推荐</span></div>
+                <div class="mode-opt-desc">邮件内附下载链接，可设有效期及访问密码</div>
+              </div>
+              <div class="mode-opt" id="modeAttach" onclick="setMode('attach')">
+                <div class="mode-opt-title"><input type="radio" name="mailMode">Excel 附件</div>
+                <div class="mode-opt-desc">名单文件直接作为附件发送，可设文件密码</div>
+              </div>
+            </div>
+          </div>
 
-      <div class="section-heading" style="margin-top:24px;">关键数据字段配置</div>
-      <p style="font-size:12.5px;color:var(--gray-400);margin-bottom:10px;line-height:1.6;">
-        以下列未映射到标准字段，勾选后将在机构端客户详情页「关键数据」中展示（不受电子授权限制）。
-      </p>
-      <div class="col-check-grid" id="customColGrid"></div>
+          <!-- 2. 安全与有效期配置（链接模式下含有效期+访问密码；附件模式下含文件密码） -->
+          <div class="form-group" id="mailSecurityGroup" style="background:var(--gray-50);border:1px solid var(--border);border-radius:10px;padding:12px 14px;">
+            <div style="display:flex;align-items:center;flex-wrap:wrap;gap:20px;">
+              <div id="expireDaysWrap" style="display:flex;align-items:center;gap:8px;">
+                <label class="form-label" style="margin-bottom:0;font-size:13px;">链接有效期</label>
+                <select class="form-select-input" id="fExpireDays" style="width:130px;height:34px;padding:4px 8px;" onchange="updateDefaultMailBody()">
+                  <option value="0" selected>长期有效</option>
+                  <option value="3">3 天有效</option>
+                  <option value="7">7 天有效</option>
+                  <option value="15">15 天有效</option>
+                  <option value="30">30 天有效</option>
+                </select>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                <label style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;user-select:none;font-size:13px;color:var(--gray-700);">
+                  <input type="checkbox" id="fPwdCheck" onchange="togglePwd()" style="accent-color:var(--brand);width:15px;height:15px;">
+                  <span id="pwdCheckLabel">设置访问密码</span>
+                </label>
+                <div id="pwdWrap" style="display:none;align-items:center;gap:6px;">
+                  <input type="text" id="fPwd" class="form-input" style="width:84px;height:32px;padding:2px 8px;font-family:monospace;font-weight:700;letter-spacing:1.5px;text-align:center;text-transform:uppercase;" maxlength="6" value="7K9P" oninput="updateDefaultMailBody()">
+                  <button type="button" class="btn btn-default btn-sm" onclick="genNewPwd()" style="padding:4px 8px;font-size:12px;height:32px;" title="随机生成新密码">换一个</button>
+                  <span style="font-size:12px;color:#d97706;margin-left:4px;">（密码不随邮件发送，需通过独立安全渠道单独告知接收人）</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. 收件人邮箱 -->
+          <div class="form-group">
+            <label class="form-label">收件人邮箱<span class="form-req">*</span></label>
+            <div class="chip-input" id="chipBox" onclick="document.getElementById('mailInput').focus()">
+              <input id="mailInput" type="text" placeholder="输入收件人邮箱，按回车或失焦添加" onkeydown="onMailKey(event, 'to')" onblur="commitMailInput('to')">
+            </div>
+          </div>
+
+          <!-- 4. 抄送邮箱 -->
+          <div class="form-group">
+            <label class="form-label">抄送邮箱</label>
+            <div class="chip-input" id="ccChipBox" onclick="document.getElementById('ccMailInput').focus()">
+              <input id="ccMailInput" type="text" placeholder="输入抄送邮箱，按回车或失焦添加（选填）" onkeydown="onMailKey(event, 'cc')" onblur="commitMailInput('cc')">
+            </div>
+          </div>
+
+          <!-- 5. 邮件主题 -->
+          <div class="form-group">
+            <label class="form-label" for="fSubject">邮件主题</label>
+            <input type="text" class="form-input" id="fSubject">
+          </div>
+
+          <!-- 6. 邮件正文预览与直接修改 -->
+          <div class="form-group" style="margin-bottom:0;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+              <label class="form-label" style="margin-bottom:0;">邮件正文预览与修改</label>
+              <button class="link-btn" onclick="resetMailBody()" style="font-size:12px;">恢复系统默认模板</button>
+            </div>
+            <div class="mail-preview-box">
+              <textarea class="mail-body-editor" id="fMailBody" placeholder="邮件正文内容..."></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 交付方式 2：在线分发 -->
+      <div class="way-card" id="cardPlatform">
+        <div class="way-card-head" onclick="toggleWay('platform')">
+          <div class="way-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="way-ico p"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+          <div>
+            <div class="way-card-title">在线分发</div>
+            <div class="way-card-desc">通过平台智能体名单分配机制分发名单，可在线跟进管理客户经理营销作业进展。</div>
+          </div>
+        </div>
+        <div class="way-card-body">
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label" for="fAgent">导入智能体<span class="form-req">*</span></label>
+            <select class="form-select-input" id="fAgent" onchange="refreshPlatform()">
+              <option value="">请选择智能体</option>
+            </select>
+          </div>
+          <div id="wlResult"></div>
+        </div>
+      </div>
     </div>
 
-    <!-- 步骤3 -->
-    <div class="wiz-page" id="wizPage3">
-      <div style="text-align:center;padding:24px 0 32px;">
-        <div style="width:64px;height:64px;border-radius:50%;background:#dcfce7;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;">
-          <svg viewBox="0 0 24 24" style="width:30px;height:30px;" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <!-- ── 步骤 3：确认交付 ── -->
+    <div class="wiz-page" id="wp3">
+      <div style="text-align:center;padding:12px 0 20px;">
+        <div style="width:52px;height:52px;border-radius:50%;background:#dcfce7;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">
+          <svg viewBox="0 0 24 24" style="width:26px;height:26px;" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="20 6 9 17 4 12"/>
           </svg>
         </div>
-        <div style="font-size:17px;font-weight:700;color:var(--gray-900);margin-bottom:8px;">即将完成</div>
-        <div style="font-size:13.5px;color:var(--gray-500);">请确认以下信息无误，然后点击「确认交付」</div>
+        <div style="font-size:16px;font-weight:700;color:var(--gray-900);margin-bottom:4px;">请核验本次交付信息</div>
+        <div style="font-size:13px;color:var(--gray-500);">确认无误后点击「确认交付」执行交付操作</div>
       </div>
 
-      <div class="confirm-summary-box">
-        <div id="confirmSummary"></div>
+      <div class="summary-card">
+        <div class="summary-card-title">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          基本信息与名单文件
+        </div>
+        <div class="summary-row"><span class="summary-lbl">名单名称</span><span class="summary-val" id="sumName" style="font-weight:700;color:var(--brand);">—</span></div>
+        <div class="summary-row"><span class="summary-lbl">接收机构</span><span class="summary-val" id="sumOrg">—</span></div>
+        <div class="summary-row"><span class="summary-lbl">名单文件</span><span class="summary-val" id="sumFile">—</span></div>
+        <div class="summary-row"><span class="summary-lbl">企业数</span><span class="summary-val" id="sumCount" style="font-weight:700;">—</span></div>
+        <div class="summary-row"><span class="summary-lbl">备注</span><span class="summary-val" id="sumRemark">—</span></div>
       </div>
 
-      <div style="background:var(--brand-light);border:1px solid var(--brand-border);border-radius:10px;padding:14px 16px;">
-        <div style="font-size:13px;font-weight:600;color:var(--brand);margin-bottom:4px;">提交后</div>
-        <div style="font-size:12.5px;color:var(--gray-600);line-height:1.7;">名单数据将写入营销名单池，机构端可在「营销名单」中查看。文件将同步给机构，机构端可随时下载原始 Excel。</div>
+      <div id="sumEmailCard" class="summary-card" style="display:none;">
+        <div class="summary-card-title">
+          <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          系统邮件配置
+        </div>
+        <div class="summary-row"><span class="summary-lbl">收件人</span><span class="summary-val" id="sumMailTo">—</span></div>
+        <div class="summary-row" id="sumMailCcRow" style="display:none;"><span class="summary-lbl">抄送人</span><span class="summary-val" id="sumMailCc">—</span></div>
+        <div class="summary-row"><span class="summary-lbl">发送方式</span><span class="summary-val" id="sumMailMode">—</span></div>
+        <div class="summary-row"><span class="summary-lbl">邮件主题</span><span class="summary-val" id="sumMailSubject">—</span></div>
+        <div class="summary-row"><span class="summary-lbl">邮件正文预览</span><span class="summary-val" id="sumMailBody" style="font-size:12px;color:var(--gray-600);white-space:pre-wrap;">—</span></div>
+      </div>
+
+      <div id="sumPlatformCard" class="summary-card" style="display:none;">
+        <div class="summary-card-title">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          在线分发配置
+        </div>
+        <div class="summary-row"><span class="summary-lbl">目标智能体</span><span class="summary-val" id="sumAgent">—</span></div>
+        <div class="summary-row"><span class="summary-lbl">导入企业数</span><span class="summary-val" id="sumImportCount" style="font-weight:700;color:#047857;">—</span></div>
+        <div class="summary-row"><span class="summary-lbl">生成批次</span><span class="summary-val" id="sumBatchName">—</span></div>
       </div>
     </div>
+  </div>
 
-  </div><!-- /wizard-body -->
-
-  <!-- 底部按钮 -->
-  <div class="wizard-footer">
-    <button class="btn btn-default" id="wizPrevBtn" onclick="wizPrev()" style="display:none;">上一步</button>
+  <div class="drawer-footer">
+    <button class="btn btn-default" id="btnPrev" onclick="wizPrev()" style="display:none;">← 上一步</button>
     <div style="flex:1;"></div>
-    <button class="btn btn-default" onclick="closeWizard()" style="margin-right:8px;">取消</button>
-    <button class="btn btn-primary" id="wizNextBtn" onclick="wizNext()">下一步</button>
+    <button class="btn btn-default" onclick="closeNew()">取消</button>
+    <button class="btn btn-primary" id="btnNext" onclick="wizNext()">下一步 →</button>
   </div>
 </div>
 
 <!-- ══════════════════════════════════════
-     详情抽屉（查看交付记录）
+     交付详情抽屉
      ══════════════════════════════════════ -->
 <div class="side-overlay" id="detailOverlay" onclick="closeDetail()"></div>
-<div class="detail-drawer" id="detailDrawer">
+<div class="drawer drawer-detail" id="detailDrawer">
   <div class="drawer-header">
-    <div>
-      <div class="drawer-title" id="detailTitle">—</div>
-      <div class="drawer-subtitle" id="detailSubtitle"></div>
+    <div style="min-width:0;">
+      <div class="drawer-title" id="dTitle">—</div>
     </div>
-    <div style="display:flex;align-items:center;gap:12px;">
-      <button class="btn btn-sm" id="detailDeleteBtn"
-        style="font-size:12px;color:#dc2626;border:1px solid #fecaca;background:#fff;padding:0 12px;height:30px;">
-        <svg style="width:13px;height:13px;flex-shrink:0;margin-right:4px;vertical-align:-2px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-        </svg>
-        删除
-      </button>
-      <button class="drawer-close-btn" onclick="closeDetail()">
-        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <button class="btn btn-default btn-sm" id="dDownloadBtn" style="font-size:12.5px;">下载原文件</button>
+      <button class="btn btn-sm" id="dDeleteBtn" style="font-size:12.5px;color:#dc2626;border:1px solid #fecaca;background:#fff;">删除</button>
+      <button class="drawer-close-btn" onclick="closeDetail()"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
   </div>
-  <div style="flex:1;overflow-y:auto;padding:22px 24px;" id="detailBody"></div>
+  <div class="d-tabs">
+    <div class="d-tab active" data-pane="info" onclick="switchDTab('info')">交付信息</div>
+    <div class="d-tab" data-pane="rows" onclick="switchDTab('rows')">名单明细</div>
+  </div>
+  <div class="drawer-body">
+    <div class="d-pane active" id="paneInfo"></div>
+    <div class="d-pane" id="paneRows">
+      <div class="rows-toolbar" style="margin-bottom:12px;">
+        <div class="delivery-search-box" style="min-width:280px;">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input id="rowKw" type="text" placeholder="搜索企业名称 / 统一社会信用代码..." oninput="rowPage=1;renderRows()">
+        </div>
+      </div>
+      <div class="rows-table-wrap"><table class="rows-table" id="rowsTable"></table></div>
+      <div class="pagination" style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);">
+        <div class="pagination-info" id="rowPagerInfo"></div>
+        <div class="pagination-controls" id="rowPagerControls"></div>
+      </div>
+    </div>
+  </div>
 </div>
 
-<!-- 确认删除 Modal -->
+<!-- 通用确认弹窗 -->
 <div class="modal-backdrop" id="confirmModal">
   <div class="modal-box">
-    <div class="modal-icon danger">
+    <div class="modal-icon danger" id="confirmIcon">
       <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
     </div>
-    <div class="modal-title" id="confirmTitle">确认删除？</div>
+    <div class="modal-title" id="confirmTitle">确认操作？</div>
     <div class="modal-desc" id="confirmDesc">此操作不可恢复。</div>
     <div class="modal-btns">
       <button class="btn btn-default" style="min-width:90px;" onclick="closeConfirm()">取消</button>
-      <button class="btn btn-primary" id="confirmOkBtn" style="min-width:90px;background:#dc2626;border-color:#dc2626;">确认删除</button>
+      <button class="btn btn-primary" id="confirmOkBtn" style="min-width:90px;">确认</button>
     </div>
   </div>
 </div>
 
-<!-- Toast -->
 <div class="toast-wrap" id="toastWrap" style="display:none;"></div>
 
 <script src="js/sidebar.js"></script>
 <script>
-  /* ════════ 数据 ════════ */
-  let RECORDS = [
-    { id:'r1', name:'平安银行-小微普惠2026Q2', org:'平安银行股份有限公司', orgShort:'平安银行', remark:'苏州地区、注册资本500万以上、制造业、近3年无不良', count:380, customCols:['近一年营收'], inPool:true, createdBy:'张敏', createdAt:'2026-06-01 14:30', fileName:'小微名单_20260601.xlsx' },
-    { id:'r2', name:'平安银行-小微普惠2026Q2（追加）', org:'平安银行股份有限公司', orgShort:'平安银行', remark:'追加苏州工业园区客群', count:120, customCols:['近一年营收'], inPool:true, createdBy:'张敏', createdAt:'2026-06-15 10:20', fileName:'小微追加_20260615.xlsx' },
-    { id:'r3', name:'招商银行-科创企业名单', org:'招商银行股份有限公司', orgShort:'招商银行', remark:'高新技术企业+专精特新，南京江北新区', count:230, customCols:['专利数','近期中标'], inPool:true, createdBy:'李华', createdAt:'2026-06-10 09:15', fileName:'科创企业_20260610.xlsx' },
-    { id:'r4', name:'农业银行-惠农贷客群', org:'中国农业银行股份有限公司', orgShort:'农业银行', remark:'农林牧渔行业、2年以上经营年限', count:560, customCols:['行业类型','经营年限'], inPool:true, createdBy:'王芳', createdAt:'2026-05-20 15:45', fileName:'农业企业_20260520.xlsx' },
-    { id:'r5', name:'农业银行-惠农贷（追加批）', org:'中国农业银行股份有限公司', orgShort:'农业银行', remark:'苏北追加名单', count:180, customCols:['行业类型'], inPool:true, createdBy:'王芳', createdAt:'2026-06-01 11:30', fileName:'农业追加_20260601.xlsx' },
-    { id:'r6', name:'农业银行-惠农贷（第三批）', org:'中国农业银行股份有限公司', orgShort:'农业银行', remark:'', count:90, customCols:[], inPool:false, createdBy:'王芳', createdAt:'2026-06-15 16:00', fileName:'农业第三批_20260615.xlsx' },
-    { id:'r7', name:'江苏银行-厂房贷企业', org:'江苏银行股份有限公司', orgShort:'江苏银行', remark:'自有厂房、中型以上规模，苏州、无锡', count:145, customCols:['厂房面积','经营年限'], inPool:true, createdBy:'陈峰', createdAt:'2026-04-15 10:00', fileName:'厂房名单_20260415.xlsx' },
-    { id:'r8', name:'南京银行-外贸企业名单', org:'南京银行股份有限公司', orgShort:'南京银行', remark:'有出口业务、近2年海关记录', count:210, customCols:['出口额','海关评级'], inPool:true, createdBy:'刘洋', createdAt:'2026-03-28 14:00', fileName:'外贸名单_20260328.xlsx' },
-    { id:'r9', name:'平安银行-税务贷企业', org:'平安银行股份有限公司', orgShort:'平安银行', remark:'纳税评级A级及以上，苏州地区', count:320, customCols:['纳税评级','开票金额'], inPool:true, createdBy:'张敏', createdAt:'2026-02-10 11:00', fileName:'税务名单_20260210.xlsx' },
+  /* ════════ 基础数据 ════════ */
+  const ORGS = [
+    { short:'平安银行', full:'平安银行股份有限公司' },
+    { short:'招商银行', full:'招商银行股份有限公司' },
+    { short:'农业银行', full:'中国农业银行股份有限公司' },
+    { short:'江苏银行', full:'江苏银行股份有限公司' },
+    { short:'南京银行', full:'南京银行股份有限公司' }
   ];
 
-  let wizStep = 1;
-  let uploadedFile = null;
-  let currentDetailId = null;
-  let confirmCallback = null;
+  const AGENTS = [
+    { id:'a1', org:'平安银行', name:'橙业贷', status:'运行中', whitelist:true },
+    { id:'a5', org:'平安银行', name:'税务贷', status:'运行中', whitelist:true },
+    { id:'a2', org:'招商银行', name:'厂房贷', status:'运行中', whitelist:true },
+    { id:'a3', org:'农业银行', name:'惠农贷', status:'已停用', whitelist:true }
+  ];
 
-  const MOCK_EXCEL_COLS = ['企业名称','信用代码','注册地区','注册资本(万)','成立年份','近一年营收','厂房面积','专利数量'];
-  const STD_FIELDS = ['企业名称','统一社会信用代码','区域','注册资本','成立日期','—（不映射）'];
-  const AUTO_MAP = {'企业名称':'企业名称','信用代码':'统一社会信用代码','注册地区':'区域','注册资本(万)':'注册资本','成立年份':'成立日期'};
+  const MOCK_COLS = [
+    '序号','企业名称','统一社会信用代码','所在区县','行业门类','注册资本(万)','近一年营收(万)','资金需求分','征信评级','社保参保人数','纳税评级','经营年限','联系人'
+  ];
 
-  /* ════════ 渲染列表 ════════ */
+  let RECORDS = [
+    { id:'r1', name:'平安银行-小微普惠2026Q2', org:'平安银行', remark:'苏州地区、注册资本500万以上、制造业、近3年无不良',
+      fileName:'小微名单_20260601.xlsx', fileSize:'86 KB', rows:400, valid:386, dup:8, bad:6,
+      cols:['序号','企业名称','统一社会信用代码','所在区县','行业门类','注册资本(万)','近一年营收(万)','资金需求分','征信评级','社保参保人数','纳税评级','经营年限','联系人'],
+      platform:{ agent:'橙业贷', batch:'平安银行-小微普惠2026Q2', whitelist:true, forced:false, imported:360, outside:26, batchStatus:'已分配' },
+      email:{ mode:'link', expireDays:7, to:['wanglei@pingan.com.cn','zhaolin@pingan.com.cn'], cc:['chenchen@pingan.com.cn'], hasPwd:true, pwd:'7K9P', sentAt:'2026-06-01 14:31', status:'已发送' },
+      createdBy:'张敏', createdAt:'2026-06-01 14:30' },
+    { id:'r2', name:'招商银行-科创企业名单', org:'招商银行', remark:'高新技术企业+专精特新，南京江北新区',
+      fileName:'科创企业_20260610.xlsx', fileSize:'52 KB', rows:236, valid:230, dup:4, bad:2,
+      cols:['序号','企业名称','统一社会信用代码','所属园区','资质类型','专利数','研发投入(万)','资金需求分','征信评级','社保参保人数','经营年限','联系人'],
+      platform:{ agent:'厂房贷', batch:'招商银行-科创企业名单', whitelist:false, forced:false, imported:230, outside:0, batchStatus:'分配中' },
+      email:null, createdBy:'李华', createdAt:'2026-06-10 09:15' },
+    { id:'r3', name:'农业银行-惠农贷客群', org:'农业银行', remark:'农林牧渔行业、2年以上经营年限',
+      fileName:'农业企业_20260520.xlsx', fileSize:'118 KB', rows:572, valid:560, dup:9, bad:3,
+      cols:['序号','企业名称','统一社会信用代码','所在乡镇','主营农业类型','种植/养殖规模','年产值(万)','资金需求分','信用评级','社保参保人数','经营年限','联系人'],
+      platform:{ agent:'惠农贷', batch:'农业银行-惠农贷客群', whitelist:true, forced:true, imported:560, outside:41, batchStatus:'未分配' },
+      email:{ mode:'attach', expireDays:0, to:['sunhao@abchina.com'], cc:['audit@abchina.com'], hasPwd:true, pwd:'6H2K', sentAt:'2026-05-20 15:46', status:'已发送' },
+      createdBy:'王芳', createdAt:'2026-05-20 15:45' },
+    { id:'r4', name:'江苏银行-厂房贷企业', org:'江苏银行', remark:'自有厂房、中型以上规模，苏州、无锡',
+      fileName:'厂房名单_20260415.xlsx', fileSize:'34 KB', rows:148, valid:145, dup:2, bad:1,
+      cols:['序号','企业名称','统一社会信用代码','所在区县','厂房面积(㎡)','近一年营收(万)','资金需求分','征信评级','社保参保人数','纳税评级','经营年限','联系人'],
+      platform:null,
+      email:{ mode:'link', expireDays:15, to:['chenchen@jsbchina.cn'], cc:[], hasPwd:true, pwd:'9A4M', sentAt:'2026-04-15 10:01', status:'已发送' },
+      createdBy:'陈峰', createdAt:'2026-04-15 10:00' },
+    { id:'r5', name:'南京银行-外贸企业名单', org:'南京银行', remark:'有出口业务、近2年海关记录',
+      fileName:'外贸名单_20260328.xlsx', fileSize:'47 KB', rows:214, valid:210, dup:3, bad:1,
+      cols:['序号','企业名称','统一社会信用代码','所在区县','出口额(万美元)','海关评级','主要出口国','资金需求分','征信评级','社保参保人数','联系人'],
+      platform:null,
+      email:{ mode:'link', expireDays:7, to:['liuchang@njcb.com.cn','intl@njcb.com.cn'], cc:[], hasPwd:false, pwd:null, sentAt:'2026-03-28 14:02', status:'发送失败', failMsg:'部分邮件地址无效' },
+      createdBy:'刘洋', createdAt:'2026-03-28 14:00' },
+    { id:'r6', name:'平安银行-税务贷企业', org:'平安银行', remark:'纳税评级A级及以上，苏州地区',
+      fileName:'税务名单_20260210.xlsx', fileSize:'71 KB', rows:326, valid:320, dup:5, bad:1,
+      cols:['序号','企业名称','统一社会信用代码','所在区县','纳税评级','年开票金额(万)','资金需求分','征信评级','社保参保人数','经营年限','联系人'],
+      platform:{ agent:'税务贷', batch:'平安银行-税务贷企业', whitelist:false, forced:false, imported:320, outside:0, batchStatus:'已分配' },
+      email:null, createdBy:'张敏', createdAt:'2026-02-10 11:00' }
+  ];
+
+  /* ════════ 工具 ════════ */
+  const $ = id => document.getElementById(id);
+  const ICON_P = '<svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>';
+  const ICON_E = '<svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>';
+  const ICON_EYE_OPEN = '<svg viewBox="0 0 24 24" style="width:14px;height:14px;" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+  const ICON_EYE_CLOSE = '<svg viewBox="0 0 24 24" style="width:14px;height:14px;" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+  const BATCH_STATUS_CLS = { '未分配':'tag-amber', '分配中':'tag-blue', '已分配':'tag-green' };
+  const MAIL_STATUS_CLS = { '已发送':'tag-green', '发送失败':'tag-red' };
+
+  function nowStr() {
+    const d = new Date(), p = n => String(n).padStart(2,'0');
+    return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes());
+  }
+
+  /* ════════ 列表 ════════ */
+  function initFilters() {
+    $('orgFilter').innerHTML = '<option value="">全部机构</option>' + ORGS.map(o => `<option value="${o.short}">${o.short}</option>`).join('');
+    $('fOrg').innerHTML = '<option value="">请选择合作机构</option>' + ORGS.map(o => `<option value="${o.short}">${o.short}</option>`).join('');
+  }
+
+  function wayCell(r) {
+    let h = '';
+    if (r.platform) h += `<span class="way-tag way-platform">${ICON_P}在线分发</span>`;
+    if (r.email) h += `<span class="way-tag way-email">${ICON_E}系统邮件</span>`;
+    return h;
+  }
+
   function renderTable(data) {
-    var tbody = document.getElementById('deliveryTbody');
-    document.getElementById('paginationInfo').textContent = `显示 1 到 ${data.length} 条，共 ${data.length} 条记录`;
+    $('paginationInfo').textContent = `显示 1 到 ${data.length} 条，共 ${data.length} 条记录`;
     if (!data.length) {
-      tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:48px;color:var(--gray-400);">暂无交付记录</td></tr>';
+      $('deliveryTbody').innerHTML = '<tr><td colspan="9" style="text-align:center;padding:48px;color:var(--gray-400);">暂无交付记录</td></tr>';
       return;
     }
-    tbody.innerHTML = data.map(function(r, idx) {
-      var colBadges = r.customCols.length
-        ? r.customCols.map(function(c){return '<span class="col-badge">'+c+'</span>';}).join('')
-        : '<span style="color:var(--gray-300);font-size:12px;">—</span>';
-      return '<tr>' +
-        '<td style="color:var(--gray-400);font-size:12.5px;">' + (idx + 1) + '</td>' +
-        '<td>' +
-          '<span class="delivery-name" onclick="openDetail(\''+r.id+'\')">'+r.name+'</span>' +
-          (r.remark ? '<span class="delivery-remark" title="'+r.remark+'">'+r.remark+'</span>' : '') +
-        '</td>' +
-        '<td><span class="tag tag-gray">'+r.orgShort+'</span></td>' +
-        '<td><strong>'+r.count.toLocaleString()+'</strong> 家</td>' +
-        '<td>'+colBadges+'</td>' +
-        '<td><span class="status-badge '+(r.inPool?'status-in-pool':'status-archived')+'">'+(r.inPool?'已入池':'仅存档')+'</span></td>' +
-        '<td style="color:var(--gray-500);font-size:12.5px;">'+r.createdAt+'</td>' +
-        '<td style="color:var(--gray-600);">'+r.createdBy+'</td>' +
-        '<td style="text-align:right;white-space:nowrap;">' +
-          '<a href="credit-monitoring.html" class="btn btn-sm" style="font-size:12px;color:#0284c7;border:1px solid #bae6fd;background:#f0f9ff;margin-right:6px;text-decoration:none;display:inline-flex;align-items:center;gap:3px;"><svg style="width:12px;height:12px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>余额监控</a>' +
-          '<button class="btn btn-default btn-sm" onclick="openDetail(\''+r.id+'\')" style="font-size:12px;margin-right:6px;">查看</button>' +
-          '<button class="btn btn-sm" onclick="showToast(\'开始下载...\')" style="font-size:12px;color:var(--brand);border:1px solid var(--brand-border);background:var(--brand-light);margin-right:6px;">下载</button>' +
-          '<button class="btn btn-sm" onclick="prepareDelete(\''+r.id+'\',\''+r.name+'\')" style="font-size:12px;color:#dc2626;border:1px solid #fecaca;background:#fff;">删除</button>' +
-        '</td></tr>';
-    }).join('');
+    $('deliveryTbody').innerHTML = data.map((r, i) => `
+      <tr>
+        <td style="color:var(--gray-400);font-size:12.5px;">${i + 1}</td>
+        <td>
+          <span class="delivery-name" onclick="openDetail('${r.id}')">${r.name}</span>
+        </td>
+        <td><span class="tag tag-gray">${r.org}</span></td>
+        <td><strong>${r.valid.toLocaleString()}</strong> 家</td>
+        <td>${wayCell(r)}</td>
+        <td>${r.remark ? `<span class="delivery-remark-cell" title="${r.remark}">${r.remark}</span>` : '<span style="color:var(--gray-300);">—</span>'}</td>
+        <td style="color:var(--gray-500);font-size:12.5px;">${r.createdAt}</td>
+        <td style="color:var(--gray-600);">${r.createdBy}</td>
+        <td style="text-align:right;white-space:nowrap;">
+          <button class="btn btn-default btn-sm" onclick="openDetail('${r.id}')" style="font-size:12px;margin-right:6px;">查看</button>
+          <button class="btn btn-sm" onclick="showToast('开始下载：${r.fileName}')" style="font-size:12px;color:var(--brand);border:1px solid var(--brand-border);background:var(--brand-light);margin-right:6px;">下载</button>
+          <button class="btn btn-sm" onclick="prepareDelete('${r.id}')" style="font-size:12px;color:#dc2626;border:1px solid #fecaca;background:#fff;">删除</button>
+        </td>
+      </tr>`).join('');
   }
 
   function doFilter() {
-    var kw = document.getElementById('searchInput').value.toLowerCase();
-    var org = document.getElementById('orgFilter').value;
-    var pool = document.getElementById('poolFilter').value;
-    var filtered = RECORDS.filter(function(r) {
-      return r.name.toLowerCase().indexOf(kw) !== -1 &&
-        (!org || r.orgShort === org) &&
-        (pool === '' || String(r.inPool) === pool);
-    });
-    renderTable(filtered);
+    const kw = $('searchInput').value.trim().toLowerCase();
+    const org = $('orgFilter').value;
+    const way = $('wayFilter').value;
+    renderTable(RECORDS.filter(r =>
+      r.name.toLowerCase().includes(kw) &&
+      (!org || r.org === org) &&
+      (!way || (way === 'platform' ? !!r.platform : !!r.email))
+    ));
   }
 
-  /* ════════ 向导 ════════ */
-  function openWizard() {
+  /* ════════ 新建向导状态 ════════ */
+  let wizStep = 1;
+  let F = {};
+
+  function openNew() {
     wizStep = 1;
-    uploadedFile = null;
-    ['wName','wRemark'].forEach(function(id){document.getElementById(id).value='';});
-    document.getElementById('wOrg').value = '';
-    document.getElementById('wFileInfo').style.display = 'none';
-    document.getElementById('wFileInput').value = '';
-    document.getElementById('poolToggle').classList.add('on');
-    goWizPage(1);
-    document.getElementById('wizardOverlay').classList.add('show');
-    document.getElementById('wizardDrawer').classList.add('show');
+    F = {
+      file: null, parse: null,
+      platformOn: false, emailOn: false,
+      mode: 'link', expireDays: '0',
+      hasPwd: false, pwd: genRandomPwd(),
+      mailList: [], ccList: [],
+      mailSubject: '', mailBody: '', mailBodyUserEdited: false,
+      forced: false
+    };
+
+    ['fName','fRemark','fSubject','fMailBody','mailInput','ccMailInput'].forEach(id => {
+      const el = $(id);
+      if (el) el.value = '';
+    });
+    $('fOrg').value = '';
+    $('fExpireDays').value = '0';
+    $('fPwdCheck').checked = false;
+    $('pwdWrap').style.display = 'none';
+    $('fPwd').value = F.pwd;
+    clearFile();
+    $('chipBox').querySelectorAll('.chip').forEach(c => c.remove());
+    $('ccChipBox').querySelectorAll('.chip').forEach(c => c.remove());
+    $('cardPlatform').classList.remove('on');
+    $('cardEmail').classList.remove('on');
+    setMode('link');
+    onOrgChange();
+
+    goStep(1);
+    $('newOverlay').classList.add('show');
+    $('newDrawer').classList.add('show');
   }
 
-  function closeWizard() {
-    document.getElementById('wizardOverlay').classList.remove('show');
-    document.getElementById('wizardDrawer').classList.remove('show');
+  function closeNew() {
+    $('newOverlay').classList.remove('show');
+    $('newDrawer').classList.remove('show');
   }
 
-  function goWizPage(n) {
+  function goStep(n) {
     wizStep = n;
-    ['wizPage1','wizPage2','wizPage3'].forEach(function(id,i){
-      document.getElementById(id).classList.toggle('active', i+1===n);
+    [1, 2, 3].forEach(i => {
+      $('wp' + i).classList.toggle('active', i === n);
+      const stepEl = $('ws' + i);
+      stepEl.classList.remove('active', 'done');
+      if (i < n) stepEl.classList.add('done');
+      else if (i === n) stepEl.classList.add('active');
     });
-    ['wizStep1','wizStep2','wizStep3'].forEach(function(id,i){
-      var el = document.getElementById(id);
-      el.classList.remove('active','done');
-      if (i+1 < n) el.classList.add('done');
-      else if (i+1 === n) el.classList.add('active');
-    });
-    document.getElementById('wizLine1').classList.toggle('done', n>1);
-    document.getElementById('wizLine2').classList.toggle('done', n>2);
-    document.getElementById('wizPrevBtn').style.display = n>1 ? 'inline-flex' : 'none';
-    document.getElementById('wizNextBtn').textContent = n===3 ? '确认交付' : '下一步';
+    $('wl1').classList.toggle('done', n > 1);
+    $('wl2').classList.toggle('done', n > 2);
+
+    $('btnPrev').style.display = n > 1 ? 'inline-flex' : 'none';
+    $('btnNext').textContent = n === 3 ? '确认交付' : '下一步 →';
+    if (n === 2) {
+      refreshPlatform();
+      updateDefaultMailBody();
+    }
   }
 
-  function wizPrev() { if (wizStep > 1) goWizPage(wizStep-1); }
+  function jumpStep(n) {
+    if (n < wizStep) {
+      goStep(n);
+    } else if (n > wizStep) {
+      if (validateStep(wizStep)) goStep(n);
+    }
+  }
+
+  function wizPrev() {
+    if (wizStep > 1) goStep(wizStep - 1);
+  }
 
   function wizNext() {
     if (wizStep === 1) {
-      var name = document.getElementById('wName').value.trim();
-      var org = document.getElementById('wOrg').value;
-      if (!name) { showToast('请填写名单名称'); return; }
-      if (!org) { showToast('请选择接收机构'); return; }
-      if (!uploadedFile) { showToast('请上传名单文件'); return; }
-      renderStep2();
-      goWizPage(2);
+      if (!validateStep(1)) return;
+      goStep(2);
     } else if (wizStep === 2) {
-      renderStep3();
-      goWizPage(3);
+      if (!validateStep(2)) return;
+      renderSummaryStep3();
+      goStep(3);
     } else {
       doSubmit();
     }
   }
 
-  function handleFile(input) {
-    var file = input.files ? input.files[0] : null;
-    if (!file) return;
-    uploadedFile = file;
-    var info = document.getElementById('wFileInfo');
-    info.style.display = 'flex';
-    document.getElementById('wFileName').innerHTML =
-      '<svg viewBox="0 0 24 24" style="width:16px;height:16px;flex-shrink:0;" fill="none" stroke="var(--brand)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>' + file.name;
+  function validateStep(s) {
+    if (s === 1) {
+      const name = $('fName').value.trim();
+      const org = $('fOrg').value;
+      if (!name) { showToast('请填写名单名称'); return false; }
+      if (!org) { showToast('请选择接收机构'); return false; }
+      if (!F.file) { showToast('请上传名单文件'); return false; }
+      return true;
+    }
+    if (s === 2) {
+      if (F.emailOn) {
+        commitMailInput('to');
+        commitMailInput('cc');
+      }
+      if (!F.platformOn && !F.emailOn) { showToast('请至少选择一种交付方式'); return false; }
+      if (F.platformOn && !$('fAgent').value) { showToast('请选择导入智能体'); return false; }
+      if (F.emailOn && !F.mailList.length) { showToast('请至少添加一个收件人邮箱'); return false; }
+      return true;
+    }
+    return true;
   }
 
-  function triggerFileUpload() {
-    // 延迟一帧再触发，避免抽屉内事件冒泡问题
-    setTimeout(function() {
-      document.getElementById('wFileInput').click();
-    }, 0);
+  /* ════════ 文件上传与解析（对标智能体极简模式） ════════ */
+  function handleFile(file) {
+    if (!file) return;
+    F.file = file;
+    // 系统后台完成识别与去重校验
+    F.parse = { rows: 500, valid: 486, dup: 8, bad: 6 };
+    $('fileInfoRow').style.display = 'flex';
+    $('fileInfoName').textContent = file.name;
+    $('fileInfoSize').textContent = (file.size / 1024).toFixed(1) + ' KB';
+    refreshPlatform();
   }
 
   function clearFile() {
-    uploadedFile = null;
-    document.getElementById('wFileInfo').style.display = 'none';
-    document.getElementById('wFileInput').value = '';
+    F.file = null; F.parse = null;
+    $('fileInput').value = '';
+    $('fileInfoRow').style.display = 'none';
+    refreshPlatform();
   }
 
-  function renderStep2() {
-    // 标准字段映射表
-    document.getElementById('mappingBody').innerHTML = MOCK_EXCEL_COLS.map(function(col) {
-      var mapped = AUTO_MAP[col] || '';
-      var opts = STD_FIELDS.map(function(f){return '<option value="'+f+'"'+(f===mapped?' selected':'')+'>'+f+'</option>';}).join('');
-      var badge = mapped
-        ? '<span style="display:inline-block;padding:1px 6px;border-radius:4px;font-size:11px;font-weight:500;background:var(--brand-light);color:var(--brand);">已识别</span>'
-        : '<span style="display:inline-block;padding:1px 6px;border-radius:4px;font-size:11px;font-weight:500;background:#fef3c7;color:#92400e;">未映射</span>';
-      return '<tr><td style="font-weight:600;">'+col+'</td><td style="text-align:center;color:var(--gray-400);">→</td><td><select class="mapping-select" data-col="'+col+'">'+opts+'</select></td><td style="text-align:center;">'+badge+'</td></tr>';
-    }).join('');
-
-    // 自定义列
-    var custom = MOCK_EXCEL_COLS.filter(function(c){return !AUTO_MAP[c];});
-    var grid = document.getElementById('customColGrid');
-    if (!custom.length) {
-      grid.innerHTML = '<div style="color:var(--gray-400);font-size:13px;grid-column:1/-1;">所有列均已映射到标准字段，无自定义列。</div>';
-      return;
+  /* ════════ 机构与智能体联动 ════════ */
+  function onOrgChange() {
+    const org = $('fOrg').value;
+    const list = AGENTS.filter(a => a.org === org);
+    const sel = $('fAgent');
+    if (!org) {
+      sel.innerHTML = '<option value="">请先选择接收机构</option>';
+      sel.disabled = true;
+    } else if (!list.length) {
+      sel.innerHTML = '<option value="">该机构暂无可用智能体</option>';
+      sel.disabled = true;
+    } else {
+      sel.disabled = false;
+      sel.innerHTML = '<option value="">请选择智能体</option>' +
+        list.map(a => `<option value="${a.id}">${a.name}</option>`).join('');
+      sel.value = '';
     }
-    grid.innerHTML = custom.map(function(col) {
-      return '<label class="col-check-item checked" onclick="toggleCol(this)"><input type="checkbox" checked>'+col+'</label>';
-    }).join('');
+    F.forced = false;
+    syncMailSubject();
+    refreshPlatform();
   }
 
-  function toggleCol(el) {
-    el.classList.toggle('checked');
-    el.querySelector('input').checked = el.classList.contains('checked');
+  function toggleWay(w) {
+    if (w === 'platform') {
+      F.platformOn = !F.platformOn;
+      $('cardPlatform').classList.toggle('on', F.platformOn);
+    } else {
+      F.emailOn = !F.emailOn;
+      $('cardEmail').classList.toggle('on', F.emailOn);
+    }
   }
 
-  function renderStep3() {
-    var orgEl = document.getElementById('wOrg');
-    var orgText = orgEl.options[orgEl.selectedIndex] ? orgEl.options[orgEl.selectedIndex].text : '—';
-    var name = document.getElementById('wName').value.trim();
-    var remark = document.getElementById('wRemark').value.trim();
-    var inPool = document.getElementById('poolToggle').classList.contains('on');
-    var checked = Array.from(document.querySelectorAll('#customColGrid .col-check-item.checked')).map(function(el){return el.textContent.trim();});
-    var count = Math.floor(Math.random()*300+80);
-
-    document.getElementById('confirmSummary').innerHTML =
-      '<div class="info-row"><span class="info-label">名单名称</span><span class="info-value" style="font-weight:600;">'+name+'</span></div>' +
-      '<div class="info-row"><span class="info-label">接收机构</span><span class="info-value">'+orgText+'</span></div>' +
-      '<div class="info-row"><span class="info-label">备注</span><span class="info-value">'+(remark||'<span style="color:var(--gray-300);">—</span>')+'</span></div>' +
-      '<div class="info-row"><span class="info-label">上传文件</span><span class="info-value">'+(uploadedFile?uploadedFile.name:'—')+'</span></div>' +
-      '<div class="info-row"><span class="info-label">识别企业数</span><span class="info-value" style="color:var(--brand);font-weight:700;">'+count+' 家</span></div>' +
-      '<div class="info-row"><span class="info-label">导入客户池</span><span class="info-value">'+(inPool?'<span class="tag tag-blue">开启</span>':'<span class="tag tag-gray">关闭（仅存档）</span>')+'</span></div>' +
-      '<div class="info-row"><span class="info-label">关键数据字段</span><span class="info-value">'+(checked.length?checked.map(function(c){return '<span class="col-badge">'+c+'</span>';}).join(''):'<span style="color:var(--gray-300);">—</span>')+'</span></div>';
-
-    // 暂存 count 供 doSubmit 用
-    document.getElementById('confirmSummary').dataset.count = count;
-    document.getElementById('confirmSummary').dataset.checked = JSON.stringify(checked);
-    document.getElementById('confirmSummary').dataset.inPool = inPool;
+  function setMode(m) {
+    F.mode = m;
+    $('modeLink').classList.toggle('active', m === 'link');
+    $('modeAttach').classList.toggle('active', m === 'attach');
+    $('modeLink').querySelector('input').checked = m === 'link';
+    $('modeAttach').querySelector('input').checked = m === 'attach';
+    $('expireDaysWrap').style.display = m === 'link' ? 'flex' : 'none';
+    $('pwdCheckLabel').textContent = m === 'link' ? '设置访问密码' : '设置文件密码';
+    updateDefaultMailBody();
   }
 
-  function doSubmit() {
-    var orgEl = document.getElementById('wOrg');
-    var orgVal = orgEl.value;
-    var parts = orgVal.split('|');
-    var name = document.getElementById('wName').value.trim();
-    var remark = document.getElementById('wRemark').value.trim();
-    var ds = document.getElementById('confirmSummary').dataset;
-    var count = parseInt(ds.count) || 0;
-    var checked = JSON.parse(ds.checked || '[]');
-    var inPool = ds.inPool === 'true';
-    var now = new Date();
-    var timeStr = now.toLocaleDateString('zh-CN').replace(/\//g,'-') + ' ' + now.toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});
+  /* ════════ 网盘式访问密码 ════════ */
+  function genRandomPwd() {
+    const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
+    let res = '';
+    for (let i = 0; i < 4; i++) res += chars[Math.floor(Math.random() * chars.length)];
+    return res;
+  }
 
-    RECORDS.unshift({
-      id: 'r'+Date.now(), name: name,
-      org: parts[0]||'', orgShort: parts[1]||'',
-      remark: remark, count: count, customCols: checked,
-      inPool: inPool, createdBy: '当前用户', createdAt: timeStr,
-      fileName: uploadedFile ? uploadedFile.name : 'unknown.xlsx'
+  function genNewPwd() {
+    F.pwd = genRandomPwd();
+    $('fPwd').value = F.pwd;
+    updateDefaultMailBody();
+  }
+
+  function togglePwd() {
+    F.hasPwd = $('fPwdCheck').checked;
+    $('pwdWrap').style.display = F.hasPwd ? 'inline-flex' : 'none';
+    if (F.hasPwd && !$('fPwd').value) {
+      F.pwd = genRandomPwd();
+      $('fPwd').value = F.pwd;
+    }
+    updateDefaultMailBody();
+  }
+
+  /* ════════ 邮件收件人、抄送人与正文 ════════ */
+  function commitMailInput(type) {
+    const isCc = type === 'cc';
+    const input = $(isCc ? 'ccMailInput' : 'mailInput');
+    if (!input) return true;
+    const raw = input.value.trim();
+    if (!raw) return true;
+
+    // 支持以逗号、分号、空格分割批量添加
+    const tokens = raw.split(/[,;；，\s\n]+/).map(s => s.trim()).filter(Boolean);
+    let allValid = true;
+    const list = isCc ? F.ccList : F.mailList;
+
+    for (const val of tokens) {
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
+        showToast('邮箱格式不正确：' + val);
+        allValid = false;
+        continue;
+      }
+      if (!list.includes(val)) {
+        list.push(val);
+      }
+    }
+    renderMailChips(type);
+    input.value = '';
+    return allValid;
+  }
+
+  function onMailKey(e, type) {
+    if (['Enter', ',', ';', '，', '；', 'Tab'].includes(e.key)) {
+      if (e.key === 'Tab' && !e.target.value.trim()) return;
+      e.preventDefault();
+      commitMailInput(type);
+    }
+  }
+
+  function removeMail(idx, type) {
+    const list = type === 'cc' ? F.ccList : F.mailList;
+    list.splice(idx, 1);
+    renderMailChips(type);
+  }
+
+  function renderMailChips(type) {
+    const isCc = type === 'cc';
+    const box = $(isCc ? 'ccChipBox' : 'chipBox');
+    const input = $(isCc ? 'ccMailInput' : 'mailInput');
+    const list = isCc ? F.ccList : F.mailList;
+    box.querySelectorAll('.chip').forEach(c => c.remove());
+    list.forEach((m, idx) => {
+      const span = document.createElement('span');
+      span.className = 'chip' + (isCc ? ' chip-cc' : '');
+      span.innerHTML = m + `<button type="button" onclick="event.stopPropagation();removeMail(${idx},'${type}')">×</button>`;
+      box.insertBefore(span, input);
     });
+  }
+
+  function syncMailSubject() {
+    const name = $('fName').value.trim();
+    $('fSubject').value = name ? `【联合征信】名单交付：${name}` : '【联合征信】名单交付';
+    updateDefaultMailBody();
+  }
+
+  function updateDefaultMailBody() {
+    if (F.mailBodyUserEdited) return;
+    const org = $('fOrg').value || '贵行';
+    const name = $('fName').value.trim() || '企业名单';
+    const count = F.parse ? F.parse.valid : '—';
+    const days = $('fExpireDays').value;
+
+    let text = `尊敬的 ${org} 合作伙伴：\n\n您好！本次向贵行正式交付【${name}】，共包含 ${count} 家企业名单数据。\n\n`;
+    if (F.mode === 'link') {
+      const expireStr = (days === '0' || days === 0) ? '长期有效，请妥善保存' : `${days} 天内有效，请及时下载保存`;
+      text += `名单下载链接如下（${expireStr}）：\nhttps://credit.example.com/delivery/download?token=sec_7f9a2b4e\n\n`;
+      if (F.hasPwd) {
+        text += `【安全提示】为保障数据安全，访问密码不随本邮件发送，将通过独立安全渠道另行告知，请注意查收。\n\n`;
+      }
+    } else {
+      if (F.hasPwd) {
+        text += `名单文件已作为加密附件随信发送，请查收附件。\n\n`;
+        text += `【安全提示】为保障数据安全，解压密码不随本邮件发送，将通过独立安全渠道另行告知，请注意查收。\n\n`;
+      } else {
+        text += `名单文件已作为附件随信发送，请查收附件并按双方约定的安全规范解密使用。\n\n`;
+      }
+    }
+    text += `如对名单数据有任何疑问，请随时联系联合征信平台运营团队。\n\n联合征信运营团队\n${new Date().toLocaleDateString('zh-CN').replace(/\//g,'-')}`;
+    $('fMailBody').value = text;
+  }
+
+  function resetMailBody() {
+    F.mailBodyUserEdited = false;
+    updateDefaultMailBody();
+    showToast('已恢复系统默认正文');
+  }
+
+  $('fMailBody').addEventListener('input', () => { F.mailBodyUserEdited = true; });
+
+  /* ════════ 白名单校验 ════════ */
+  function refreshPlatform() {
+    const box = $('wlResult');
+    const agent = AGENTS.find(a => a.id === $('fAgent').value);
+    if (!agent) { box.innerHTML = ''; return; }
+
+    const validCount = F.parse ? F.parse.valid : 486;
+    const outside = 34, inside = validCount - outside;
+    F.importCount = F.forced ? validCount : inside;
+    box.innerHTML = `
+      <div class="wl-box warn">
+        <div class="wl-top-bar">
+          <div class="wl-top-title">
+            <svg viewBox="0 0 24 24" style="width:15px;height:15px;flex-shrink:0;" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            <span>检测到 <b>${outside}</b> 家企业在白名单外</span>
+          </div>
+          <div class="wl-top-links">
+            <button type="button" class="wl-action-btn" onclick="showToast('白名单外企业明细已开始下载')">下载白名单外明细</button>
+            <a class="wl-action-btn" href="agents.html" target="_blank">去完善白名单</a>
+          </div>
+        </div>
+        <div class="wl-radio-row">
+          <label class="wl-radio-item ${!F.forced ? 'active' : ''}">
+            <input type="radio" name="wlMode" value="normal" ${!F.forced ? 'checked' : ''} onchange="F.forced=false;refreshPlatform()">
+            <span>仅导入白名单内（<b>${inside}</b> 家）</span>
+          </label>
+          <label class="wl-radio-item ${F.forced ? 'active' : ''}">
+            <input type="radio" name="wlMode" value="force" ${F.forced ? 'checked' : ''} onchange="F.forced=true;refreshPlatform()">
+            <span>强制导入全部（<b>${validCount}</b> 家）</span>
+          </label>
+        </div>
+      </div>`;
+  }
+
+  /* ════════ 步骤 3 汇总渲染 ════════ */
+  function renderSummaryStep3() {
+    $('sumName').textContent = $('fName').value.trim();
+    $('sumOrg').textContent = $('fOrg').value;
+    $('sumFile').textContent = `${F.file.name}（${(F.file.size/1024).toFixed(1)} KB）`;
+    $('sumCount').textContent = `${F.parse.valid} 家`;
+    $('sumRemark').textContent = $('fRemark').value.trim() || '—';
+
+    // 邮件配置
+    if (F.emailOn) {
+      $('sumEmailCard').style.display = 'block';
+      $('sumMailTo').textContent = F.mailList.join('； ');
+      if (F.ccList && F.ccList.length) {
+        $('sumMailCcRow').style.display = 'flex';
+        $('sumMailCc').textContent = F.ccList.join('； ');
+      } else {
+        $('sumMailCcRow').style.display = 'none';
+      }
+      if (F.mode === 'link') {
+        const daysStr = ($('fExpireDays').value === '0' || $('fExpireDays').value === 0) ? '长期有效' : `${$('fExpireDays').value} 天有效`;
+        const pwdStr = F.hasPwd ? ` · 访问密码：${($('fPwd').value || F.pwd || '').toUpperCase()}（需单独发送）` : ' · 无访问密码';
+        $('sumMailMode').textContent = `下载链接（${daysStr}${pwdStr}）`;
+      } else {
+        const pwdStr = F.hasPwd ? `（文件密码：${($('fPwd').value || F.pwd || '').toUpperCase()}，需单独发送）` : '（无密码）';
+        $('sumMailMode').textContent = `Excel 附件发送${pwdStr}`;
+      }
+      $('sumMailSubject').textContent = $('fSubject').value.trim();
+      $('sumMailBody').textContent = $('fMailBody').value.trim();
+    } else {
+      $('sumEmailCard').style.display = 'none';
+    }
+
+    // 平台配置
+    if (F.platformOn) {
+      $('sumPlatformCard').style.display = 'block';
+      const agent = AGENTS.find(a => a.id === $('fAgent').value);
+      $('sumAgent').textContent = agent ? agent.name : '—';
+      const validCount = F.parse ? F.parse.valid : 486;
+      const outside = (agent && agent.whitelist) ? 34 : 0;
+      if (outside > 0) {
+        if (F.forced) {
+          $('sumImportCount').innerHTML = `<b style="color:#047857;">${validCount}</b> 家（已开启强制导入，包含白名单外 ${outside} 家）`;
+        } else {
+          $('sumImportCount').innerHTML = `<b style="color:#047857;">${F.importCount}</b> / ${validCount} 家（白名单外已过滤 ${outside} 家）`;
+        }
+      } else {
+        $('sumImportCount').innerHTML = `<b style="color:#047857;">${F.importCount}</b> 家`;
+      }
+      $('sumBatchName').textContent = $('fName').value.trim();
+    } else {
+      $('sumPlatformCard').style.display = 'none';
+    }
+  }
+
+  /* ════════ 提交 ════════ */
+  function doSubmit() {
+    const name = $('fName').value.trim();
+    const org = $('fOrg').value;
+    const agent = AGENTS.find(a => a.id === $('fAgent').value);
+    const t = nowStr();
+
+    const rec = {
+      id: 'r' + Date.now(),
+      name: name,
+      org: org,
+      remark: $('fRemark').value.trim(),
+      fileName: F.file.name,
+      fileSize: (F.file.size / 1024).toFixed(0) + ' KB',
+      rows: F.parse.rows,
+      valid: F.parse.valid,
+      dup: F.parse.dup,
+      bad: F.parse.bad,
+      cols: MOCK_COLS.slice(),
+      platform: F.platformOn ? {
+        agent: agent.name,
+        batch: name,
+        whitelist: agent.whitelist,
+        forced: F.forced,
+        imported: F.importCount,
+        outside: agent.whitelist ? 34 : 0,
+        batchStatus: '未分配'
+      } : null,
+      email: F.emailOn ? {
+        mode: F.mode,
+        expireDays: F.mode === 'link' ? parseInt($('fExpireDays').value) : 0,
+        hasPwd: F.hasPwd,
+        pwd: F.hasPwd ? ($('fPwd').value || F.pwd || '').toUpperCase() : null,
+        to: F.mailList.slice(),
+        cc: F.ccList.slice(),
+        sentAt: t,
+        status: '已发送'
+      } : null,
+      createdBy: '当前用户',
+      createdAt: t
+    };
+
+    RECORDS.unshift(rec);
     doFilter();
-    closeWizard();
-    showToast('名单交付成功，' + count + ' 家企业' + (inPool ? '已入客户池' : '已存档'), 'success');
+    closeNew();
+    showToast('名单交付成功', 'success');
   }
 
   /* ════════ 详情抽屉 ════════ */
+  let D = null, rowPage = 1, drawerPwdVisible = false;
+  const ROW_SIZE = 10;
+
   function openDetail(id) {
-    var r = RECORDS.find(function(x){return x.id===id;});
-    if (!r) return;
-    currentDetailId = id;
-    document.getElementById('detailTitle').textContent = r.name;
-    document.getElementById('detailSubtitle').textContent = r.orgShort + ' · ' + r.createdAt;
-    document.getElementById('detailDeleteBtn').onclick = function(){prepareDelete(r.id, r.name);};
+    D = RECORDS.find(r => r.id === id);
+    if (!D) return;
+    drawerPwdVisible = false;
+    $('dTitle').textContent = D.name;
+    $('dDownloadBtn').onclick = () => showToast('开始下载：' + D.fileName);
+    $('dDeleteBtn').onclick = () => prepareDelete(D.id);
+    D._rows = buildRows(D);
+    renderInfo();
 
-    var colBadges = r.customCols.length
-      ? r.customCols.map(function(c){return '<span class="col-badge">'+c+'</span>';}).join('')
-      : '<span style="color:var(--gray-300);">—</span>';
-
-    document.getElementById('detailBody').innerHTML =
-      '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px;">' +
-        '<div style="background:var(--gray-50);border-radius:10px;padding:14px 16px;text-align:center;">' +
-          '<div style="font-size:12px;color:var(--gray-400);margin-bottom:5px;">企业总数</div>' +
-          '<div style="font-size:24px;font-weight:700;color:var(--brand);">'+r.count.toLocaleString()+'</div>' +
-        '</div>' +
-        '<div style="background:var(--gray-50);border-radius:10px;padding:14px 16px;text-align:center;">' +
-          '<div style="font-size:12px;color:var(--gray-400);margin-bottom:5px;">客户池状态</div>' +
-          '<div style="font-size:14px;font-weight:700;padding-top:4px;">'+(r.inPool?'<span class="status-badge status-in-pool">已入池</span>':'<span class="status-badge status-archived">仅存档</span>')+'</div>' +
-        '</div>' +
-        '<div style="background:var(--gray-50);border-radius:10px;padding:14px 16px;text-align:center;">' +
-          '<div style="font-size:12px;color:var(--gray-400);margin-bottom:5px;">关键数据字段</div>' +
-          '<div style="font-size:18px;font-weight:700;color:var(--gray-900);">'+r.customCols.length+'</div>' +
-        '</div>' +
-      '</div>' +
-      '<div style="margin-bottom:22px;">' +
-        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">' +
-          '<span style="font-size:13px;font-weight:600;color:var(--gray-700);">原始文件</span>' +
-          '<button class="btn btn-default btn-sm" onclick="showToast(\'开始下载...\')" style="font-size:12px;display:flex;align-items:center;gap:4px;">' +
-            '<svg viewBox="0 0 24 24" style="width:13px;height:13px;" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>' +
-            '下载文件' +
-          '</button>' +
-        '</div>' +
-        '<div style="padding:12px 14px;background:var(--gray-50);border-radius:8px;border:1px solid var(--border);display:flex;align-items:center;gap:10px;">' +
-          '<svg viewBox="0 0 24 24" style="width:18px;height:18px;flex-shrink:0;" fill="none" stroke="var(--brand)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>' +
-          '<span style="font-size:13px;color:var(--gray-700);font-weight:500;">'+r.fileName+'</span>' +
-        '</div>' +
-      '</div>' +
-      '<div class="section-heading" style="margin-top:0;">交付详情</div>' +
-      '<div class="info-row"><span class="info-label">名单名称</span><span class="info-value" style="font-weight:600;">'+r.name+'</span></div>' +
-      '<div class="info-row"><span class="info-label">接收机构</span><span class="info-value">'+r.org+'</span></div>' +
-      '<div class="info-row"><span class="info-label">操作人</span><span class="info-value">'+r.createdBy+'</span></div>' +
-      '<div class="info-row"><span class="info-label">交付时间</span><span class="info-value">'+r.createdAt+'</span></div>' +
-      '<div class="info-row"><span class="info-label">备注</span><span class="info-value" style="white-space:pre-wrap;">'+(r.remark||'<span style="color:var(--gray-300);">暂无备注</span>')+'</span></div>' +
-      '<div class="info-row"><span class="info-label">关键数据字段</span><span class="info-value">'+colBadges+'</span></div>';
-
-    document.getElementById('detailOverlay').classList.add('show');
-    document.getElementById('detailDrawer').classList.add('show');
+    $('rowKw').value = '';
+    rowPage = 1;
+    renderRows();
+    switchDTab('info');
+    $('detailOverlay').classList.add('show');
+    $('detailDrawer').classList.add('show');
   }
 
   function closeDetail() {
-    document.getElementById('detailOverlay').classList.remove('show');
-    document.getElementById('detailDrawer').classList.remove('show');
+    $('detailOverlay').classList.remove('show');
+    $('detailDrawer').classList.remove('show');
   }
 
-  /* ════════ 删除 ════════ */
-  function prepareDelete(id, name) {
-    openConfirm(
-      '确认删除？',
-      '将删除交付名单「'+name+'」，此操作不可恢复。',
-      function() {
-        RECORDS = RECORDS.filter(function(r){return r.id!==id;});
-        doFilter();
-        if (currentDetailId === id) closeDetail();
-        showToast('已删除');
+  function switchDTab(p) {
+    document.querySelectorAll('.d-tab').forEach(t => t.classList.toggle('active', t.dataset.pane === p));
+    $('paneInfo').classList.toggle('active', p === 'info');
+    $('paneRows').classList.toggle('active', p === 'rows');
+  }
+
+  function toggleDrawerPwdVisibility(pwd) {
+    drawerPwdVisible = !drawerPwdVisible;
+    const valEl = $('drawerPwdVal');
+    const eyeEl = $('drawerEyeIcon');
+    if (valEl) valEl.textContent = drawerPwdVisible ? pwd : '••••';
+    if (eyeEl) eyeEl.innerHTML = drawerPwdVisible ? ICON_EYE_OPEN : ICON_EYE_CLOSE;
+  }
+
+  function copyDownloadUrl(id, btn) {
+    const url = `${window.location.origin || ''}${window.location.pathname.replace(/deliveries\.html.*$/, '')}download.html?id=${id}`;
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(url);
+    } else {
+      const ta = document.createElement('textarea');
+      ta.value = url;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+    }
+    if (btn) {
+      const orig = btn.textContent;
+      btn.textContent = '已复制';
+      btn.style.color = '#059669';
+      setTimeout(() => { btn.textContent = orig; btn.style.color = ''; }, 1200);
+    }
+  }
+
+  function copyPassword(pwd, btn) {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(pwd);
+    } else {
+      const ta = document.createElement('textarea');
+      ta.value = pwd;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+    }
+    if (btn) {
+      const orig = btn.textContent;
+      btn.textContent = '已复制';
+      btn.style.color = '#059669';
+      setTimeout(() => { btn.textContent = orig; btn.style.color = ''; }, 1200);
+    }
+  }
+
+  function renderInfo() {
+    const r = D, p = r.platform, e = r.email;
+    let wayVal = '—';
+    if (p && e) {
+      wayVal = '在线分发 + 系统邮件';
+    } else if (p) {
+      wayVal = '在线分发';
+    } else if (e) {
+      wayVal = e.mode === 'link' ? '系统邮件（下载链接）' : '系统邮件（附件）';
+    }
+
+    let h = `
+      <div class="stat-grid" style="grid-template-columns: repeat(2, 1fr); margin-bottom: 16px;">
+        <div class="stat-box">
+          <div class="stat-box-label">企业数</div>
+          <div class="stat-box-val brand">${r.valid.toLocaleString()} <span style="font-size:13px;font-weight:400;color:var(--gray-500);">家</span></div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-box-label">交付方式</div>
+          <div class="stat-box-val" style="font-size:15px;font-weight:600;min-height:28px;display:flex;align-items:center;color:var(--gray-800);">${wayVal}</div>
+        </div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-head">基本信息</div>
+        <div class="info-row"><span class="info-label">接收机构</span><span class="info-value">${r.org}</span></div>
+        <div class="info-row"><span class="info-label">名单文件</span><span class="info-value">${r.fileName}</span></div>
+        <div class="info-row"><span class="info-label">企业数</span><span class="info-value"><b>${r.valid}</b> 家</span></div>
+        <div class="info-row"><span class="info-label">备注</span><span class="info-value">${r.remark || '<span style="color:var(--gray-300);">—</span>'}</span></div>
+      </div>`;
+
+    if (p) {
+      let importResText = '';
+      if (p.whitelist && p.outside) {
+        if (p.forced) {
+          importResText = `<b style="color:#047857;">${p.imported}</b> 家（已开启强制导入，包含白名单外 ${p.outside} 家）`;
+        } else {
+          importResText = `<b style="color:#047857;">${p.imported}</b> / ${r.valid} 家（白名单外已过滤 ${p.outside} 家）`;
+        }
+      } else {
+        importResText = `<b>${p.imported}</b> 家`;
       }
+
+      h += `
+      <div class="info-card">
+        <div class="info-card-head"><span class="way-ico p">${ICON_P}</span>在线分发</div>
+        <div class="info-row"><span class="info-label">归属智能体</span><span class="info-value">${p.agent}</span></div>
+        <div class="info-row"><span class="info-label">生成批次</span><span class="info-value"><b>${p.batch}</b></span></div>
+        <div class="info-row"><span class="info-label">导入企业数</span><span class="info-value">${importResText}</span></div>
+      </div>`;
+    }
+
+    if (e) {
+      const isLink = e.mode === 'link';
+      const expireText = (e.expireDays === 0 || e.expireDays === '0') ? '长期有效' : `${e.expireDays || 7} 天有效`;
+      const dlUrl = `download.html?id=${r.id}`;
+
+      h += `
+      <div class="info-card">
+        <div class="info-card-head"><span class="way-ico e">${ICON_E}</span>系统邮件
+          <span class="ich-extra"><button class="btn btn-default btn-sm" style="font-size:12px;" onclick="resendMail()">重新发送</button></span></div>
+        <div class="info-row"><span class="info-label">收件人</span><span class="info-value">${e.to.join('； ')}</span></div>
+        <div class="info-row"><span class="info-label">抄送</span><span class="info-value">${(e.cc && e.cc.length) ? e.cc.join('； ') : '<span style="color:var(--gray-300);">无</span>'}</span></div>
+        <div class="info-row"><span class="info-label">发送方式</span><span class="info-value">${isLink ? `下载链接（${expireText}）` : 'Excel 附件发送'}</span></div>`;
+
+      if (isLink) {
+        h += `
+        <div class="info-row">
+          <span class="info-label">下载链接</span>
+          <span class="info-value" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <a href="${dlUrl}" target="_blank" style="color:var(--brand);font-weight:600;text-decoration:none;word-break:break-all;" title="点击打开链接">https://credit.example.com/delivery/download?id=${r.id}</a>
+            <button class="btn btn-default btn-sm" style="font-size:11.5px;padding:2px 8px;height:24px;" onclick="copyDownloadUrl('${r.id}', this)">复制链接</button>
+          </span>
+        </div>`;
+      }
+
+      if (e.hasPwd && e.pwd) {
+        h += `
+        <div class="info-row">
+          <span class="info-label">${isLink ? '访问密码' : '文件密码'}</span>
+          <span class="info-value" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <span style="display:inline-flex;align-items:center;background:#f1f5f9;border:1px solid #e2e8f0;padding:2px 6px 2px 8px;border-radius:6px;gap:6px;">
+              <code id="drawerPwdVal" style="font-family:monospace;font-weight:700;letter-spacing:1.5px;color:var(--gray-800);min-width:44px;display:inline-block;text-align:center;">${drawerPwdVisible ? e.pwd : '••••'}</code>
+              <button type="button" class="eye-btn" onclick="toggleDrawerPwdVisibility('${e.pwd}')" title="切换展示/隐藏密码">
+                <span id="drawerEyeIcon">${drawerPwdVisible ? ICON_EYE_OPEN : ICON_EYE_CLOSE}</span>
+              </button>
+            </span>
+            <button class="btn btn-default btn-sm" style="font-size:11.5px;padding:2px 8px;height:24px;" onclick="copyPassword('${e.pwd}', this)">复制密码</button>
+            <span style="font-size:12px;color:var(--gray-400);">（不随邮件发送，需通过其他安全方式告知）</span>
+          </span>
+        </div>`;
+      }
+
+      h += `
+        <div class="info-row"><span class="info-label">发送时间</span><span class="info-value">${e.sentAt}</span></div>
+        <div class="info-row"><span class="info-label">发送状态</span><span class="info-value"><span class="tag ${MAIL_STATUS_CLS[e.status]}">${e.status}</span>
+          ${e.failMsg ? `<div style="font-size:12px;color:#b91c1c;margin-top:4px;">${e.failMsg}</div>` : ''}</span></div>
+      </div>`;
+    }
+    $('paneInfo').innerHTML = h;
+  }
+
+  function buildRows(r) {
+    const cities = ['苏州','南京','无锡','常州','南通','盐城','扬州','徐州'];
+    const words = ['精密','新材','智造','科技','绿源','华远','恒信','启明','海纳','瑞丰','佳禾','鼎盛'];
+    const tails = ['机械有限公司','科技有限公司','电子股份有限公司','农业发展有限公司','贸易有限公司','实业有限公司'];
+    const REAL_NAMES = [
+      '张建国','王海燕','李志强','陈敏','赵晨','顾明华','刘洋','周伟',
+      '钱晓东','孙丽','朱建平','徐立新','吴军','杨帆','黄伟','高峰',
+      '陆俊杰','戴志成','沈丽琴','金文俊','何建平','林晨','宋佳','郑威'
+    ];
+    const n = Math.min(r.valid + r.dup + r.bad, 48);
+    const rows = [];
+    for (let i = 0; i < n; i++) {
+      const name = cities[i % 8] + words[(i * 5) % 12] + tails[(i * 7) % 6];
+      const code = '91320' + String(500 + i * 37).padStart(4, '0') + 'MA' + ((i * 7919) % 100000).toString(36).toUpperCase().padStart(5, '0') + 'X';
+      const row = {};
+      r.cols.forEach(c => {
+        if (c === '序号') row[c] = i + 1;
+        else if (c === '企业名称') row[c] = name;
+        else if (c.indexOf('信用代码') > -1) row[c] = (i === 7 || i === 31) ? '—' : code;
+        else if (/需求分|资金需求/.test(c)) row[c] = (70 + (i * 13) % 26 + (i % 3) * 0.5).toFixed(1);
+        else if (/征信评级|信用评级/.test(c)) row[c] = ['AAA','AA+','AA','A+','A'][i % 5];
+        else if (/参保人数|社保/.test(c)) row[c] = (15 + (i * 19) % 280);
+        else if (/授信额度|推荐额度/.test(c)) row[c] = (200 + (i * 97) % 800).toLocaleString();
+        else if (/资本|营收|产值|研发|金额|出口额/.test(c)) row[c] = (300 + (i * 137) % 4700).toLocaleString();
+        else if (/面积/.test(c)) row[c] = (1200 + (i * 350) % 8000).toLocaleString();
+        else if (/年限/.test(c)) row[c] = (2 + i % 12) + ' 年';
+        else if (/专利/.test(c)) row[c] = 3 + (i * 3) % 40;
+        else if (/纳税评级|海关评级/.test(c)) row[c] = ['A级','A级','B级','A级','M级'][i % 5];
+        else if (/区县|乡镇|园区/.test(c)) row[c] = cities[i % 8] + ['高新区','工业园区','经开区','新材料产业园'][i % 4];
+        else if (/行业|门类|农业类型/.test(c)) row[c] = ['智能装备制造','新一代电子信息','新能源汽车零部件','生物医药新材料','现代设施农业'][i % 5];
+        else if (/资质/.test(c)) row[c] = ['国家级专精特新','省级专精特新','高新技术企业','瞪羚企业'][i % 4];
+        else if (/出口国/.test(c)) row[c] = ['东南亚','欧盟','北美','日韩'][i % 4];
+        else if (/规模/.test(c)) row[c] = (50 + (i * 20) % 300) + ' 亩';
+        else if (/联系人/.test(c)) row[c] = REAL_NAMES[i % REAL_NAMES.length];
+        else row[c] = '—';
+      });
+      rows.push(row);
+    }
+    return rows;
+  }
+
+  function renderRows() {
+    const kw = $('rowKw').value.trim().toLowerCase();
+    const cols = D.cols;
+    const keyCol = cols.find(c => c.indexOf('信用代码') > -1);
+    const list = D._rows.filter(r =>
+      !kw ||
+      String(r['企业名称']).toLowerCase().includes(kw) ||
+      (keyCol && String(r[keyCol] || '').toLowerCase().includes(kw))
     );
+    const pages = Math.max(1, Math.ceil(list.length / ROW_SIZE));
+    rowPage = Math.min(Math.max(1, rowPage), pages);
+    const startIdx = (rowPage - 1) * ROW_SIZE;
+    const pageRows = list.slice(startIdx, rowPage * ROW_SIZE);
+
+    $('rowsTable').innerHTML =
+      '<thead><tr>' + cols.map(c => `<th>${c}</th>`).join('') + '</tr></thead><tbody>' +
+      (pageRows.length ? pageRows.map(r => '<tr>' + cols.map(c => {
+        let val = (r[c] === '' || r[c] === undefined || r[c] === null) ? '<span style="color:var(--gray-300);">—</span>' : r[c];
+        return `<td>${val}</td>`;
+      }).join('') + '</tr>').join('')
+        : `<tr><td colspan="${cols.length}" style="text-align:center;padding:36px;color:var(--gray-400);">无匹配数据</td></tr>`) +
+      '</tbody>';
+
+    const from = list.length ? startIdx + 1 : 0;
+    const to = Math.min(rowPage * ROW_SIZE, list.length);
+    $('rowPagerInfo').textContent = `显示 ${from} 到 ${to} 条，共 ${list.length} 条数据`;
+
+    let pagerHtml = `<button class="btn btn-ghost btn-sm" onclick="goRowPage(-1)" ${rowPage <= 1 ? 'disabled' : ''}>上一页</button>`;
+    for (let p = 1; p <= pages; p++) {
+      if (p === rowPage) {
+        pagerHtml += `<button class="btn btn-primary btn-sm page-num">${p}</button>`;
+      } else {
+        pagerHtml += `<button class="btn btn-ghost btn-sm page-num" onclick="setRowPage(${p})">${p}</button>`;
+      }
+    }
+    pagerHtml += `<button class="btn btn-ghost btn-sm" onclick="goRowPage(1)" ${rowPage >= pages ? 'disabled' : ''}>下一页</button>`;
+    $('rowPagerControls').innerHTML = pagerHtml;
   }
 
-  function openConfirm(title, desc, cb) {
-    document.getElementById('confirmTitle').textContent = title;
-    document.getElementById('confirmDesc').textContent = desc;
-    confirmCallback = cb;
-    document.getElementById('confirmModal').classList.add('show');
-    document.getElementById('confirmOkBtn').onclick = function(){closeConfirm(); if(confirmCallback) confirmCallback();};
+  function setRowPage(p) { rowPage = p; renderRows(); }
+  function goRowPage(d) { rowPage += d; renderRows(); }
+
+  function resendMail() {
+    const e = D.email;
+    openConfirm({
+      type: 'info', title: '重新发送邮件？',
+      desc: `将向 ${e.to.length} 位收件人重新发送「${D.name}」名单。`,
+      okText: '确认发送',
+      onOk: () => {
+        e.sentAt = nowStr(); e.status = '已发送'; e.failMsg = '';
+        renderInfo(); doFilter();
+        showToast('邮件已重新发送', 'success');
+      }
+    });
   }
 
-  function closeConfirm() { document.getElementById('confirmModal').classList.remove('show'); }
+  function prepareDelete(id) {
+    const r = RECORDS.find(x => x.id === id);
+    if (!r) return;
+    let desc = `将删除交付记录「${r.name}」及原文件。`;
+    if (r.platform) desc += `<br>已在线分发的批次不受影响。`;
+    openConfirm({
+      type: 'danger', title: '确认删除交付记录？', desc, okText: '确认删除',
+      onOk: () => {
+        RECORDS = RECORDS.filter(x => x.id !== id);
+        doFilter();
+        if (D && D.id === id) closeDetail();
+        showToast('已删除交付记录');
+      }
+    });
+  }
 
-  /* ════════ Toast ════════ */
+  function openConfirm(o) {
+    const icon = $('confirmIcon');
+    icon.className = 'modal-icon ' + (o.type === 'info' ? 'info' : 'danger');
+    icon.innerHTML = o.type === 'info'
+      ? '<svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>'
+      : '<svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>';
+    $('confirmTitle').textContent = o.title;
+    $('confirmDesc').innerHTML = o.desc;
+    const ok = $('confirmOkBtn');
+    ok.textContent = o.okText || '确认';
+    ok.style.background = o.type === 'info' ? '' : '#dc2626';
+    ok.style.borderColor = o.type === 'info' ? '' : '#dc2626';
+    ok.onclick = () => { closeConfirm(); o.onOk && o.onOk(); };
+    $('confirmModal').classList.add('show');
+  }
+
+  function closeConfirm() { $('confirmModal').classList.remove('show'); }
+
   function showToast(msg, type) {
-    var wrap = document.getElementById('toastWrap');
+    const wrap = $('toastWrap');
     wrap.style.display = 'block';
-    wrap.innerHTML = '<div class="toast '+(type==='success'?'success':'')+'">' + msg + '</div>';
+    wrap.innerHTML = '<div class="toast ' + (type === 'success' ? 'success' : '') + '">' + msg + '</div>';
     clearTimeout(wrap._t);
-    wrap._t = setTimeout(function(){wrap.style.display='none'; wrap.innerHTML='';}, 2800);
+    wrap._t = setTimeout(() => { wrap.style.display = 'none'; wrap.innerHTML = ''; }, 2800);
   }
 
-  /* ════════ 初始化 ════════ */
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('DOMContentLoaded', () => {
     if (typeof renderSidebar === 'function') renderSidebar({ currentPage: 'deliveries' });
-    renderTable(RECORDS);
+    initFilters();
+    doFilter();
   });
-  document.getElementById('confirmModal').addEventListener('click', function(e){ if(e.target===this) closeConfirm(); });
+  $('confirmModal').addEventListener('click', function (e) { if (e.target === this) closeConfirm(); });
 </script>
 </body>
 </html>

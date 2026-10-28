@@ -2033,7 +2033,8 @@
           { name: '名单_20260625_001', src: 'auto', count: 280, time: '2026-06-25 06:12', status: '已分配' },
           { name: '名单_20260618_001', src: 'auto', count: 295, time: '2026-06-18 06:08', status: '已分配' },
           { name: '名单_20260611_001', src: 'auto', count: 310, time: '2026-06-11 06:15', status: '待分配' },
-          { name: '手工导入_20260610', src: 'manual', count: 50, time: '2026-06-10 14:30', status: '已分配' }
+          { name: '手工导入_20260610', src: 'manual', count: 50, time: '2026-06-10 14:30', status: '已分配' },
+          { name: '平安银行-小微普惠2026Q2', src: 'delivery', count: 360, time: '2026-06-01 14:30', status: '已分配' }
         ],
         snapshots: [
           { name: '名单_20260625_001', count: 1180, time: '2026-06-25 06:15' },
@@ -2057,6 +2058,7 @@
           { field: '企业规模', op: '>=', val: '中型' }
         ],
         batchList: [
+          { name: '招商银行-科创企业名单', src: 'delivery', count: 230, time: '2026-06-10 09:15', status: '分配中' },
           { name: '名单_20260601_001', src: 'auto', count: 220, time: '2026-06-01 06:18', status: '分配中' },
           { name: '名单_20260501_001', src: 'auto', count: 198, time: '2026-05-01 06:10', status: '已分配' }
         ],
@@ -2076,6 +2078,7 @@
           { field: '行业类型', op: '包含', val: '农林牧渔' }
         ],
         batchList: [
+          { name: '农业银行-惠农贷客群', src: 'delivery', count: 560, time: '2026-05-20 15:45', status: '待分配' },
           { name: '名单_20260520_001', src: 'auto', count: 182, time: '2026-05-20 06:05', status: '已分配' },
           { name: '手工导入_20260420', src: 'manual', count: 95, time: '2026-04-20 14:30', status: '已分配' }
         ],
@@ -2354,7 +2357,9 @@
           (a.batchList.length ? a.batchList.map(b =>
             '<tr>' +
             '<td style="font-weight:600;font-size:13px;">' + b.name + '</td>' +
-            '<td><span class="tag ' + (b.src === 'auto' ? 'tag-blue' : 'tag-gray') + '">' + (b.src === 'auto' ? '系统生成' : '手工导入') + '</span></td>' +
+            '<td>' + (b.src === 'delivery'
+              ? '<a href="deliveries.html" target="_blank" class="tag" title="来自名单交付：' + b.name + '，点击查看交付记录" style="background:#f3e8ff;color:#7e22ce;text-decoration:none;">名单交付</a>'
+              : '<span class="tag ' + (b.src === 'auto' ? 'tag-blue' : 'tag-gray') + '">' + (b.src === 'auto' ? '系统生成' : '手工导入') + '</span>') + '</td>' +
             '<td><strong>' + b.count.toLocaleString() + '</strong></td>' +
             '<td style="color:var(--gray-500);font-size:12px;">' + b.time + '</td>' +
             '<td><span class="tag ' + (b.status === '已分配' ? 'tag-green' : b.status === '分配中' ? 'tag-blue' : 'tag-amber') + '">' + b.status + '</span></td>' +

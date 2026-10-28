@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+  <title>智能营销平台·名单交付</title>
+  <meta name="description" content="智能营销平台·名单交付下载页面">
+  <link rel="stylesheet" href="css/style.css?v=1783867207">
+  <style>
+    /* ══════════════════════════════════════
+       安全下载页 — 极简原型样式
+       ══════════════════════════════════════ */
+    body {
+      background: #f1f5f9;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      color: #1e293b;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* 顶部导航 */
+    .dl-header {
+      background: #ffffff;
+      border-bottom: 1px solid #e2e8f0;
+      padding: 14px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .dl-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+    .dl-logo-mark {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: #064e3b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .dl-brand-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #0f172a;
+      letter-spacing: 0.2px;
+    }
+
+    /* 主体容器 */
+    .dl-main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    /* 核心卡片 */
+    .dl-card {
+      width: 100%;
+      max-width: 500px;
+      background: #ffffff;
+      border-radius: 16px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 10px 25px -5px rgba(15,23,42,0.08), 0 1px 3px rgba(15,23,42,0.04);
+      overflow: hidden;
+    }
+
+    .dl-card-top-bar {
+      height: 4px;
+      background: #10b981;
+    }
+
+    .dl-card-body {
+      padding: 36px 36px 32px;
+    }
+
+    /* 状态切换视图 */
+    .dl-view {
+      display: none;
+      animation: fadeIn 0.2s ease-out;
+    }
+    .dl-view.active {
+      display: block;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* 状态图标 */
+    .dl-status-icon-wrap {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      margin: 0 auto 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .dl-status-icon-wrap.lock {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: #2563eb;
+    }
+    .dl-status-icon-wrap.success {
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      color: #059669;
+    }
+    .dl-status-icon-wrap.expired {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #dc2626;
+    }
+    .dl-status-icon-wrap svg {
+      width: 28px;
+      height: 28px;
+      stroke-width: 2.2;
+    }
+
+    .dl-card-title {
+      font-size: 19px;
+      font-weight: 700;
+      text-align: center;
+      color: #0f172a;
+      margin-bottom: 24px;
+    }
+
+    /* 密码输入框组件 */
+    .dl-pwd-box {
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 24px 20px 20px;
+      margin-bottom: 22px;
+      text-align: center;
+    }
+    .dl-pwd-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #475569;
+      margin-bottom: 14px;
+    }
+    .dl-pwd-input-wrap {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin: 8px 0;
+    }
+    .dl-pwd-char-input {
+      width: 52px;
+      height: 56px;
+      border: 2px solid #cbd5e1;
+      border-radius: 10px;
+      background: #ffffff;
+      font-size: 22px;
+      font-weight: 700;
+      text-align: center;
+      text-transform: uppercase;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      color: #0f172a;
+      outline: none;
+      transition: all 0.15s;
+    }
+    .dl-pwd-char-input:focus {
+      border-color: #10b981;
+      box-shadow: 0 0 0 3px rgba(16,185,129,0.18);
+      background: #f0fdf4;
+    }
+    .dl-pwd-char-input.error {
+      border-color: #ef4444;
+      background: #fef2f2;
+      color: #dc2626;
+    }
+    .dl-pwd-error-tip {
+      font-size: 12.5px;
+      color: #dc2626;
+      margin-top: 10px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    /* 文件详情就绪卡片 */
+    .file-ready-box {
+      border: 1.5px solid #e2e8f0;
+      border-radius: 12px;
+      background: #f8fafc;
+      padding: 18px 20px;
+      margin-bottom: 24px;
+    }
+    .file-main-info {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid #e2e8f0;
+      margin-bottom: 14px;
+    }
+    .file-type-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 8px;
+      background: #dcfce7;
+      border: 1px solid #86efac;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #15803d;
+      flex-shrink: 0;
+    }
+    .file-name-text {
+      font-size: 15px;
+      font-weight: 700;
+      color: #0f172a;
+      word-break: break-all;
+    }
+    .file-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-size: 13px;
+    }
+    .file-grid-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #475569;
+    }
+    .file-grid-item .k { color: #64748b; }
+    .file-grid-item .v { font-weight: 600; color: #0f172a; }
+
+    /* 按钮组 */
+    .dl-btn {
+      width: 100%;
+      height: 46px;
+      border-radius: 10px;
+      border: none;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+    .dl-btn-primary {
+      background: #10b981;
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(16,185,129,0.25);
+    }
+    .dl-btn-primary:hover {
+      background: #059669;
+      box-shadow: 0 6px 16px rgba(16,185,129,0.35);
+    }
+    .dl-btn-default {
+      background: #f1f5f9;
+      color: #475569;
+      border: 1px solid #cbd5e1;
+    }
+    .dl-btn-default:hover {
+      background: #e2e8f0;
+      color: #1e293b;
+    }
+
+    /* 原型专用调试控制器 */
+    .proto-bar {
+      position: fixed;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(15,23,42,0.92);
+      backdrop-filter: blur(8px);
+      color: #f8fafc;
+      border-radius: 999px;
+      padding: 6px 18px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+      z-index: 1000;
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+    .proto-badge {
+      background: #f59e0b;
+      color: #78350f;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 11px;
+    }
+    .proto-btn {
+      background: rgba(255,255,255,0.12);
+      border: none;
+      color: #fff;
+      font-size: 12px;
+      padding: 3px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .proto-btn:hover {
+      background: rgba(255,255,255,0.25);
+    }
+    .proto-btn.active {
+      background: #10b981;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 顶部 Header -->
+  <header class="dl-header">
+    <div class="dl-brand">
+      <div class="dl-logo-mark">
+        <svg width="24" height="24" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18 2L31.5 9.79V25.38L18 33.17L4.5 25.38V9.79L18 2Z" stroke="#10b981" stroke-width="1.8" fill="none" stroke-linejoin="round"/>
+          <g stroke="#ffffff" stroke-width="1.8" stroke-linejoin="round">
+            <path d="M18 8L27 13.2V23.6L18 28.8L9 23.6V13.2L18 8Z" fill="none" />
+            <path d="M18 8L27 13.2L18 18.4L9 13.2Z" fill="#34d399" />
+            <path d="M18 18.4L27 13.2V23.6L18 28.8Z" fill="#059669" />
+            <path d="M18 18.4V28.8L9 23.6V13.2Z" fill="#10b981" />
+          </g>
+        </svg>
+      </div>
+      <div class="dl-brand-title">智能营销平台·名单交付</div>
+    </div>
+  </header>
+
+  <!-- 主体卡片容器 -->
+  <main class="dl-main">
+    <div class="dl-card">
+      <div class="dl-card-top-bar"></div>
+      <div class="dl-card-body">
+
+        <!-- ════════ 视图 1：输入访问密码 ════════ -->
+        <div class="dl-view" id="viewPwd">
+          <div class="dl-status-icon-wrap lock">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+          </div>
+          <div class="dl-card-title">请输入访问密码</div>
+
+          <div class="dl-pwd-box">
+            <div class="dl-pwd-label">4 位访问密码</div>
+            <div class="dl-pwd-input-wrap">
+              <input type="text" class="dl-pwd-char-input" id="pwd0" maxlength="1" autocomplete="off" autofocus>
+              <input type="text" class="dl-pwd-char-input" id="pwd1" maxlength="1" autocomplete="off">
+              <input type="text" class="dl-pwd-char-input" id="pwd2" maxlength="1" autocomplete="off">
+              <input type="text" class="dl-pwd-char-input" id="pwd3" maxlength="1" autocomplete="off">
+            </div>
+            <div class="dl-pwd-error-tip" id="pwdErrorTip">
+              <svg viewBox="0 0 24 24" style="width:13px;height:13px;" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              <span id="pwdErrorMsg">密码错误</span>
+            </div>
+          </div>
+
+          <button class="dl-btn dl-btn-primary" onclick="verifyPassword()">
+            <span>验证并提取文件</span>
+          </button>
+        </div>
+
+        <!-- ════════ 视图 2：文件就绪，提供下载 ════════ -->
+        <div class="dl-view" id="viewReady">
+          <div class="dl-status-icon-wrap success">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+              <polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+          </div>
+          <div class="dl-card-title">名单文件已就绪</div>
+
+          <!-- 文件卡片 -->
+          <div class="file-ready-box">
+            <div class="file-main-info">
+              <div class="file-type-icon">
+                <svg viewBox="0 0 24 24" style="width:24px;height:24px;" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                  <polyline points="14 2 14 8 20 8"/>
+                  <line x1="8" y1="13" x2="16" y2="13"/>
+                  <line x1="8" y1="17" x2="16" y2="17"/>
+                  <polyline points="10 9 9 9 8 9"/>
+                </svg>
+              </div>
+              <div style="flex:1;min-width:0;">
+                <div class="file-name-text" id="rFileName">小微名单_20260601.xlsx</div>
+              </div>
+            </div>
+
+            <div class="file-grid">
+              <div class="file-grid-item">
+                <span class="k">企业数：</span>
+                <span class="v" id="rValid" style="color:#047857;">386 家</span>
+              </div>
+              <div class="file-grid-item">
+                <span class="k">有效期：</span>
+                <span class="v" id="rExpire" style="color:#d97706;">7 天有效（2026-06-08 前）</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 下载按钮 -->
+          <button class="dl-btn dl-btn-primary" id="btnDownload" onclick="triggerDownload()">
+            <svg viewBox="0 0 24 24" style="width:18px;height:18px;" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            <span id="btnDownloadText">立即下载</span>
+          </button>
+        </div>
+
+        <!-- ════════ 视图 3：链接已过期 ════════ -->
+        <div class="dl-view" id="viewExpired">
+          <div class="dl-status-icon-wrap expired">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 14 14"/>
+            </svg>
+          </div>
+          <div class="dl-card-title">下载链接已过期</div>
+          <div style="font-size:14px;color:#64748b;text-align:center;line-height:1.6;margin-bottom:8px;">
+            该名单下载链接已过有效期，请联系对接人重新获取。
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- ════════ 原型演示控制浮窗（便于产品与开发快速核对原型） ════════ -->
+  <aside class="proto-bar" aria-label="原型演示控制器">
+    <span class="proto-badge">原型切换</span>
+    <button class="proto-btn" id="pBtnPwd" onclick="switchView('pwd')">输入密码</button>
+    <button class="proto-btn" id="pBtnReady" onclick="switchView('ready')">文件就绪</button>
+    <button class="proto-btn" id="pBtnExpired" onclick="switchView('expired')">链接过期</button>
+    <span style="opacity:0.3;">|</span>
+    <button class="proto-btn" onclick="fillTestPwd()" style="background:rgba(16,185,129,0.22);border:1px solid #10b981;color:#a7f3d0;font-weight:600;display:inline-flex;align-items:center;gap:5px;" title="点击一键填入测试密码并验证">
+      <svg viewBox="0 0 24 24" style="width:12px;height:12px;" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"/><line x1="10.85" y1="12.15" x2="19" y2="4"/><line x1="18" y1="5" x2="20" y2="7"/><line x1="15" y1="8" x2="17" y2="10"/></svg>
+      <span>测试密码：<b id="protoTestPwd" style="letter-spacing:1px;color:#ffffff;">7K9P</b></span>
+      <span style="font-size:11px;opacity:0.85;">(一键填入)</span>
+    </button>
+    <span style="opacity:0.3;">|</span>
+    <a href="deliveries.html" style="color:#93c5fd;text-decoration:none;">返回列表 ↗</a>
+  </aside>
+
+  <!-- 轻量全局 Toast -->
+  <div id="toast" style="position:fixed;top:24px;left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;padding:9px 18px;border-radius:8px;font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,0.25);z-index:9999;display:none;align-items:center;gap:8px;"></div>
+
+  <script>
+    /* ════════ 数据 Mock（保持与 deliveries.html 一致） ════════ */
+    const MOCK_RECORDS = {
+      'r1': {
+        id: 'r1',
+        org: '平安银行',
+        batch: '平安银行-小微普惠2026Q2',
+        fileName: '小微名单_20260601.xlsx',
+        fileSize: '86 KB',
+        valid: 386,
+        pwd: '7K9P',
+        expireText: '7 天有效（2026-06-08 前）'
+      },
+      'r3': {
+        id: 'r3',
+        org: '农业银行',
+        batch: '农业银行-惠农贷客群',
+        fileName: '农业企业_20260520.xlsx',
+        fileSize: '118 KB',
+        valid: 560,
+        pwd: '6H2K',
+        expireText: '长期有效'
+      },
+      'r4': {
+        id: 'r4',
+        org: '江苏银行',
+        batch: '江苏银行-厂房贷企业',
+        fileName: '厂房名单_20260415.xlsx',
+        fileSize: '34 KB',
+        valid: 145,
+        pwd: '9A4M',
+        expireText: '15 天有效（2026-04-30 前）'
+      },
+      'r5': {
+        id: 'r5',
+        org: '南京银行',
+        batch: '南京银行-外贸企业名单',
+        fileName: '外贸名单_20260328.xlsx',
+        fileSize: '47 KB',
+        valid: 210,
+        pwd: null,
+        expireText: '已过期'
+      }
+    };
+
+    // 解析 URL 参数
+    const params = new URLSearchParams(window.location.search);
+    const recId = params.get('id') || 'r1';
+    const urlPwd = (params.get('pwd') || '').toUpperCase().trim();
+    const curRecord = MOCK_RECORDS[recId] || MOCK_RECORDS['r1'];
+
+    // 初始化页面内容
+    function initData() {
+      document.getElementById('rFileName').textContent = curRecord.fileName;
+      const sizeEl = document.getElementById('rFileSize');
+      if (sizeEl) sizeEl.textContent = curRecord.fileSize;
+      const validEl = document.getElementById('rValid');
+      if (validEl) validEl.textContent = curRecord.valid + ' 家';
+      const expireEl = document.getElementById('rExpire');
+      if (expireEl) expireEl.textContent = curRecord.expireText;
+      const btnDlText = document.getElementById('btnDownloadText');
+      if (btnDlText) btnDlText.textContent = '立即下载';
+
+      const protoPwdEl = document.getElementById('protoTestPwd');
+      if (protoPwdEl) protoPwdEl.textContent = curRecord.pwd || '无密码';
+
+      // 绑定输入框自动跳格事件
+      setupPinInputs();
+
+      // 判断初始视图：若 URL 中带了与该记录匹配的密码，或该记录免密，则直接进入就绪状态
+      if (!curRecord.pwd || (urlPwd && urlPwd === curRecord.pwd)) {
+        switchView('ready');
+      } else {
+        switchView('pwd');
+      }
+    }
+
+    // 一键填入测试密码
+    function fillTestPwd() {
+      switchView('pwd');
+      const target = (curRecord.pwd || '7K9P').toUpperCase();
+      for (let i = 0; i < 4; i++) {
+        const el = document.getElementById('pwd' + i);
+        if (el) el.value = target[i] || '';
+      }
+      verifyPassword();
+    }
+
+    // 视图切换控制
+    function switchView(viewName) {
+      document.querySelectorAll('.dl-view').forEach(v => v.classList.remove('active'));
+      document.querySelectorAll('.proto-btn').forEach(b => b.classList.remove('active'));
+
+      if (viewName === 'pwd') {
+        document.getElementById('viewPwd').classList.add('active');
+        document.getElementById('pBtnPwd').classList.add('active');
+        setTimeout(() => document.getElementById('pwd0').focus(), 100);
+      } else if (viewName === 'ready') {
+        document.getElementById('viewReady').classList.add('active');
+        document.getElementById('pBtnReady').classList.add('active');
+      } else if (viewName === 'expired') {
+        document.getElementById('viewExpired').classList.add('active');
+        document.getElementById('pBtnExpired').classList.add('active');
+      }
+    }
+
+    // 4 位输入框逻辑
+    function setupPinInputs() {
+      const inputs = [0, 1, 2, 3].map(i => document.getElementById('pwd' + i));
+      inputs.forEach((input, idx) => {
+        input.addEventListener('input', () => {
+          input.classList.remove('error');
+          document.getElementById('pwdErrorTip').style.display = 'none';
+          input.value = input.value.toUpperCase();
+
+          if (input.value && idx < 3) {
+            inputs[idx + 1].focus();
+          }
+          const full = inputs.map(el => el.value).join('');
+          if (full.length === 4) {
+            verifyPassword();
+          }
+        });
+
+        input.addEventListener('keydown', (e) => {
+          if (e.key === 'Backspace' && !input.value && idx > 0) {
+            inputs[idx - 1].focus();
+          } else if (e.key === 'Enter') {
+            verifyPassword();
+          }
+        });
+
+        input.addEventListener('paste', (e) => {
+          e.preventDefault();
+          const pasted = (e.clipboardData || window.clipboardData).getData('text').trim().toUpperCase();
+          if (pasted.length >= 4) {
+            for (let i = 0; i < 4; i++) {
+              inputs[i].value = pasted[i] || '';
+            }
+            verifyPassword();
+          }
+        });
+      });
+    }
+
+    // 验证密码
+    function verifyPassword() {
+      const entered = [0, 1, 2, 3].map(i => document.getElementById('pwd' + i).value).join('').toUpperCase();
+      const target = (curRecord.pwd || '7K9P').toUpperCase();
+
+      if (entered === target) {
+        showToast('✓ 验证通过');
+        switchView('ready');
+      } else {
+        [0, 1, 2, 3].forEach(i => document.getElementById('pwd' + i).classList.add('error'));
+        const tip = document.getElementById('pwdErrorTip');
+        tip.style.display = 'flex';
+        document.getElementById('pwdErrorMsg').textContent = '密码错误，请重新输入';
+        document.getElementById('pwd0').focus();
+      }
+    }
+
+    // 触发下载原文件
+    function triggerDownload() {
+      showToast(`正在开始下载 ${curRecord.fileName}...`);
+      setTimeout(() => {
+        const dummyContent = `序号,企业名称,统一社会信用代码,所在区县,行业门类,社保参保人数,联系人\n` +
+          `1,苏州精密制造发展有限公司,91320500MA1791901X,高新区,智能装备制造,48,张建国\n` +
+          `2,苏州新材科技实业有限公司,91320537MA2891902Y,工业园区,新材料研发,112,王海燕\n` +
+          `... (共包含 ${curRecord.valid} 家企业)`;
+        const blob = new Blob(["\uFEFF" + dummyContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = curRecord.fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast(`✓ 已开始下载：${curRecord.fileName}`);
+      }, 400);
+    }
+
+    // Toast 提示
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.innerHTML = msg;
+      t.style.display = 'flex';
+      clearTimeout(window.__tTimer);
+      window.__tTimer = setTimeout(() => { t.style.display = 'none'; }, 2200);
+    }
+
+    window.addEventListener('DOMContentLoaded', initData);
+  </script>
+</body>
+</html>
