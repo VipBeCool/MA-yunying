@@ -357,7 +357,7 @@
       <div class="form-row">
         <div class="form-group">
           <label class="form-label" for="fName">名单名称<span class="form-req">*</span></label>
-          <input type="text" class="form-input" id="fName" placeholder="如：平安银行-小微普惠2026Q3" oninput="syncMailSubject()">
+          <input type="text" class="form-input" id="fName" placeholder="如：小微普惠2026Q3" oninput="syncMailSubject()">
         </div>
         <div class="form-group">
           <label class="form-label" for="fOrg">接收机构<span class="form-req">*</span></label>
@@ -646,39 +646,39 @@
   ];
 
   let RECORDS = [
-    { id:'r1', name:'平安银行-小微普惠2026Q2', org:'平安银行', remark:'苏州地区、注册资本500万以上、制造业、近3年无不良',
+    { id:'r1', name:'小微普惠2026Q2', org:'平安银行', remark:'苏州地区、注册资本500万以上、制造业、近3年无不良',
       fileName:'小微名单_20260601.xlsx', fileSize:'86 KB', rows:400, valid:386, dup:8, bad:6,
       cols:['序号','企业名称','统一社会信用代码','所在区县','行业门类','注册资本(万)','近一年营收(万)','资金需求分','征信评级','社保参保人数','纳税评级','经营年限','联系人'],
-      platform:{ agent:'橙业贷', batch:'平安银行-小微普惠2026Q2', whitelist:true, forced:false, imported:360, outside:26, batchStatus:'已分配' },
+      platform:{ agent:'橙业贷', batch:'小微普惠2026Q2', whitelist:true, forced:false, imported:360, outside:26, batchStatus:'已分配' },
       email:{ mode:'link', expireDays:7, to:['wanglei@pingan.com.cn','zhaolin@pingan.com.cn'], cc:['chenchen@pingan.com.cn'], hasPwd:true, pwd:'7K9P', sentAt:'2026-06-01 14:31', status:'已发送' },
       createdBy:'张敏', createdAt:'2026-06-01 14:30' },
-    { id:'r2', name:'招商银行-科创企业名单', org:'招商银行', remark:'高新技术企业+专精特新，南京江北新区',
+    { id:'r2', name:'科创企业名单', org:'招商银行', remark:'高新技术企业+专精特新，南京江北新区',
       fileName:'科创企业_20260610.xlsx', fileSize:'52 KB', rows:236, valid:230, dup:4, bad:2,
       cols:['序号','企业名称','统一社会信用代码','所属园区','资质类型','专利数','研发投入(万)','资金需求分','征信评级','社保参保人数','经营年限','联系人'],
-      platform:{ agent:'厂房贷', batch:'招商银行-科创企业名单', whitelist:false, forced:false, imported:230, outside:0, batchStatus:'分配中' },
+      platform:{ agent:'厂房贷', batch:'科创企业名单', whitelist:false, forced:false, imported:230, outside:0, batchStatus:'分配中' },
       email:null, createdBy:'李华', createdAt:'2026-06-10 09:15' },
-    { id:'r3', name:'农业银行-惠农贷客群', org:'农业银行', remark:'农林牧渔行业、2年以上经营年限',
+    { id:'r3', name:'惠农贷客群', org:'农业银行', remark:'农林牧渔行业、2年以上经营年限',
       fileName:'农业企业_20260520.xlsx', fileSize:'118 KB', rows:572, valid:560, dup:9, bad:3,
       cols:['序号','企业名称','统一社会信用代码','所在乡镇','主营农业类型','种植/养殖规模','年产值(万)','资金需求分','信用评级','社保参保人数','经营年限','联系人'],
-      platform:{ agent:'惠农贷', batch:'农业银行-惠农贷客群', whitelist:true, forced:true, imported:560, outside:41, batchStatus:'未分配' },
+      platform:{ agent:'惠农贷', batch:'惠农贷客群', whitelist:true, forced:true, imported:560, outside:41, batchStatus:'未分配' },
       email:{ mode:'attach', expireDays:0, to:['sunhao@abchina.com'], cc:['audit@abchina.com'], hasPwd:true, pwd:'6H2K', sentAt:'2026-05-20 15:46', status:'已发送' },
       createdBy:'王芳', createdAt:'2026-05-20 15:45' },
-    { id:'r4', name:'江苏银行-厂房贷企业', org:'江苏银行', remark:'自有厂房、中型以上规模，苏州、无锡',
+    { id:'r4', name:'厂房贷企业', org:'江苏银行', remark:'自有厂房、中型以上规模，苏州、无锡',
       fileName:'厂房名单_20260415.xlsx', fileSize:'34 KB', rows:148, valid:145, dup:2, bad:1,
       cols:['序号','企业名称','统一社会信用代码','所在区县','厂房面积(㎡)','近一年营收(万)','资金需求分','征信评级','社保参保人数','纳税评级','经营年限','联系人'],
       platform:null,
       email:{ mode:'link', expireDays:15, to:['chenchen@jsbchina.cn'], cc:[], hasPwd:true, pwd:'9A4M', sentAt:'2026-04-15 10:01', status:'已发送' },
       createdBy:'陈峰', createdAt:'2026-04-15 10:00' },
-    { id:'r5', name:'南京银行-外贸企业名单', org:'南京银行', remark:'有出口业务、近2年海关记录',
+    { id:'r5', name:'外贸企业名单', org:'南京银行', remark:'有出口业务、近2年海关记录',
       fileName:'外贸名单_20260328.xlsx', fileSize:'47 KB', rows:214, valid:210, dup:3, bad:1,
       cols:['序号','企业名称','统一社会信用代码','所在区县','出口额(万美元)','海关评级','主要出口国','资金需求分','征信评级','社保参保人数','联系人'],
       platform:null,
       email:{ mode:'link', expireDays:7, to:['liuchang@njcb.com.cn','intl@njcb.com.cn'], cc:[], hasPwd:false, pwd:null, sentAt:'2026-03-28 14:02', status:'发送失败', failMsg:'部分邮件地址无效' },
       createdBy:'刘洋', createdAt:'2026-03-28 14:00' },
-    { id:'r6', name:'平安银行-税务贷企业', org:'平安银行', remark:'纳税评级A级及以上，苏州地区',
+    { id:'r6', name:'税务贷企业', org:'平安银行', remark:'纳税评级A级及以上，苏州地区',
       fileName:'税务名单_20260210.xlsx', fileSize:'71 KB', rows:326, valid:320, dup:5, bad:1,
       cols:['序号','企业名称','统一社会信用代码','所在区县','纳税评级','年开票金额(万)','资金需求分','征信评级','社保参保人数','经营年限','联系人'],
-      platform:{ agent:'税务贷', batch:'平安银行-税务贷企业', whitelist:false, forced:false, imported:320, outside:0, batchStatus:'已分配' },
+      platform:{ agent:'税务贷', batch:'税务贷企业', whitelist:false, forced:false, imported:320, outside:0, batchStatus:'已分配' },
       email:null, createdBy:'张敏', createdAt:'2026-02-10 11:00' }
   ];
 

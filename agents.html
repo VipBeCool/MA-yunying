@@ -1578,7 +1578,7 @@
               <path
                 d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
             </svg>
-            <span style="color:#b91c1c;">若启用了营销白名单，白名单之外的企业会被自动过滤。</span>
+            <span style="color:#b91c1c;">若开启了黑/白名单，导入的名单将根据黑白名单规则进行过滤</span>
           </div>
         </div>
       </div>
@@ -2348,7 +2348,7 @@
           '</div>' +
           '<div class="batch-toolbar">' +
           '<button class="btn btn-primary btn-sm" onclick="showToast(\'任务已提交，稍后在下方列表查看\'); this.classList.remove(\'btn-primary\'); this.classList.add(\'btn-default\'); this.innerText=\'跑批中...\'; this.disabled=true;">手动执行跑批</button>' +
-          '<button class="btn btn-default btn-sm" onclick="openImportBatch(\'' + a.id + '\')">导入名单</button>' +
+          '<button class="btn btn-default btn-sm" onclick="openImportBatch(\'' + a.id + '\')">手动导入</button>' +
           '</div>' +
           '<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:10px;overflow:hidden;">' +
           '<table class="batch-table"><thead><tr>' +
